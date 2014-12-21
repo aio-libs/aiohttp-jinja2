@@ -23,7 +23,24 @@ def get_env(app):
     return app.get(APP_KEY)
 
 
-def render(template_name, encoding='utf-8'):
+def render_template(template_name, request, context, *,
+                    response=None, encoding='utf-8'):
+    env = request.app[APP_KEY]
+    try:
+        template = env.get_template(template_name)
+    except jinja2.TemplateNotFound:
+        raise web.HTTPInternalServerError(
+            text="Template {} not found".format(template_name))
+    text = template.render(context)
+    if response is None:
+        response = web.HTTPOk()
+    response.content_type = 'text/html'
+    response.charset = encoding
+    response.text = text
+    return response
+
+
+def template(template_name, encoding='utf-8'):
 
     def wrapper(func):
         if not asyncio.iscoroutinefunction(func):
@@ -46,8 +63,9 @@ def render(template_name, encoding='utf-8'):
         @functools.wraps(func)
         def wrapped(self, request):
             response = web.HTTPOk()
-            ctx = yield from func(self, request, response)
-            return do_render(ctx, request, response)
+            context = yield from func(self, request, response)
+            return render_template(template_name, request, context,
+                                   response=response, encoding=encoding)
         return wrapped
 
     def make_func_wrapper(func):
@@ -55,21 +73,9 @@ def render(template_name, encoding='utf-8'):
         @functools.wraps(func)
         def wrapped(request):
             response = web.HTTPOk()
-            ctx = yield from func(request, response)
-            return do_render(ctx, request, response)
+            context = yield from func(request, response)
+            return render_template(template_name, request, context,
+                                   response=response, encoding=encoding)
         return wrapped
-
-    def do_render(ctx, request, response):
-        env = request.app[APP_KEY]
-        try:
-            template = env.get_template(template_name)
-        except jinja2.TemplateNotFound:
-            raise web.HTTPInternalServerError(
-                text="Template {} not found".format(template_name))
-        text = template.render(ctx)
-        response.content_type = 'text/html'
-        response.charset = encoding
-        response.text = text
-        return response
 
     return wrapper
