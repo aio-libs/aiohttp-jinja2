@@ -20,7 +20,8 @@ tests_require = install_requires + ['nose']
 
 
 setup(name='aiohttp_jinja2',
-      description="jinja2 template renderer for aiohttp.web",
+      description=("jinja2 template renderer for aiohttp.web "
+                   "(http server for asyncio)"),
       lond_description='\n\n'.join((read('README.rst'), read('CHANGES.txt'))),
       classifiers=[
           'License :: OSI Approved :: Apache Software License',
