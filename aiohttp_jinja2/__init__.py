@@ -44,7 +44,7 @@ def template(template_name, encoding='utf-8'):
 
     def wrapper(func):
         if not asyncio.iscoroutinefunction(func):
-            raise TypeError("func should be coroutine")
+            func = asyncio.coroutine(func)
         sig = inspect.signature(func)
         try:
             sig.bind(object(), object(), object())
