@@ -1,22 +1,14 @@
 # Some simple testing tasks (sorry, UNIX only).
 
-FLAGS=
-
-
 flake:
 	flake8 aiohttp_jinja2 tests 
 
 test: flake
-	nosetests -s $(FLAGS) ./tests/
-
-vtest: flake
-	nosetests -s -v $(FLAGS) ./tests/
-
-testloop:
-	while sleep 1; do python runtests.py $(FLAGS); done
+	nosetests -s ./tests/
 
 cov cover coverage:
-	nosetests -s --with-cover --cover-html --cover-branches --cover-html-dir ./coverage $(FLAGS) ./tests/
+	nosetests -s --with-cover --cover-html --cover-branches \
+            --cover-html-dir ./coverage --cover-package=aiohttp_jinja2 ./tests/
 	@echo "open file://`pwd`/coverage/index.html"
 
 clean:
