@@ -7,7 +7,7 @@ import jinja2
 from aiohttp import web
 
 
-__all__ = ('setup', 'get_env', 'render')
+__all__ = ('setup', 'get_env', 'render_template', 'template')
 
 
 APP_KEY = 'aiohttp_jinja2_environment'
