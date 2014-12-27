@@ -3,8 +3,10 @@ import socket
 import unittest
 import aiohttp
 from aiohttp import web
+from aiohttp.multidict import MultiDict
 import aiohttp_jinja2
 import jinja2
+from unittest import mock
 
 
 class TestSimple(unittest.TestCase):
@@ -22,6 +24,17 @@ class TestSimple(unittest.TestCase):
         port = s.getsockname()[1]
         s.close()
         return port
+
+    def make_request(self, app, method, path):
+        message = aiohttp.RawRequestMessage(method, path,
+                                            aiohttp.HttpVersion(1, 1),
+                                            MultiDict(), False, False)
+        self.payload = mock.Mock()
+        self.transport = mock.Mock()
+        self.writer = mock.Mock()
+        req = web.Request(app, message, self.payload,
+                          self.transport, self.writer, 15)
+        return req
 
     def test_func(self):
 
@@ -118,5 +131,28 @@ class TestSimple(unittest.TestCase):
 
             srv.close()
             self.addCleanup(srv.close)
+
+        self.loop.run_until_complete(go())
+
+    def test_render_not_initialized(self):
+
+        @asyncio.coroutine
+        def func(request):
+            return aiohttp_jinja2.render_template('template', request, {})
+
+        @asyncio.coroutine
+        def go():
+            app = web.Application(loop=self.loop)
+
+            app.router.add_route('GET', '/', func)
+
+            req = self.make_request(app, 'GET', '/')
+
+            with self.assertRaises(web.HTTPInternalServerError) as ctx:
+                yield from func(req)
+
+            self.assertEqual("Template engine is not initialized, "
+                             "call aiohttp_jinja2.setup() first",
+                             ctx.exception.text)
 
         self.loop.run_until_complete(go())

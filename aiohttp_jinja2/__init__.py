@@ -25,7 +25,11 @@ def get_env(app):
 
 def render_template(template_name, request, context, *,
                     response=None, encoding='utf-8'):
-    env = request.app[APP_KEY]
+    env = request.app.get(APP_KEY)
+    if env is None:
+        raise web.HTTPInternalServerError(
+            text=("Template engine is not initialized, "
+                  "call aiohttp_jinja2.setup() first"))
     try:
         template = env.get_template(template_name)
     except jinja2.TemplateNotFound:
