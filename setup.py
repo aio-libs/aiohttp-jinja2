@@ -20,6 +20,7 @@ tests_require = install_requires + ['nose']
 
 
 setup(name='aiohttp_jinja2',
+      version=version,
       description=("jinja2 template renderer for aiohttp.web "
                    "(http server for asyncio)"),
       lond_description='\n\n'.join((read('README.rst'), read('CHANGES.txt'))),
