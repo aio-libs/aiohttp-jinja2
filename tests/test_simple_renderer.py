@@ -152,7 +152,8 @@ class TestSimple(unittest.TestCase):
                 yield from func(req)
 
             self.assertEqual("Template engine is not initialized, "
-                             "call aiohttp_jinja2.setup() first",
+                             "call aiohttp_jinja2.setup(app_key={}) first"
+                             "".format(aiohttp_jinja2.APP_KEY),
                              ctx.exception.text)
 
         self.loop.run_until_complete(go())
