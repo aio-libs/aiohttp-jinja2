@@ -40,7 +40,7 @@ class TestSimple(unittest.TestCase):
 
         @aiohttp_jinja2.template('tmpl.jinja2')
         @asyncio.coroutine
-        def func(request, response):
+        def func(request):
             return {'head': 'HEAD', 'text': 'text'}
 
         @asyncio.coroutine
@@ -74,7 +74,7 @@ class TestSimple(unittest.TestCase):
 
             @aiohttp_jinja2.template('tmpl.jinja2')
             @asyncio.coroutine
-            def meth(self, request, response):
+            def meth(self, request):
                 return {'head': 'HEAD', 'text': 'text'}
 
         @asyncio.coroutine
@@ -106,7 +106,7 @@ class TestSimple(unittest.TestCase):
     def test_convert_func_to_coroutine(self):
 
         @aiohttp_jinja2.template('tmpl.jinja2')
-        def func(request, response):
+        def func(request):
             return {'head': 'HEAD', 'text': 'text'}
 
         @asyncio.coroutine
