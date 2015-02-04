@@ -12,23 +12,24 @@ __all__ = ('setup', 'get_env', 'render_template', 'template')
 APP_KEY = 'aiohttp_jinja2_environment'
 
 
-def setup(app, *args, **kwargs):
+def setup(app, *args, app_key=APP_KEY, **kwargs):
     env = jinja2.Environment(*args, **kwargs)
-    app[APP_KEY] = env
+    app[app_key] = env
     return env
 
 
-def get_env(app):
-    return app.get(APP_KEY)
+def get_env(app, app_key=APP_KEY):
+    return app.get(app_key)
 
 
 def _render_template(template_name, request, response, context, *,
-                     encoding='utf-8'):
-    env = request.app.get(APP_KEY)
+                     app_key, encoding):
+    env = request.app.get(app_key)
     if env is None:
         raise web.HTTPInternalServerError(
             text=("Template engine is not initialized, "
-                  "call aiohttp_jinja2.setup() first"))
+                  "call aiohttp_jinja2.setup(app_key={}) first"
+                  "".format(app_key)))
     try:
         template = env.get_template(template_name)
     except jinja2.TemplateNotFound:
@@ -42,13 +43,13 @@ def _render_template(template_name, request, response, context, *,
 
 
 def render_template(template_name, request, context, *,
-                    encoding='utf-8'):
+                    app_key=APP_KEY, encoding='utf-8'):
     response = web.Response()
     return _render_template(template_name, request, response, context,
-                            encoding=encoding)
+                            app_key=app_key, encoding=encoding)
 
 
-def template(template_name, encoding='utf-8'):
+def template(template_name, *, app_key=APP_KEY, encoding='utf-8'):
 
     def wrapper(func):
         @asyncio.coroutine
@@ -59,7 +60,6 @@ def template(template_name, encoding='utf-8'):
             context = yield from coro(*args)
             request = args[-1]
             return _render_template(template_name, request, response, context,
-                                    encoding=encoding)
+                                    app_key=app_key, encoding=encoding)
         return wrapped
-
     return wrapper
