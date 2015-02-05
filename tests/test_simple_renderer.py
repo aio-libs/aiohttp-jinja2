@@ -157,3 +157,34 @@ class TestSimple(unittest.TestCase):
                              ctx.exception.text)
 
         self.loop.run_until_complete(go())
+
+    def test_set_status(self):
+
+        @aiohttp_jinja2.template('tmpl.jinja2', status=201)
+        def func(request):
+            return {'head': 'HEAD', 'text': 'text'}
+
+        @asyncio.coroutine
+        def go():
+            app = web.Application(loop=self.loop)
+            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
+                {'tmpl.jinja2':
+                 "<html><body><h1>{{head}}</h1>{{text}}</body></html>"}))
+
+            app.router.add_route('GET', '/', func)
+
+            port = self.find_unused_port()
+            srv = yield from self.loop.create_server(
+                app.make_handler(), '127.0.0.1', port)
+            url = "http://127.0.0.1:{}/".format(port)
+
+            resp = yield from aiohttp.request('GET', url, loop=self.loop)
+            self.assertEqual(201, resp.status)
+            txt = yield from resp.text()
+            self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
+                             txt)
+
+            srv.close()
+            self.addCleanup(srv.close)
+
+        self.loop.run_until_complete(go())

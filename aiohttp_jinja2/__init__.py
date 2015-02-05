@@ -39,17 +39,16 @@ def _render_template(template_name, request, response, context, *,
     response.content_type = 'text/html'
     response.charset = encoding
     response.text = text
-    return response
 
 
 def render_template(template_name, request, context, *,
                     app_key=APP_KEY, encoding='utf-8'):
     response = web.Response()
-    return _render_template(template_name, request, response, context,
-                            app_key=app_key, encoding=encoding)
+    _render_template(template_name, request, response, context,
+                     app_key=app_key, encoding=encoding)
 
 
-def template(template_name, *, app_key=APP_KEY, encoding='utf-8'):
+def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
 
     def wrapper(func):
         @asyncio.coroutine
@@ -59,7 +58,9 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8'):
             response = web.Response()
             context = yield from coro(*args)
             request = args[-1]
-            return _render_template(template_name, request, response, context,
-                                    app_key=app_key, encoding=encoding)
+            _render_template(template_name, request, response, context,
+                             app_key=app_key, encoding=encoding)
+            response.set_status(status)
+            return response
         return wrapped
     return wrapper
