@@ -3,7 +3,7 @@ import socket
 import unittest
 import aiohttp
 from aiohttp import web
-from aiohttp.multidict import MultiDict
+from aiohttp.multidict import CIMultiDict
 import aiohttp_jinja2
 import jinja2
 from unittest import mock
@@ -26,9 +26,10 @@ class TestSimple(unittest.TestCase):
         return port
 
     def make_request(self, app, method, path):
+        headers = CIMultiDict()
         message = aiohttp.RawRequestMessage(method, path,
                                             aiohttp.HttpVersion(1, 1),
-                                            MultiDict(), False, False)
+                                            headers, False, False)
         self.payload = mock.Mock()
         self.transport = mock.Mock()
         self.writer = mock.Mock()
