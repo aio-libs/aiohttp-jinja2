@@ -54,7 +54,10 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
         @asyncio.coroutine
         @functools.wraps(func)
         def wrapped(*args):
-            coro = asyncio.coroutine(func)
+            if asyncio.iscoroutinefunction(func):
+                coro = func
+            else:
+                coro = asyncio.coroutine(func)
             response = web.Response()
             context = yield from coro(*args)
             request = args[-1]
