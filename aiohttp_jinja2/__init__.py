@@ -42,8 +42,8 @@ def _render_template(template_name, request, response, context, *,
 
 
 def render_template(template_name, request, context, *,
-                    app_key=APP_KEY, encoding='utf-8'):
-    response = web.Response()
+                    app_key=APP_KEY, encoding='utf-8', response=None):
+    response = response or web.Response()
     _render_template(template_name, request, response, context,
                      app_key=app_key, encoding=encoding)
 
