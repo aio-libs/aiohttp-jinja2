@@ -4,7 +4,7 @@ import jinja2
 from aiohttp import web
 
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 __all__ = ('setup', 'get_env', 'render_template', 'template')
 
