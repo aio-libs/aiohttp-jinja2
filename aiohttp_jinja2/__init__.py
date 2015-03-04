@@ -22,30 +22,48 @@ def get_env(app, app_key=APP_KEY):
     return app.get(app_key)
 
 
-def _render_template(template_name, request, response, context, *,
-                     app_key, encoding):
+def pre_validate(request, app_key, template_name):
+    template_instance = None
+
     env = request.app.get(app_key)
     if env is None:
         raise web.HTTPInternalServerError(
-            text=("Template engine is not initialized, "
-                  "call aiohttp_jinja2.setup(app_key={}) first"
-                  "".format(app_key)))
+            text=("Template engine is not initialized, call aiohttp_jinja2.setup(app_key={}) first".format(app_key)))
     try:
-        template = env.get_template(template_name)
+        template_instance = env.get_template(template_name)
     except jinja2.TemplateNotFound:
         raise web.HTTPInternalServerError(
             text="Template {} not found".format(template_name))
-    text = template.render(context)
-    response.content_type = 'text/html'
-    response.charset = encoding
-    response.text = text
+
+    return template_instance
 
 
-def render_template(template_name, request, context, *,
-                    app_key=APP_KEY, encoding='utf-8'):
+@asyncio.coroutine
+def get_html_from_template(template_name, request, context, *, app_key=APP_KEY):
+    template_instance = pre_validate(request, app_key, template_name)
+    return template_instance.render(context)
+
+
+def _render_template(template_name, request, response, context, *, app_key, encoding):
+    template_instance = pre_validate(request, app_key, template_name)
+
+    if template_instance:
+        text = template_instance.render(context)
+        response.content_type = 'text/html'
+        response.charset = encoding
+        response.text = text
+
+
+def render_template(template_name, request, context, *, app_key=APP_KEY, encoding='utf-8'):
     response = web.Response()
-    _render_template(template_name, request, response, context,
-                     app_key=app_key, encoding=encoding)
+    _render_template(
+        template_name=template_name,
+        request=request,
+        response=response,
+        context=context,
+        app_key=app_key,
+        encoding=encoding
+    )
     return response
 
 
@@ -68,3 +86,4 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
             return response
         return wrapped
     return wrapper
+
