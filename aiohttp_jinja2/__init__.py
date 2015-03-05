@@ -54,8 +54,8 @@ def _render_template(template_name, request, response, context, *, app_key, enco
         response.text = text
 
 
-def render_template(template_name, request, context, *, app_key=APP_KEY, encoding='utf-8'):
-    response = web.Response()
+def render_template(template_name, request, context, *, app_key=APP_KEY, encoding='utf-8', response_status_code=200):
+    response = web.Response(status=response_status_code)
     _render_template(
         template_name=template_name,
         request=request,
@@ -80,8 +80,7 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
             response = web.Response()
             context = yield from coro(*args)
             request = args[-1]
-            _render_template(template_name, request, response, context,
-                             app_key=app_key, encoding=encoding)
+            _render_template(template_name, request, response, context, app_key=app_key, encoding=encoding)
             response.set_status(status)
             return response
         return wrapped
