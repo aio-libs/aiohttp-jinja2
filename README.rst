@@ -28,12 +28,12 @@ most convinient way is to decorate *web-handler*::
     def handler(request):
         return {'name': 'Andrew', 'surname': 'Svetlov'}
 
-On handler call the `aiohttp_jinja2.template` decorator will pass
-returned dictionary `{'name': 'Andrew', 'surname': 'Svetlov'}` into
-template named `tmpl.jinja2` for getting resulting HTML text.
+On handler call the ``aiohttp_jinja2.template`` decorator will pass
+returned dictionary ``{'name': 'Andrew', 'surname': 'Svetlov'}`` into
+template named ``tmpl.jinja2`` for getting resulting HTML text.
 
 If you need more complex processing (set response headers for example)
-you may call `render_template` function::
+you may call ``render_template`` function::
 
     @asyncio.coroutine
     def handler(request):
