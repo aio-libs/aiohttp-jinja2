@@ -18,7 +18,7 @@ def setup(app, *args, app_key=APP_KEY, **kwargs):
     return env
 
 
-def get_env(app, app_key=APP_KEY):
+def get_env(app, *, app_key=APP_KEY):
     return app.get(app_key)
 
 
