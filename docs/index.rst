@@ -85,7 +85,15 @@ Reference
                               app_key=APP_KEY, encoding='utf-8')
 
    Return :class:`aiohttp.web.Response` which contains template
-   *template_name* filled with *context*.
+   *template_name* filled with *context* and is a response to
+   *request* (:class:`aiohttp.web.Request` instance).
+
+   *app_key* is an optional key for application dict, :const:`APP_KEY`
+   by default.
+
+   *encoding* is response encoding, ``'utf-8'`` by default.
+
+   Returned response has *Content-Type* header set to ``'text/html'``.
 
 License
 -------
