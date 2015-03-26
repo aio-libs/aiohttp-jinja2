@@ -1,3 +1,7 @@
-ipdb
+flake8
 nose
 coverage
+sphinx
+alabaster>=0.6.2
+aiohttp
+jinja2
