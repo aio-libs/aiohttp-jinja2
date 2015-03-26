@@ -7,6 +7,9 @@ aiohttp_jinja2
 ==============
 
 
+.. currentmodule:: aiohttp_jinja2
+
+
 jinja2_ template renderer for `aiohttp.web`__.
 
 
@@ -20,26 +23,28 @@ __ aiohttp_web_
 Usage
 -----
 
-Before template rendering you have to setup *jinja2 environment* first::
+Before template rendering you have to setup *jinja2 environment*
+(:class:`jinja2.Environment`)first::
 
     app = web.Application(loop=self.loop)
     aiohttp_jinja2.setup(app,
         loader=jinja2.FileSystemLoader('/path/to/templates/folder'))
 
 
-After that you may to use template engine in your *web-handlers*. The
-most convinient way is to decorate *web-handler*::
+After that you may use template engine in your
+:term:`web-handlers<web-handler>`. The most convinient way is to
+decorate :term:`web-handler`::
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     def handler(request):
         return {'name': 'Andrew', 'surname': 'Svetlov'}
 
-On handler call the ``aiohttp_jinja2.template`` decorator will pass
+On handler call the :func:`template` decorator will pass
 returned dictionary ``{'name': 'Andrew', 'surname': 'Svetlov'}`` into
 template named ``"tmpl.jinja2"`` for getting resulting HTML text.
 
 If you need more complex processing (set response headers for example)
-you may call ``render_template`` function::
+you may call :func:`render_template` function::
 
     @asyncio.coroutine
     def handler(request):
@@ -95,10 +100,29 @@ Reference
 
    Returned response has *Content-Type* header set to ``'text/html'``.
 
+
+.. decorator:: template(template_name, *, app_key=APP_KEY, encoding='utf-8',\
+                        status=200)
+
+   Decorate :term:`web-handler` to convert returned :class:`dict`
+   context into :class:`aiohtttp.web.Response` filled with
+   *template_name* template.
+
+   *app_key* is an optional key for application dict, :const:`APP_KEY`
+   by default.
+
+   *encoding* is response encoding, ``'utf-8'`` by default.
+
+   *status* is *HTTP status code* for returned response, *200* (OK) by
+   default.
+
+   Returned response has *Content-Type* header set to ``'text/html'``.
+
+
 License
 -------
 
-``aiohttp_jinja2`` is offered under the Apache 2 license.
+:mod:`aiohttp_jinja2` is offered under the Apache 2 license.
 
 Glossary
 --------
@@ -112,6 +136,11 @@ Glossary
        A modern and designer-friendly templating language for Python.
 
        See http://jinja.pocoo.org/
+
+   web-handler
+
+       An enpoint that returns http response.
+
 
 Indices and tables
 ==================
