@@ -222,3 +222,74 @@ class TestSimple(unittest.TestCase):
             self.addCleanup(srv.close)
 
         self.loop.run_until_complete(go())
+
+    def test_template_not_found(self):
+
+        @asyncio.coroutine
+        def func(request):
+            return aiohttp_jinja2.render_template('template', request, {})
+
+        @asyncio.coroutine
+        def go():
+            app = web.Application(loop=self.loop)
+            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({}))
+
+            app.router.add_route('GET', '/', func)
+
+            req = self.make_request(app, 'GET', '/')
+
+            with self.assertRaises(web.HTTPInternalServerError) as ctx:
+                yield from func(req)
+
+            self.assertEqual("Template 'template' not found",
+                             ctx.exception.text)
+
+        self.loop.run_until_complete(go())
+
+    def test_template_not_found(self):
+
+        @asyncio.coroutine
+        def func(request):
+            return aiohttp_jinja2.render_template('template', request, {})
+
+        @asyncio.coroutine
+        def go():
+            app = web.Application(loop=self.loop)
+            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({}))
+
+            app.router.add_route('GET', '/', func)
+
+            req = self.make_request(app, 'GET', '/')
+
+            with self.assertRaises(web.HTTPInternalServerError) as ctx:
+                yield from func(req)
+
+            self.assertEqual("Template 'template' not found",
+                             ctx.exception.text)
+
+        self.loop.run_until_complete(go())
+
+    def test_render_not_mapping(self):
+
+        @aiohttp_jinja2.template('tmpl.jinja2')
+        @asyncio.coroutine
+        def func(request):
+            return 123
+
+        @asyncio.coroutine
+        def go():
+            app = web.Application(loop=self.loop)
+            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
+                {'tmpl.jinja2': "tmlp"}))
+
+            app.router.add_route('GET', '/', func)
+
+            req = self.make_request(app, 'GET', '/')
+
+            with self.assertRaises(web.HTTPInternalServerError) as ctx:
+                yield from func(req)
+
+            self.assertEqual("context should be mapping, not <class 'int'>",
+                             ctx.exception.text)
+
+        self.loop.run_until_complete(go())

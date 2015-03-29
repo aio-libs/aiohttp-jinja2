@@ -1,6 +1,7 @@
 import asyncio
 import functools
 import jinja2
+from collections import Mapping
 from aiohttp import web
 
 
@@ -34,7 +35,10 @@ def _render_template(template_name, request, response, context, *,
         template = env.get_template(template_name)
     except jinja2.TemplateNotFound:
         raise web.HTTPInternalServerError(
-            text="Template {} not found".format(template_name))
+            text="Template '{}' not found".format(template_name))
+    if not isinstance(context, Mapping):
+        raise web.HTTPInternalServerError(
+            text="context should be mapping, not {}".format(type(context)))
     text = template.render(context)
     response.content_type = 'text/html'
     response.charset = encoding
