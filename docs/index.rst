@@ -10,14 +10,7 @@ aiohttp_jinja2
 .. currentmodule:: aiohttp_jinja2
 
 
-jinja2_ template renderer for `aiohttp.web`__.
-
-
-.. _jinja2: http://jinja.pocoo.org
-
-.. _aiohttp_web: http://aiohttp.readthedocs.org/en/latest/web.html
-
-__ aiohttp_web_
+:term:`jinja2` template renderer for :ref:`aiohttp.web<aiohttp-web>`.
 
 
 Usage
