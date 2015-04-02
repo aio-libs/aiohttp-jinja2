@@ -5,7 +5,7 @@ from collections import Mapping
 from aiohttp import web
 
 
-__version__ = '0.3.1'
+__version__ = '0.4.0'
 
 __all__ = ('setup', 'get_env', 'render_template', 'template')
 
@@ -23,8 +23,7 @@ def get_env(app, *, app_key=APP_KEY):
     return app.get(app_key)
 
 
-def _render_template(template_name, request, response, context, *,
-                     app_key, encoding):
+def render_string(template_name, request, context, *, app_key):
     env = request.app.get(app_key)
     if env is None:
         raise web.HTTPInternalServerError(
@@ -40,16 +39,16 @@ def _render_template(template_name, request, response, context, *,
         raise web.HTTPInternalServerError(
             text="context should be mapping, not {}".format(type(context)))
     text = template.render(context)
-    response.content_type = 'text/html'
-    response.charset = encoding
-    response.text = text
+    return text
 
 
 def render_template(template_name, request, context, *,
                     app_key=APP_KEY, encoding='utf-8'):
     response = web.Response()
-    _render_template(template_name, request, response, context,
-                     app_key=app_key, encoding=encoding)
+    text = render_string(template_name, request, context, app_key=app_key)
+    response.content_type = 'text/html'
+    response.charset = encoding
+    response.text = text
     return response
 
 
@@ -63,11 +62,10 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
                 coro = func
             else:
                 coro = asyncio.coroutine(func)
-            response = web.Response()
             context = yield from coro(*args)
             request = args[-1]
-            _render_template(template_name, request, response, context,
-                             app_key=app_key, encoding=encoding)
+            response = render_template(template_name, request, context,
+                                       app_key=app_key, encoding=encoding)
             response.set_status(status)
             return response
         return wrapped

@@ -79,12 +79,27 @@ Reference
    by default.
 
 
+.. function:: render_string(template_name, request, context, *, \
+                            app_key=APP_KEY)
+
+   Return :class:`str` which contains template
+   *template_name* filled with *context*.
+
+   *request* is a parameter from :term:`web-handler`,
+   :class:`aiohttp.web.Request` instance.
+
+   *app_key* is an optional key for application dict, :const:`APP_KEY`
+   by default.
+
+
 .. function:: render_template(template_name, request, context, *, \
                               app_key=APP_KEY, encoding='utf-8')
 
    Return :class:`aiohttp.web.Response` which contains template
-   *template_name* filled with *context* and is a response to
-   *request* (:class:`aiohttp.web.Request` instance).
+   *template_name* filled with *context*.
+
+   *request* is a parameter from :term:`web-handler`,
+   :class:`aiohttp.web.Request` instance.
 
    *app_key* is an optional key for application dict, :const:`APP_KEY`
    by default.

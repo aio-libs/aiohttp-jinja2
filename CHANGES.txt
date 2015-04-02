@@ -1,10 +1,19 @@
 CHANGES
 =======
 
-X.X.X (XXXX-XX-XX)
+0.4.0 (2015-04-02)
+------------------
+
+- Add `render_string` method
+
+0.3.1 (2015-04-01)
 ------------------
 
 - Don't allow non-mapping context
+
+- Fix tiny documentation issues
+
+- Change the library logo
 
 0.3.0 (2015-03-15)
 ------------------
