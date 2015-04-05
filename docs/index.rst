@@ -179,7 +179,7 @@ Glossary
 
    web-handler
 
-       An enpoint that returns http response.
+       An endpoint that returns http response.
 
 
 Indices and tables
