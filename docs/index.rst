@@ -6,9 +6,9 @@
 aiohttp_jinja2
 ==============
 
-
+.. module:: aiohttp_jinja2
 .. currentmodule:: aiohttp_jinja2
-
+.. highlight:: python
 
 :term:`jinja2` template renderer for :ref:`aiohttp.web<aiohttp-web>`.
 
@@ -17,7 +17,7 @@ Usage
 -----
 
 Before template rendering you have to setup *jinja2 environment*
-(:class:`jinja2.Environment`)first::
+(:class:`jinja2.Environment`) first::
 
     app = web.Application(loop=self.loop)
     aiohttp_jinja2.setup(app,
@@ -48,16 +48,29 @@ you may call :func:`render_template` function::
         response.headers['Content-Language'] = 'ru'
         return response
 
+Library Installation
+--------------------
+
+The :mod:`aiohttp_jinja2` can be installed by pip::
+
+   $ pip3 install aiohttp_jinaj2
+
+Source code
+-----------
+
+The project is hosted on `GitHub <https://github.com/aio-libs/aiohttp_jinja2>`_.
+
+Please feel free to file an issue on `bug tracker
+<https://github.com/aio-libs/aiohttp_jinja2/issues>`_ if you have found a bug
+or have some suggestion for library improvement.
+
+The library uses `Travis <https://travis-ci.org/aio-libs/aiohttp_jinja2>`_ for
+Continious Integration.
+
 .. _aiohttp_jinja2-reference:
 
 Reference
 ---------
-
-.. highlight:: python
-
-.. module:: aiohttp_jinja2
-
-.. currentmodule:: aiohttp_jinja2
 
 
 .. data:: APP_KEY
@@ -107,6 +120,25 @@ Reference
    *encoding* is response encoding, ``'utf-8'`` by default.
 
    Returned response has *Content-Type* header set to ``'text/html'``.
+
+
+.. function:: setup(app, *args, app_key=APP_KEY, **kwargs)
+
+   Initialize :class:`jinja2.Environment` object.
+
+   *app* is :class:`aiohttp.web.Application` instance.
+
+   *args* and *kawargs* are passed into environment constructor.
+
+   *app_key* is an optional key for application dict, :const:`APP_KEY`
+   by default.
+
+   The functions is rougly equivalent for::
+
+      def setup(app, *args, app_key=APP_KEY, **kwargs):
+          env = jinja2.Environment(*args, **kwargs)
+          app[app_key] = env
+          return env
 
 
 .. decorator:: template(template_name, *, app_key=APP_KEY, encoding='utf-8',\
