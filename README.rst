@@ -16,7 +16,7 @@ Usage
 
 Before template rendering you have to setup *jinja2 environment* first::
 
-    app = web.Application(loop=self.loop)
+    app = web.Application()
     aiohttp_jinja2.setup(app,
         loader=jinja2.FileSystemLoader('/path/to/templates/folder'))
 
