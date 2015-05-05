@@ -38,6 +38,10 @@ def render_string(template_name, request, context, *, app_key):
     if not isinstance(context, Mapping):
         raise web.HTTPInternalServerError(
             text="context should be mapping, not {}".format(type(context)))
+    if 'context' in request:
+        request_context = request['context'].copy()
+        request_context.update(context)
+        context = request_context
     text = template.render(context)
     return text
 
@@ -70,3 +74,18 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
             return response
         return wrapped
     return wrapper
+
+
+@asyncio.coroutine
+def context_processors_middleware(app, handler):
+    def middleware(request):
+        request['context'] = {}
+        for processor in app['context_processors']:
+            request['context'].update((yield from processor(request)))
+        return (yield from handler(request))
+    return middleware
+
+
+@asyncio.coroutine
+def request_processor(request):
+    return {'request': request}
