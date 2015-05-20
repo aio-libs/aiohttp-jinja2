@@ -26,18 +26,22 @@ def get_env(app, *, app_key=APP_KEY):
 def render_string(template_name, request, context, *, app_key):
     env = request.app.get(app_key)
     if env is None:
-        raise web.HTTPInternalServerError(
-            text=("Template engine is not initialized, "
-                  "call aiohttp_jinja2.setup(app_key={}) first"
-                  "".format(app_key)))
+        text = ("Template engine is not initialized, "
+                "call aiohttp_jinja2.setup(app_key={}) first"
+                "".format(app_key))
+        # in order to see meaningful exception message both: on console
+        # output and rendered page we add same message to *reason* and
+        # *text* arguments.
+        raise web.HTTPInternalServerError(reason=text, text=text)
     try:
         template = env.get_template(template_name)
-    except jinja2.TemplateNotFound:
+    except jinja2.TemplateNotFound as e:
         raise web.HTTPInternalServerError(
-            text="Template '{}' not found".format(template_name))
+            text="Template '{}' not found".format(template_name)) from e
     if not isinstance(context, Mapping):
-        raise web.HTTPInternalServerError(
-            text="context should be mapping, not {}".format(type(context)))
+        text = "context should be mapping, not {}".format(type(context))
+        # same reason as above
+        raise web.HTTPInternalServerError(reason=text, text=text)
     text = template.render(context)
     return text
 
