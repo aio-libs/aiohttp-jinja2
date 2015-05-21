@@ -1,5 +1,6 @@
 import asyncio
 import socket
+import re
 import unittest
 import aiohttp
 from aiohttp import web
@@ -148,14 +149,15 @@ class TestSimple(unittest.TestCase):
             app.router.add_route('GET', '/', func)
 
             req = self.make_request(app, 'GET', '/')
+            msg = "Template engine is not initialized, " \
+                  "call aiohttp_jinja2.setup(app_key={}" \
+                  ") first".format(aiohttp_jinja2.APP_KEY)
 
-            with self.assertRaises(web.HTTPInternalServerError) as ctx:
+            with self.assertRaisesRegex(web.HTTPInternalServerError,
+                                        re.escape(msg)) as ctx:
                 yield from func(req)
 
-            self.assertEqual("Template engine is not initialized, "
-                             "call aiohttp_jinja2.setup(app_key={}) first"
-                             "".format(aiohttp_jinja2.APP_KEY),
-                             ctx.exception.text)
+            self.assertEqual(msg, ctx.exception.text)
 
         self.loop.run_until_complete(go())
 
@@ -262,12 +264,12 @@ class TestSimple(unittest.TestCase):
             app.router.add_route('GET', '/', func)
 
             req = self.make_request(app, 'GET', '/')
-
-            with self.assertRaises(web.HTTPInternalServerError) as ctx:
+            msg = "context should be mapping, not <class 'int'>"
+            with self.assertRaisesRegex(web.HTTPInternalServerError,
+                                        re.escape(msg)) as ctx:
                 yield from func(req)
 
-            self.assertEqual("context should be mapping, not <class 'int'>",
-                             ctx.exception.text)
+            self.assertEqual(msg, ctx.exception.text)
 
         self.loop.run_until_complete(go())
 
