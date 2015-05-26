@@ -53,7 +53,7 @@ Library Installation
 
 The :mod:`aiohttp_jinja2` can be installed by pip::
 
-   $ pip3 install aiohttp_jinaj2
+   $ pip3 install aiohttp_jinja2
 
 Source code
 -----------
