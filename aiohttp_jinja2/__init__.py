@@ -22,6 +22,7 @@ def setup(app, *args, app_key=APP_KEY, **kwargs):
         return app.router[name].url(parts=kwargs, query=query)
     
     env.globals['url_for'] = url_for
+    env.globals['app'] = app
 
 
     return env
