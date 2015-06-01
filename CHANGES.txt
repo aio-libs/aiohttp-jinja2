@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+0.4.3 (2015-06-01)
+------------------
+
+- Fix distribution building: add manifest file
+
 0.4.2 (2015-05-21)
 ------------------
 

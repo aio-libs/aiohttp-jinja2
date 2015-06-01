@@ -5,7 +5,7 @@ from collections import Mapping
 from aiohttp import web
 
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 
 __all__ = ('setup', 'get_env', 'render_template', 'template')
 
