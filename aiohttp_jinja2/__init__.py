@@ -16,6 +16,15 @@ APP_KEY = 'aiohttp_jinja2_environment'
 def setup(app, *args, app_key=APP_KEY, **kwargs):
     env = jinja2.Environment(*args, **kwargs)
     app[app_key] = env
+    
+    def url_for(name,  **kwargs):
+        query = kwargs.get('query')
+        return app.router[name].url(parts=kwargs, query=query)
+    
+    env.globals['url_for'] = url_for
+    env.globals['app'] = app
+
+
     return env
 
 
