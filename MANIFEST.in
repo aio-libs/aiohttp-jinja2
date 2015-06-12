@@ -1,0 +1,9 @@
+include CHANGES.txt
+include LICENSE
+include README.rst
+include Makefile
+graft aiohttp_jinja2
+graft docs
+graft examples
+graft tests
+global-exclude *.pyc
