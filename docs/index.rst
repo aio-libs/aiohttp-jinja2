@@ -48,6 +48,28 @@ you may call :func:`render_template` function::
         response.headers['Content-Language'] = 'ru'
         return response
 
+In order to use context processors at first add
+`context_processors_middleware` into your application::
+
+    app = web.Application(middlewares=(
+        aiohttp_jinja2.context_processors_middleware,
+    ))
+
+And then add list of context processors::
+
+    @asyncio.coroutine
+    def foo_processor(request):
+        return {'foo': 'bar'}
+
+    app['aiohttp_jinja2_context_processors'] = (
+        foo_processor,
+        aiohttp_jinja2.request_processor,
+    )
+
+As you can see, there is a built-in `request_processor`,
+which adds current `request` into context of templates.
+
+
 Library Installation
 --------------------
 
