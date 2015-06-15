@@ -11,6 +11,8 @@ __all__ = ('setup', 'get_env', 'render_template', 'template')
 
 
 APP_KEY = 'aiohttp_jinja2_environment'
+REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
+APP_CONTEXT_PROCESSORS_KEY = 'aiohttp_jinja2_context_processors'
 
 
 def setup(app, *args, app_key=APP_KEY, **kwargs):
@@ -49,6 +51,10 @@ def render_string(template_name, request, context, *, app_key):
         text = "context should be mapping, not {}".format(type(context))
         # same reason as above
         raise web.HTTPInternalServerError(reason=text, text=text)
+    if REQUEST_CONTEXT_KEY in request:
+        for k, v in request.get(REQUEST_CONTEXT_KEY, {}).items():
+            if k not in context:
+                context[k] = v
     text = template.render(context)
     return text
 
@@ -81,3 +87,19 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
             return response
         return wrapped
     return wrapper
+
+
+@asyncio.coroutine
+def context_processors_middleware(app, handler):
+    def middleware(request):
+        request[REQUEST_CONTEXT_KEY] = {}
+        for processor in app[APP_CONTEXT_PROCESSORS_KEY]:
+            request[REQUEST_CONTEXT_KEY].update(
+                (yield from processor(request)))
+        return (yield from handler(request))
+    return middleware
+
+
+@asyncio.coroutine
+def request_processor(request):
+    return {'request': request}
