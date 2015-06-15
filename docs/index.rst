@@ -48,6 +48,17 @@ you may call :func:`render_template` function::
         response.headers['Content-Language'] = 'ru'
         return response
 
+Context processors is a way to add some variables to each
+template context. It works like `jinja2.Environment().globals`,
+but calculate variables each request. So if you need to 
+add global constants it will be better to use
+`jinja2.Environment().globals`. But if you variables depends of
+request (e.g. current user) you have to use context processors.
+
+Context processors is following last-win strategy.
+Therefore a context processor could rewrite variables delivered with
+previous one.
+
 In order to use context processors at first add
 `context_processors_middleware` into your application::
 
