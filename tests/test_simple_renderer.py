@@ -384,9 +384,7 @@ class TestSimple(unittest.TestCase):
 
         @aiohttp_jinja2.template('tmpl.jinja2')
         def redirect_func(request):
-            return aiohttp_jinja2.render_template(
-                'tmpl.jinja2', request,
-                {'head': 'HEAD', 'text': 'text'})
+            return {'head': 'HEAD', 'text': 'text'}
 
         @asyncio.coroutine
         def go():
