@@ -80,7 +80,7 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
             else:
                 coro = asyncio.coroutine(func)
             context = yield from coro(*args)
-            if isinstance(context, web.Response):
+            if isinstance(context, web.StreamResponse):
                 return context
             
             request = args[-1]
