@@ -380,21 +380,15 @@ class TestSimple(unittest.TestCase):
 
         @aiohttp_jinja2.template('tmpl.jinja2')
         def func(request):
-            return aiohttp.web_exceptions.HTTPFound('/redirect')
-
-        @aiohttp_jinja2.template('tmpl.jinja2')
-        def redirect_func(request):
-            return {'head': 'HEAD', 'text': 'text'}
+            return aiohttp.web_exceptions.HTTPForbidden()
 
         @asyncio.coroutine
         def go():
             app = web.Application(loop=self.loop)
             aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
-                {'tmpl.jinja2':
-                 "<html><body><h1>{{head}}</h1>{{text}}</body></html>"}))
+                {'tmpl.jinja2': "template"}))
 
             app.router.add_route('GET', '/', func)
-            app.router.add_route('GET', '/redirect', redirect_func)
 
             port = self.find_unused_port()
             handler = app.make_handler()
@@ -403,10 +397,7 @@ class TestSimple(unittest.TestCase):
             url = "http://127.0.0.1:{}/".format(port)
 
             resp = yield from aiohttp.request('GET', url, loop=self.loop)
-            self.assertEqual(200, resp.status)
-            txt = yield from resp.text()
-            self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
-                             txt)
+            self.assertEqual(403, resp.status)
 
             yield from handler.finish_connections()
             srv.close()
