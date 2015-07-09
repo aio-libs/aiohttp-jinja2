@@ -82,7 +82,7 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
             context = yield from coro(*args)
             if isinstance(context, web.StreamResponse):
                 return context
-            
+
             request = args[-1]
             response = render_template(template_name, request, context,
                                        app_key=app_key, encoding=encoding)
