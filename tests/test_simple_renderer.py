@@ -375,3 +375,32 @@ class TestSimple(unittest.TestCase):
             self.addCleanup(srv.close)
 
         self.loop.run_until_complete(go())
+
+    def test_context_is_response(self):
+
+        @aiohttp_jinja2.template('tmpl.jinja2')
+        def func(request):
+            return aiohttp.web_exceptions.HTTPForbidden()
+
+        @asyncio.coroutine
+        def go():
+            app = web.Application(loop=self.loop)
+            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
+                {'tmpl.jinja2': "template"}))
+
+            app.router.add_route('GET', '/', func)
+
+            port = self.find_unused_port()
+            handler = app.make_handler()
+            srv = yield from self.loop.create_server(
+                handler, '127.0.0.1', port)
+            url = "http://127.0.0.1:{}/".format(port)
+
+            resp = yield from aiohttp.request('GET', url, loop=self.loop)
+            self.assertEqual(403, resp.status)
+
+            yield from handler.finish_connections()
+            srv.close()
+            self.addCleanup(srv.close)
+
+        self.loop.run_until_complete(go())
