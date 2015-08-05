@@ -156,7 +156,7 @@ class TestSimple(unittest.TestCase):
 
             req = self.make_request(app, 'GET', '/')
             msg = "Template engine is not initialized, " \
-                  "call aiohttp_jinja2.setup(app_key={}" \
+                  "call aiohttp_jinja2.setup(..., app_key={}" \
                   ") first".format(aiohttp_jinja2.APP_KEY)
 
             with self.assertRaisesRegex(web.HTTPInternalServerError,

@@ -36,7 +36,7 @@ def render_string(template_name, request, context, *, app_key):
     env = request.app.get(app_key)
     if env is None:
         text = ("Template engine is not initialized, "
-                "call aiohttp_jinja2.setup(app_key={}) first"
+                "call aiohttp_jinja2.setup(..., app_key={}) first"
                 "".format(app_key))
         # in order to see meaningful exception message both: on console
         # output and rendered page we add same message to *reason* and
