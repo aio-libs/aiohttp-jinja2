@@ -5,7 +5,7 @@ from collections import Mapping
 from aiohttp import web
 
 
-__version__ = '0.5.0'
+__version__ = '0.6.0a0'
 
 __all__ = ('setup', 'get_env', 'render_template', 'template')
 
@@ -94,6 +94,7 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
 
 @asyncio.coroutine
 def context_processors_middleware(app, handler):
+    @asyncio.coroutine
     def middleware(request):
         request[REQUEST_CONTEXT_KEY] = {}
         for processor in app[APP_CONTEXT_PROCESSORS_KEY]:
