@@ -15,9 +15,12 @@ REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
 APP_CONTEXT_PROCESSORS_KEY = 'aiohttp_jinja2_context_processors'
 
 
-def setup(app, *args, app_key=APP_KEY, **kwargs):
+def setup(app, *args, app_key=APP_KEY, context_processors=(), **kwargs):
     env = jinja2.Environment(*args, **kwargs)
     app[app_key] = env
+    if context_processors:
+        app[APP_CONTEXT_PROCESSORS_KEY] = context_processors
+        app.middlewares.append(context_processors_middleware)
 
     def url(__aiohttp_jinjs2_route_name,  **kwargs):
         return app.router[__aiohttp_jinjs2_route_name].url(**kwargs)
