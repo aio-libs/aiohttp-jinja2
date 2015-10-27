@@ -15,7 +15,7 @@ with codecs.open(os.path.join(os.path.abspath(os.path.dirname(
 def read(f):
     return open(os.path.join(os.path.dirname(__file__), f)).read().strip()
 
-install_requires = ['aiohttp>=0.14', 'jinja2>=2.7']
+install_requires = ['aiohttp>=0.18', 'jinja2>=2.7']
 tests_require = install_requires + ['nose']
 
 
@@ -29,8 +29,8 @@ setup(name='aiohttp_jinja2',
           'Intended Audience :: Developers',
           'Programming Language :: Python',
           'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.3',
           'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
           'Topic :: Internet :: WWW/HTTP'],
       author='Andrew Svetlov',
       author_email='andrew.svetlov@gmail.com',
