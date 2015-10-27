@@ -5,7 +5,7 @@ python:
 
 install:
   - pip install --upgrade setuptools
-  - pip install coveralls --use-mirrors
+  - pip install coveralls
   - python setup.py develop
 
 script:
