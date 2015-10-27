@@ -50,7 +50,7 @@ you may call :func:`render_template` function::
 
 Context processors is a way to add some variables to each
 template context. It works like `jinja2.Environment().globals`,
-but calculate variables each request. So if you need to 
+but calculate variables each request. So if you need to
 add global constants it will be better to use
 `jinja2.Environment().globals`. But if you variables depends of
 request (e.g. current user) you have to use context processors.
