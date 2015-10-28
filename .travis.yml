@@ -6,7 +6,7 @@ python:
 install:
   - pip install --upgrade setuptools
   - pip install coveralls
-  - python setup.py develop
+  - pip install -e .
 
 script:
   py.test --cov=aiohttp_jinja2 tests
