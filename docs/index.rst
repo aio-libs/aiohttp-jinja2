@@ -49,36 +49,33 @@ you may call :func:`render_template` function::
         return response
 
 Context processors is a way to add some variables to each
-template context. It works like `jinja2.Environment().globals`,
+template context. It works like :attr:`jinja2.Environment().globals`,
 but calculate variables each request. So if you need to
 add global constants it will be better to use
-`jinja2.Environment().globals`. But if you variables depends of
+:attr:`jinja2.Environment().globals` directly. But if you variables depends of
 request (e.g. current user) you have to use context processors.
 
 Context processors is following last-win strategy.
 Therefore a context processor could rewrite variables delivered with
 previous one.
 
-In order to use context processors at first add
-`context_processors_middleware` into your application::
-
-    app = web.Application(middlewares=(
-        aiohttp_jinja2.context_processors_middleware,
-    ))
-
-And then add list of context processors::
+In order to use context processors create required processors::
 
     @asyncio.coroutine
     def foo_processor(request):
         return {'foo': 'bar'}
 
-    app['aiohttp_jinja2_context_processors'] = (
-        foo_processor,
-        aiohttp_jinja2.request_processor,
-    )
+and pass them into :func:`setup`::
 
-As you can see, there is a built-in `request_processor`,
-which adds current `request` into context of templates.
+    aiohttp_jinja2.setup(
+        app,
+        context_processors=[foo_processor,
+                            aiohttp_jinja2.request_processor],
+        loader=loader)
+
+As you can see, there is a built-in :func:`request_processor`, which
+adds current :class:`aiohttp.web.Request` into context of templates
+under ``'request'`` name.
 
 
 Library Installation
