@@ -4,7 +4,7 @@ python:
   - 3.5
 
 install:
-  - pip install --upgrade setuptools
+  - pip install --upgrade pip
   - pip install coveralls
   - pip install -r requirements-dev.txt
 
