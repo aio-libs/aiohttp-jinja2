@@ -9,7 +9,7 @@ install:
   - python setup.py develop
 
 script:
-  coverage run --source=aiohttp setup.py test
+  py.test --cov=aiohttp_jinja2 tests
 after_success:
   coveralls
 

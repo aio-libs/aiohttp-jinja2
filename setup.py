@@ -38,6 +38,4 @@ setup(name='aiohttp_jinja2',
       license='Apache 2',
       packages=find_packages(),
       install_requires=install_requires,
-      tests_require=tests_require,
-      test_suite='nose.collector',
       include_package_data=True)
