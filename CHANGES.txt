@@ -6,6 +6,8 @@ CHANGES
 
 - Fix a bug in middleware (missed coroutine decorator) #16
 
+- Drop Python 3.3 support (switched to aiohttp version v0.18.0)
+
 - Simplify context processors initialization by adding parameter to `setup()`
 
 0.5.0 (2015-07-09)
