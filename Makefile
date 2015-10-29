@@ -4,12 +4,11 @@ flake:
 	flake8 aiohttp_jinja2 tests 
 
 test: flake
-	nosetests -s ./tests/
+	py.test -s ./tests/
 
 cov cover coverage:
-	nosetests -s --with-cover --cover-html --cover-branches \
-            --cover-html-dir ./coverage --cover-package=aiohttp_jinja2 ./tests/
-	@echo "open file://`pwd`/coverage/index.html"
+	py.test --cov=aiohttp_jinja2 --cov-report=html --cov-report=term ./tests/
+	@echo "open file://`pwd`/htmlcov/index.html"
 
 clean:
 	rm -rf `find . -name __pycache__`

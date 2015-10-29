@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-0.6.0 (2015-XX-XX)
+0.6.0 (2015-10-29)
 ------------------
 
 - Fix a bug in middleware (missed coroutine decorator) #16
