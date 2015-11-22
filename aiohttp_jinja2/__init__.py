@@ -35,7 +35,7 @@ def get_env(app, *, app_key=APP_KEY):
     return app.get(app_key)
 
 
-def render_string(template_name, request, context, *, app_key):
+def render_string(template_name, request, context, *, app_key=APP_KEY):
     env = request.app.get(app_key)
     if env is None:
         text = ("Template engine is not initialized, "
