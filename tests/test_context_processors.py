@@ -49,6 +49,7 @@ def test_context_is_response(create_server, loop):
 
     resp = yield from aiohttp.request('GET', url, loop=loop)
     assert 403 == resp.status
+    yield from resp.release()
 
 
 @pytest.mark.run_loop
