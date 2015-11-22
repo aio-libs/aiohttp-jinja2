@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+0.6.1 (2015-11-22)
+------------------
+
+- Make app_key parameter from render_string coroutine optional
+
 0.6.0 (2015-10-29)
 ------------------
 
