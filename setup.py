@@ -36,6 +36,6 @@ setup(name='aiohttp_jinja2',
       author_email='andrew.svetlov@gmail.com',
       url='https://github.com/aio-libs/aiohttp_jinja2/',
       license='Apache 2',
-      packages=find_packages(),
+      packages=['aiohttp_jinja2'],
       install_requires=install_requires,
       include_package_data=True)
