@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+0.7.0 (2015-12-30)
+------------------
+
+- Add ability to decorate class based views (available in aiohttp 0.20) #18
+
+- Upgrade aiohttp requirement to version 0.20.0+
+
 0.6.2 (2015-11-22)
 ------------------
 

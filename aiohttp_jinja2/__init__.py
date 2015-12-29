@@ -6,7 +6,7 @@ from aiohttp import web
 from aiohttp.abc import AbstractView
 
 
-__version__ = '0.6.3'
+__version__ = '0.7.0'
 
 __all__ = ('setup', 'get_env', 'render_template', 'template')
 
@@ -23,8 +23,8 @@ def setup(app, *args, app_key=APP_KEY, context_processors=(), **kwargs):
         app[APP_CONTEXT_PROCESSORS_KEY] = context_processors
         app.middlewares.append(context_processors_middleware)
 
-    def url(__aiohttp_jinjs2_route_name, **kwargs):
-        return app.router[__aiohttp_jinjs2_route_name].url(**kwargs)
+    def url(__aiohttp_jinja2_route_name, **kwargs):
+        return app.router[__aiohttp_jinja2_route_name].url(**kwargs)
 
     env.globals['url'] = url
     env.globals['app'] = app
