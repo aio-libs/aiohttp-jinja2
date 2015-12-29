@@ -22,7 +22,7 @@ def setup(app, *args, app_key=APP_KEY, context_processors=(), **kwargs):
         app[APP_CONTEXT_PROCESSORS_KEY] = context_processors
         app.middlewares.append(context_processors_middleware)
 
-    def url(__aiohttp_jinjs2_route_name,  **kwargs):
+    def url(__aiohttp_jinjs2_route_name, **kwargs):
         return app.router[__aiohttp_jinjs2_route_name].url(**kwargs)
 
     env.globals['url'] = url
@@ -86,7 +86,12 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
             if isinstance(context, web.StreamResponse):
                 return context
 
-            request = args[-1]
+            # Supports class based views see web.View
+            if isinstance(args[0], web.View):
+                request = args[0].request
+            else:
+                request = args[-1]
+
             response = render_template(template_name, request, context,
                                        app_key=app_key, encoding=encoding)
             response.set_status(status)
