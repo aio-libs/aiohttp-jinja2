@@ -3,6 +3,7 @@ import functools
 import jinja2
 from collections import Mapping
 from aiohttp import web
+from aiohttp.abc import AbstractView
 
 
 __version__ = '0.6.3'
@@ -87,7 +88,7 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
                 return context
 
             # Supports class based views see web.View
-            if isinstance(args[0], web.View):
+            if isinstance(args[0], AbstractView):
                 request = args[0].request
             else:
                 request = args[-1]
