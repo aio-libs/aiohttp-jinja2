@@ -72,6 +72,40 @@ class TestSimple(unittest.TestCase):
 
         self.loop.run_until_complete(go())
 
+    def test_render_class_based_view(self):
+        class MyView(web.View):
+            @aiohttp_jinja2.template('tmpl.jinja2')
+            @asyncio.coroutine
+            def get(self):
+                return {'head': 'HEAD', 'text': 'text'}
+
+        @asyncio.coroutine
+        def go():
+            app = web.Application(loop=self.loop)
+            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
+                {'tmpl.jinja2':
+                 "<html><body><h1>{{head}}</h1>{{text}}</body></html>"}))
+
+            app.router.add_route('*', '/', MyView)
+
+            port = self.find_unused_port()
+            handler = app.make_handler()
+            srv = yield from self.loop.create_server(
+                handler, '127.0.0.1', port)
+            url = 'http://127.0.0.1:{}'.format(port)
+
+            resp = yield from aiohttp.request('GET', url, loop=self.loop)
+            self.assertEqual(200, resp.status)
+            txt = yield from resp.text()
+            self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
+                             txt)
+
+            yield from handler.finish_connections()
+            srv.close()
+            self.addCleanup(srv.close)
+
+        self.loop.run_until_complete(go())
+
     def test_meth(self):
 
         class Handler:

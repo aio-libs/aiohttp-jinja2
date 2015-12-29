@@ -1,5 +1,5 @@
 import codecs
-from setuptools import setup, find_packages
+from setuptools import setup
 import os
 import re
 
@@ -15,7 +15,7 @@ with codecs.open(os.path.join(os.path.abspath(os.path.dirname(
 def read(f):
     return open(os.path.join(os.path.dirname(__file__), f)).read().strip()
 
-install_requires = ['aiohttp>=0.18', 'jinja2>=2.7']
+install_requires = ['aiohttp>=0.20', 'jinja2>=2.7']
 tests_require = install_requires + ['nose']
 
 
