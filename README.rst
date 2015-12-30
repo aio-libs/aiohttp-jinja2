@@ -30,7 +30,8 @@ Using the function based web handlers::
     def handler(request):
         return {'name': 'Andrew', 'surname': 'Svetlov'}
 
-Or for [class based views](https://aiohttp.readthedocs.org/en/stable/web.html#class-based-views)::
+Or for `Class Based Views
+<https://aiohttp.readthedocs.org/en/stable/web.html#class-based-views>`::
 
     class Handler(web.View):
         @aiohttp_jinja2.template('tmpl.jinja2')
