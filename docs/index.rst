@@ -25,19 +25,31 @@ Before template rendering you have to setup *jinja2 environment*
 
 
 After that you may use template engine in your
-:term:`web-handlers<web-handler>`. The most convinient way is to
-decorate :term:`web-handler`::
+:term:`web-handlers<web-handler>`. The most convenient way is to
+decorate a :term:`web-handler`.
+
+Using the function based web handlers::
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     def handler(request):
         return {'name': 'Andrew', 'surname': 'Svetlov'}
+
+Or the class-based views (:class:`aiohttp.web.View`)::
+
+    class Handler(web.View):
+        @aiohttp_jinja2.template('tmpl.jinja2')
+        @asyncio.coroutine
+        def get(self):
+            return {'name': 'Andrew', 'surname': 'Svetlov'}
 
 On handler call the :func:`template` decorator will pass
 returned dictionary ``{'name': 'Andrew', 'surname': 'Svetlov'}`` into
 template named ``"tmpl.jinja2"`` for getting resulting HTML text.
 
 If you need more complex processing (set response headers for example)
-you may call :func:`render_template` function::
+you may call :func:`render_template` function.
+
+Using a function based web handler::
 
     @asyncio.coroutine
     def handler(request):
@@ -47,6 +59,18 @@ you may call :func:`render_template` function::
                                                   context)
         response.headers['Content-Language'] = 'ru'
         return response
+
+Or, again, a class-based view (:class:`aiohttp.web.View`)::
+
+    class Handler(web.View):
+        @asyncio.coroutine
+        def get(self):
+            context = {'name': 'Andrew', 'surname': 'Svetlov'}
+            response = aiohttp_jinja2.render_template('tmpl.jinja2',
+                                                      self.request,
+                                                      context)
+            response.headers['Content-Language'] = 'ru'
+            return response
 
 Context processors is a way to add some variables to each
 template context. It works like :attr:`jinja2.Environment().globals`,
@@ -65,7 +89,7 @@ In order to use context processors create required processors::
     def foo_processor(request):
         return {'foo': 'bar'}
 
-and pass them into :func:`setup`::
+And pass them into :func:`setup`::
 
     aiohttp_jinja2.setup(
         app,
@@ -95,7 +119,7 @@ Please feel free to file an issue on `bug tracker
 or have some suggestion for library improvement.
 
 The library uses `Travis <https://travis-ci.org/aio-libs/aiohttp_jinja2>`_ for
-Continious Integration.
+Continuous Integration.
 
 IRC channel
 -----------

@@ -1,10 +1,24 @@
 CHANGES
 =======
 
+0.7.0 (2015-12-30)
+------------------
+
+- Add ability to decorate class based views (available in aiohttp 0.20) #18
+
+- Upgrade aiohttp requirement to version 0.20.0+
+
+0.6.2 (2015-11-22)
+------------------
+
+- Make app_key parameter from render_string coroutine optional
+
 0.6.0 (2015-10-29)
 ------------------
 
 - Fix a bug in middleware (missed coroutine decorator) #16
+
+- Drop Python 3.3 support (switched to aiohttp version v0.18.0)
 
 - Simplify context processors initialization by adding parameter to `setup()`
 

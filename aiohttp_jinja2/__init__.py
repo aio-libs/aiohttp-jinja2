@@ -3,9 +3,10 @@ import functools
 import jinja2
 from collections import Mapping
 from aiohttp import web
+from aiohttp.abc import AbstractView
 
 
-__version__ = '0.6.1'
+__version__ = '0.7.0'
 
 __all__ = ('setup', 'get_env', 'render_template', 'template')
 
@@ -22,8 +23,8 @@ def setup(app, *args, app_key=APP_KEY, context_processors=(), **kwargs):
         app[APP_CONTEXT_PROCESSORS_KEY] = context_processors
         app.middlewares.append(context_processors_middleware)
 
-    def url(__aiohttp_jinjs2_route_name,  **kwargs):
-        return app.router[__aiohttp_jinjs2_route_name].url(**kwargs)
+    def url(__aiohttp_jinja2_route_name, **kwargs):
+        return app.router[__aiohttp_jinja2_route_name].url(**kwargs)
 
     env.globals['url'] = url
     env.globals['app'] = app
@@ -35,7 +36,7 @@ def get_env(app, *, app_key=APP_KEY):
     return app.get(app_key)
 
 
-def render_string(template_name, request, context, *, app_key):
+def render_string(template_name, request, context, *, app_key=APP_KEY):
     env = request.app.get(app_key)
     if env is None:
         text = ("Template engine is not initialized, "
@@ -86,7 +87,12 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
             if isinstance(context, web.StreamResponse):
                 return context
 
-            request = args[-1]
+            # Supports class based views see web.View
+            if isinstance(args[0], AbstractView):
+                request = args[0].request
+            else:
+                request = args[-1]
+
             response = render_template(template_name, request, context,
                                        app_key=app_key, encoding=encoding)
             response.set_status(status)
