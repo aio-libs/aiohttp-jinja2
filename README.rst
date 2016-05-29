@@ -6,7 +6,7 @@ jinja2_ template renderer for `aiohttp.web`__.
 
 .. _jinja2: http://jinja.pocoo.org
 
-.. _aiohttp_web: http://aiohttp.readthedocs.org/en/latest/web.html
+.. _aiohttp_web: https://aiohttp.readthedocs.io/en/latest/web.html
 
 __ aiohttp_web_
 
@@ -31,7 +31,7 @@ Using the function based web handlers::
         return {'name': 'Andrew', 'surname': 'Svetlov'}
 
 Or for `Class Based Views
-<https://aiohttp.readthedocs.org/en/stable/web.html#class-based-views>`::
+<https://aiohttp.readthedocs.io/en/stable/web.html#class-based-views>`::
 
     class Handler(web.View):
         @aiohttp_jinja2.template('tmpl.jinja2')
