@@ -30,7 +30,7 @@ class TestSimple(unittest.TestCase):
         headers = CIMultiDict()
         message = aiohttp.RawRequestMessage(method, path,
                                             aiohttp.HttpVersion(1, 1),
-                                            headers, False, False)
+                                            headers, [], False, False)
         self.payload = mock.Mock()
         self.transport = mock.Mock()
         self.writer = mock.Mock()
