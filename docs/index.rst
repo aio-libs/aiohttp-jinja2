@@ -101,6 +101,16 @@ As you can see, there is a built-in :func:`request_processor`, which
 adds current :class:`aiohttp.web.Request` into context of templates
 under ``'request'`` name.
 
+By default there are two aiohttp specific :attr:`jinja2.Environment().globals` available in templates:
+
+- ``url``: Resolve a named route url
+- ``app``: Use any properties on the app instance
+
+    <body>
+        <h1>Welcome to {{ app['name'] }}</h1>
+        <a href="{{ url('index') }}">Index Page</a>
+    </body>
+
 
 Library Installation
 --------------------
