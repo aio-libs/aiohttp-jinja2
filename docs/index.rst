@@ -38,8 +38,7 @@ Or the class-based views (:class:`aiohttp.web.View`)::
 
     class Handler(web.View):
         @aiohttp_jinja2.template('tmpl.jinja2')
-        @asyncio.coroutine
-        def get(self):
+        async def get(self):
             return {'name': 'Andrew', 'surname': 'Svetlov'}
 
 On handler call the :func:`template` decorator will pass
@@ -51,8 +50,7 @@ you may call :func:`render_template` function.
 
 Using a function based web handler::
 
-    @asyncio.coroutine
-    def handler(request):
+    async def handler(request):
         context = {'name': 'Andrew', 'surname': 'Svetlov'}
         response = aiohttp_jinja2.render_template('tmpl.jinja2',
                                                   request,
@@ -63,8 +61,7 @@ Using a function based web handler::
 Or, again, a class-based view (:class:`aiohttp.web.View`)::
 
     class Handler(web.View):
-        @asyncio.coroutine
-        def get(self):
+        async def get(self):
             context = {'name': 'Andrew', 'surname': 'Svetlov'}
             response = aiohttp_jinja2.render_template('tmpl.jinja2',
                                                       self.request,
@@ -85,8 +82,7 @@ previous one.
 
 In order to use context processors create required processors::
 
-    @asyncio.coroutine
-    def foo_processor(request):
+    async def foo_processor(request):
         return {'foo': 'bar'}
 
 And pass them into :func:`setup`::
