@@ -35,8 +35,7 @@ Or for `Class Based Views
 
     class Handler(web.View):
         @aiohttp_jinja2.template('tmpl.jinja2')
-        @asyncio.coroutine
-        def get(self):
+        async def get(self):
             return {'name': 'Andrew', 'surname': 'Svetlov'}
 
 
@@ -49,8 +48,7 @@ you may call ``render_template`` function.
 
 Using a function based web handler::
 
-    @asyncio.coroutine
-    def handler(request):
+    async def handler(request):
         context = {'name': 'Andrew', 'surname': 'Svetlov'}
         response = aiohttp_jinja2.render_template('tmpl.jinja2',
                                                   request,
@@ -61,8 +59,7 @@ Using a function based web handler::
 Or, again, a class based view::
 
     class Handler(web.View):
-        @asyncio.coroutine
-        def get(self):
+        async def get(self):
             context = {'name': 'Andrew', 'surname': 'Svetlov'}
             response = aiohttp_jinja2.render_template('tmpl.jinja2',
                                                       self.request,
