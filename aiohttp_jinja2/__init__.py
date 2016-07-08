@@ -1,10 +1,11 @@
 import asyncio
 import functools
-import jinja2
 from collections import Mapping
+from urllib.parse import urlunparse
+
+import jinja2
 from aiohttp import web
 from aiohttp.abc import AbstractView
-
 
 __version__ = '0.7.1'
 
@@ -19,14 +20,15 @@ APP_CONTEXT_PROCESSORS_KEY = 'aiohttp_jinja2_context_processors'
 def setup(app, *args, app_key=APP_KEY, context_processors=(), **kwargs):
     env = jinja2.Environment(*args, **kwargs)
     app[app_key] = env
-    if context_processors:
-        app[APP_CONTEXT_PROCESSORS_KEY] = context_processors
-        app.middlewares.append(context_processors_middleware)
 
-    def url(__aiohttp_jinja2_route_name, **kwargs):
-        return app.router[__aiohttp_jinja2_route_name].url(**kwargs)
+    app.middlewares.append(context_processors_middleware)
+    app[APP_CONTEXT_PROCESSORS_KEY] = (
+        context_processors + (
+            request_processor,
+            url_processor
+        )
+    )
 
-    env.globals['url'] = url
     env.globals['app'] = app
 
     return env
@@ -116,3 +118,15 @@ def context_processors_middleware(app, handler):
 @asyncio.coroutine
 def request_processor(request):
     return {'request': request}
+
+
+@asyncio.coroutine
+def url_processor(request):
+    def _url(name, _external=False, **kwargs):
+        path = request.app.router[name].url(**kwargs)
+        if _external:
+            __url = urlunparse((request.scheme, request.host, path, '', '', ''))
+        else:
+            __url = path
+        return __url
+    return {'url': _url}
