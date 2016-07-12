@@ -10,6 +10,21 @@ jinja2_ template renderer for `aiohttp.web`__.
 
 __ aiohttp_web_
 
+Installation
+------------
+Install from PyPI::
+
+    pip install aiohttp-jinja2
+
+
+Developing
+----------
+
+Install requirement and launch tests::
+
+    pip install -r requirements-dev.txt
+    py.test tests
+
 
 Usage
 -----

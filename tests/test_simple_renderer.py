@@ -38,6 +38,34 @@ class TestSimple(unittest.TestCase):
                           self.transport, self.writer, 15)
         return req
 
+    @asyncio.coroutine
+    def _create_app_with_template(self, template, func):
+        """
+        Helper method that creates application with single handler that process
+        request to root '/' with any http method and returns response for
+        rendered `template`
+        """
+        app = web.Application(loop=self.loop)
+        aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({
+            'tmpl.jinja2': template
+        }))
+
+        app.router.add_route('*', '/', func)
+
+        port = self.find_unused_port()
+        handler = app.make_handler()
+        srv = yield from self.loop.create_server(
+            handler, '127.0.0.1', port)
+        url = 'http://127.0.0.1:{}/'.format(port)
+
+        resp = yield from aiohttp.request('GET', url, loop=self.loop)
+
+        yield from handler.finish_connections()
+        srv.close()
+        self.addCleanup(srv.close)
+
+        return resp
+
     def test_func(self):
 
         @aiohttp_jinja2.template('tmpl.jinja2')
@@ -47,28 +75,13 @@ class TestSimple(unittest.TestCase):
 
         @asyncio.coroutine
         def go():
-            app = web.Application(loop=self.loop)
-            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
-                {'tmpl.jinja2':
-                 "<html><body><h1>{{head}}</h1>{{text}}</body></html>"}))
+            template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
 
-            app.router.add_route('GET', '/', func)
-
-            port = self.find_unused_port()
-            handler = app.make_handler()
-            srv = yield from self.loop.create_server(
-                handler, '127.0.0.1', port)
-            url = "http://127.0.0.1:{}/".format(port)
-
-            resp = yield from aiohttp.request('GET', url, loop=self.loop)
+            resp = yield from self._create_app_with_template(template, func)
             self.assertEqual(200, resp.status)
             txt = yield from resp.text()
             self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
                              txt)
-
-            yield from handler.finish_connections()
-            srv.close()
-            self.addCleanup(srv.close)
 
         self.loop.run_until_complete(go())
 
@@ -81,28 +94,14 @@ class TestSimple(unittest.TestCase):
 
         @asyncio.coroutine
         def go():
-            app = web.Application(loop=self.loop)
-            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
-                {'tmpl.jinja2':
-                 "<html><body><h1>{{head}}</h1>{{text}}</body></html>"}))
+            template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
 
-            app.router.add_route('*', '/', MyView)
+            resp = yield from self._create_app_with_template(template, MyView)
 
-            port = self.find_unused_port()
-            handler = app.make_handler()
-            srv = yield from self.loop.create_server(
-                handler, '127.0.0.1', port)
-            url = 'http://127.0.0.1:{}'.format(port)
-
-            resp = yield from aiohttp.request('GET', url, loop=self.loop)
             self.assertEqual(200, resp.status)
             txt = yield from resp.text()
             self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
                              txt)
-
-            yield from handler.finish_connections()
-            srv.close()
-            self.addCleanup(srv.close)
 
         self.loop.run_until_complete(go())
 
@@ -117,29 +116,16 @@ class TestSimple(unittest.TestCase):
 
         @asyncio.coroutine
         def go():
-            app = web.Application(loop=self.loop)
-            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
-                {'tmpl.jinja2':
-                 "<html><body><h1>{{head}}</h1>{{text}}</body></html>"}))
+            template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
 
             handler = Handler()
-            app.router.add_route('GET', '/', handler.meth)
 
-            port = self.find_unused_port()
-            handler = app.make_handler()
-            srv = yield from self.loop.create_server(
-                handler, '127.0.0.1', port)
-            url = "http://127.0.0.1:{}/".format(port)
+            resp = yield from self._create_app_with_template(template, handler.meth)
 
-            resp = yield from aiohttp.request('GET', url, loop=self.loop)
             self.assertEqual(200, resp.status)
             txt = yield from resp.text()
             self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
                              txt)
-
-            yield from handler.finish_connections()
-            srv.close()
-            self.addCleanup(srv.close)
 
         self.loop.run_until_complete(go())
 
@@ -151,28 +137,13 @@ class TestSimple(unittest.TestCase):
 
         @asyncio.coroutine
         def go():
-            app = web.Application(loop=self.loop)
-            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
-                {'tmpl.jinja2':
-                 "<html><body><h1>{{head}}</h1>{{text}}</body></html>"}))
+            template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
 
-            app.router.add_route('GET', '/', func)
+            resp = yield from self._create_app_with_template(template, func)
 
-            port = self.find_unused_port()
-            handler = app.make_handler()
-            srv = yield from self.loop.create_server(
-                handler, '127.0.0.1', port)
-            url = "http://127.0.0.1:{}/".format(port)
-
-            resp = yield from aiohttp.request('GET', url, loop=self.loop)
-            self.assertEqual(200, resp.status)
             txt = yield from resp.text()
             self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
                              txt)
-
-            yield from handler.finish_connections()
-            srv.close()
-            self.addCleanup(srv.close)
 
         self.loop.run_until_complete(go())
 
@@ -209,28 +180,14 @@ class TestSimple(unittest.TestCase):
 
         @asyncio.coroutine
         def go():
-            app = web.Application(loop=self.loop)
-            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
-                {'tmpl.jinja2':
-                 "<html><body><h1>{{head}}</h1>{{text}}</body></html>"}))
+            template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
 
-            app.router.add_route('GET', '/', func)
+            resp = yield from self._create_app_with_template(template, func)
 
-            port = self.find_unused_port()
-            handler = app.make_handler()
-            srv = yield from self.loop.create_server(
-                handler, '127.0.0.1', port)
-            url = "http://127.0.0.1:{}/".format(port)
-
-            resp = yield from aiohttp.request('GET', url, loop=self.loop)
             self.assertEqual(201, resp.status)
             txt = yield from resp.text()
             self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
                              txt)
-
-            yield from handler.finish_connections()
-            srv.close()
-            self.addCleanup(srv.close)
 
         self.loop.run_until_complete(go())
 
@@ -244,28 +201,13 @@ class TestSimple(unittest.TestCase):
 
         @asyncio.coroutine
         def go():
-            app = web.Application(loop=self.loop)
-            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
-                {'tmpl.jinja2':
-                 "<html><body><h1>{{head}}</h1>{{text}}</body></html>"}))
+            template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
 
-            app.router.add_route('GET', '/', func)
-
-            port = self.find_unused_port()
-            handler = app.make_handler()
-            srv = yield from self.loop.create_server(
-                handler, '127.0.0.1', port)
-            url = "http://127.0.0.1:{}/".format(port)
-
-            resp = yield from aiohttp.request('GET', url, loop=self.loop)
+            resp = yield from self._create_app_with_template(template, func)
             self.assertEqual(200, resp.status)
             txt = yield from resp.text()
             self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
                              txt)
-
-            yield from handler.finish_connections()
-            srv.close()
-            self.addCleanup(srv.close)
 
         self.loop.run_until_complete(go())
 
@@ -303,7 +245,7 @@ class TestSimple(unittest.TestCase):
         def go():
             app = web.Application(loop=self.loop)
             aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
-                {'tmpl.jinja2': "tmpl"}))
+                {'tmpl.jinja2': 'tmpl'}))
 
             app.router.add_route('GET', '/', func)
 
@@ -314,5 +256,24 @@ class TestSimple(unittest.TestCase):
                 yield from func(req)
 
             self.assertEqual(msg, ctx.exception.text)
+
+        self.loop.run_until_complete(go())
+
+    def test_render_without_context(self):
+
+        @aiohttp_jinja2.template('tmpl.jinja2')
+        def func(request):
+            pass
+
+        @asyncio.coroutine
+        def go():
+            template = '<html><body><p>{{text}}</p></body></html>'
+
+            resp = yield from self._create_app_with_template(template, func)
+
+            self.assertEqual(200, resp.status)
+            txt = yield from resp.text()
+            self.assertEqual('<html><body><p></p></body></html>',
+                             txt)
 
         self.loop.run_until_complete(go())
