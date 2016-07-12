@@ -120,7 +120,8 @@ class TestSimple(unittest.TestCase):
 
             handler = Handler()
 
-            resp = yield from self._create_app_with_template(template, handler.meth)
+            resp = yield from self._create_app_with_template(template,
+                                                             handler.meth)
 
             self.assertEqual(200, resp.status)
             txt = yield from resp.text()
