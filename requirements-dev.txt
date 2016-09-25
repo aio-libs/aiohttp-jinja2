@@ -5,5 +5,5 @@ alabaster>=0.6.2
 aiohttp
 jinja2
 pytest
-pytest-cov
+pytest-cov==2.3.1
 -e .
