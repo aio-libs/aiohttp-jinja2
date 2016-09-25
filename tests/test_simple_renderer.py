@@ -230,8 +230,9 @@ class TestSimple(unittest.TestCase):
             with self.assertRaises(web.HTTPInternalServerError) as ctx:
                 yield from func(req)
 
-            self.assertEqual("Template 'template' not found",
-                             ctx.exception.text)
+            t = "Template 'template' not found"
+            self.assertEqual(t, ctx.exception.text)
+            self.assertEqual(t, ctx.exception.reason)
 
         self.loop.run_until_complete(go())
 

@@ -49,8 +49,8 @@ def render_string(template_name, request, context, *, app_key=APP_KEY):
     try:
         template = env.get_template(template_name)
     except jinja2.TemplateNotFound as e:
-        raise web.HTTPInternalServerError(
-            text="Template '{}' not found".format(template_name)) from e
+        text = "Template '{}' not found".format(template_name)
+        raise web.HTTPInternalServerError(reason=text, text=text) from e
     if not isinstance(context, Mapping):
         text = "context should be mapping, not {}".format(type(context))
         # same reason as above
