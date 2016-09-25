@@ -4,7 +4,7 @@ import re
 import unittest
 import aiohttp
 from aiohttp import web
-from aiohttp.multidict import CIMultiDict
+from multidict import CIMultiDict
 import aiohttp_jinja2
 import jinja2
 from unittest import mock
