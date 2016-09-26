@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+0.9.0 (2016-09-26)
+------------------
+
+- Fix reason parameter in HTTPInternalServerError when template is not
+  found #33
+
 0.8.0 (2016-07-12)
 ------------------
 
