@@ -5,13 +5,14 @@ python:
 
 install:
   - pip install --upgrade pip
-  - pip install coveralls
+  - pip install codecov
   - pip install -r requirements-dev.txt
 
 script:
   py.test --cov=aiohttp_jinja2 tests
+
 after_success:
-  coveralls
+  codecov
 
 env:
   matrix:
