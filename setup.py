@@ -19,7 +19,7 @@ install_requires = ['aiohttp>=0.20', 'jinja2>=2.7']
 tests_require = install_requires + ['nose']
 
 
-setup(name='aiohttp_jinja2',
+setup(name='aiohttp-jinja2',
       version=version,
       description=("jinja2 template renderer for aiohttp.web "
                    "(http server for asyncio)"),
