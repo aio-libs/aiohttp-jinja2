@@ -18,7 +18,7 @@ APP_CONTEXT_PROCESSORS_KEY = 'aiohttp_jinja2_context_processors'
 
 def setup(app, *args, app_key=APP_KEY, context_processors=(), filters=None, **kwargs):
     env = jinja2.Environment(*args, **kwargs)
-    if filters and isinstance(filters, dict):
+    if filters is not None:
         env.filters.update(filters)
     app[app_key] = env
     if context_processors:
