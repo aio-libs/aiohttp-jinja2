@@ -1,10 +1,9 @@
-import aiohttp
-import aiohttp_jinja2
 import asyncio
-import jinja2
-import pytest
 
+import jinja2
 from aiohttp import web
+
+import aiohttp_jinja2
 
 
 def test_get_env(loop):
@@ -17,8 +16,8 @@ def test_get_env(loop):
     assert env is aiohttp_jinja2.get_env(app)
 
 
-@pytest.mark.run_loop
-def test_url(create_server, loop):
+@asyncio.coroutine
+def test_url(test_client, loop):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     @asyncio.coroutine
@@ -29,15 +28,16 @@ def test_url(create_server, loop):
     def other(request):
         return
 
-    app, url = yield from create_server()
+    app = web.Application(loop=loop)
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
         {'tmpl.jinja2':
          "{{ url('other', parts={'name': 'John_Doe'})}}"}))
 
     app.router.add_route('GET', '/', index)
     app.router.add_route('GET', '/user/{name}', other, name='other')
+    client = yield from test_client(app)
 
-    resp = yield from aiohttp.request('GET', url, loop=loop)
+    resp = yield from client.get('/')
     assert 200 == resp.status
     txt = yield from resp.text()
     assert '/user/John_Doe' == txt

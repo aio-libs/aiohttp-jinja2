@@ -1,281 +1,253 @@
 import asyncio
-import socket
-import re
-import unittest
-import aiohttp
-from aiohttp import web
-from multidict import CIMultiDict
-import aiohttp_jinja2
+
 import jinja2
-from unittest import mock
+import pytest
+from aiohttp import web
+from aiohttp.test_utils import make_mocked_request
+
+import aiohttp_jinja2
 
 
-class TestSimple(unittest.TestCase):
+@asyncio.coroutine
+def test_func(loop, test_client):
 
-    def setUp(self):
-        self.loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(None)
+    @aiohttp_jinja2.template('tmpl.jinja2')
+    @asyncio.coroutine
+    def func(request):
+        return {'head': 'HEAD', 'text': 'text'}
 
-    def tearDown(self):
-        self.loop.close()
+    template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({
+        'tmpl.jinja2': template
+    }))
 
-    def find_unused_port(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind(('127.0.0.1', 0))
-        port = s.getsockname()[1]
-        s.close()
-        return port
+    app.router.add_route('*', '/', func)
 
-    def make_request(self, app, method, path):
-        headers = CIMultiDict()
-        message = aiohttp.RawRequestMessage(method, path,
-                                            aiohttp.HttpVersion(1, 1),
-                                            headers, [], False, False)
-        self.payload = mock.Mock()
-        self.transport = mock.Mock()
-        self.writer = mock.Mock()
-        req = web.Request(app, message, self.payload,
-                          self.transport, self.writer, 15)
-        return req
+    client = yield from test_client(app)
+
+    resp = yield from client.get('/')
+    assert 200 == resp.status
+    txt = yield from resp.text()
+    assert '<html><body><h1>HEAD</h1>text</body></html>' == txt
+
+
+@asyncio.coroutine
+def test_render_class_based_view(loop, test_client):
+    class MyView(web.View):
+        @aiohttp_jinja2.template('tmpl.jinja2')
+        @asyncio.coroutine
+        def get(self):
+            return {'head': 'HEAD', 'text': 'text'}
+
+    template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
+
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({
+        'tmpl.jinja2': template
+    }))
+
+    app.router.add_route('*', '/', MyView)
+
+    client = yield from test_client(app)
+
+    resp = yield from client.get('/')
+
+    assert 200 == resp.status
+    txt = yield from resp.text()
+    assert '<html><body><h1>HEAD</h1>text</body></html>' == txt
+
+
+@asyncio.coroutine
+def test_meth(loop, test_client):
+
+    class Handler:
+
+        @aiohttp_jinja2.template('tmpl.jinja2')
+        @asyncio.coroutine
+        def meth(self, request):
+            return {'head': 'HEAD', 'text': 'text'}
+
+    template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
+
+    handler = Handler()
+
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({
+        'tmpl.jinja2': template
+    }))
+
+    app.router.add_route('*', '/', handler.meth)
+
+    client = yield from test_client(app)
+
+    resp = yield from client.get('/')
+
+    assert 200 == resp.status
+    txt = yield from resp.text()
+    assert '<html><body><h1>HEAD</h1>text</body></html>' == txt
+
+
+@asyncio.coroutine
+def test_convert_func_to_coroutine(loop, test_client):
+
+    @aiohttp_jinja2.template('tmpl.jinja2')
+    def func(request):
+        return {'head': 'HEAD', 'text': 'text'}
+
+    template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
+
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({
+        'tmpl.jinja2': template
+    }))
+
+    app.router.add_route('*', '/', func)
+
+    client = yield from test_client(app)
+
+    resp = yield from client.get('/')
+
+    txt = yield from resp.text()
+    assert '<html><body><h1>HEAD</h1>text</body></html>' == txt
+
+
+@asyncio.coroutine
+def test_render_not_initialized(loop):
 
     @asyncio.coroutine
-    def _create_app_with_template(self, template, func):
-        """
-        Helper method that creates application with single handler that process
-        request to root '/' with any http method and returns response for
-        rendered `template`
-        """
-        app = web.Application(loop=self.loop)
-        aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({
-            'tmpl.jinja2': template
-        }))
+    def func(request):
+        return aiohttp_jinja2.render_template('template', request, {})
 
-        app.router.add_route('*', '/', func)
+    app = web.Application(loop=loop)
 
-        port = self.find_unused_port()
-        handler = app.make_handler()
-        srv = yield from self.loop.create_server(
-            handler, '127.0.0.1', port)
-        url = 'http://127.0.0.1:{}/'.format(port)
+    app.router.add_route('GET', '/', func)
 
-        resp = yield from aiohttp.request('GET', url, loop=self.loop)
+    req = make_mocked_request('GET', '/', app=app)
+    msg = "Template engine is not initialized, " \
+          "call aiohttp_jinja2.setup(..., app_key={}" \
+          ") first".format(aiohttp_jinja2.APP_KEY)
 
-        yield from handler.finish_connections()
-        srv.close()
-        self.addCleanup(srv.close)
+    with pytest.raises(web.HTTPInternalServerError) as ctx:
+        yield from func(req)
 
-        return resp
+    assert msg == ctx.value.text
 
-    def test_func(self):
 
-        @aiohttp_jinja2.template('tmpl.jinja2')
-        @asyncio.coroutine
-        def func(request):
-            return {'head': 'HEAD', 'text': 'text'}
+@asyncio.coroutine
+def test_set_status(loop, test_client):
 
-        @asyncio.coroutine
-        def go():
-            template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
+    @aiohttp_jinja2.template('tmpl.jinja2', status=201)
+    def func(request):
+        return {'head': 'HEAD', 'text': 'text'}
 
-            resp = yield from self._create_app_with_template(template, func)
-            self.assertEqual(200, resp.status)
-            txt = yield from resp.text()
-            self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
-                             txt)
+    template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
 
-        self.loop.run_until_complete(go())
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({
+        'tmpl.jinja2': template
+    }))
 
-    def test_render_class_based_view(self):
-        class MyView(web.View):
-            @aiohttp_jinja2.template('tmpl.jinja2')
-            @asyncio.coroutine
-            def get(self):
-                return {'head': 'HEAD', 'text': 'text'}
+    app.router.add_route('*', '/', func)
 
-        @asyncio.coroutine
-        def go():
-            template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
+    client = yield from test_client(app)
 
-            resp = yield from self._create_app_with_template(template, MyView)
+    resp = yield from client.get('/')
 
-            self.assertEqual(200, resp.status)
-            txt = yield from resp.text()
-            self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
-                             txt)
+    assert 201 == resp.status
+    txt = yield from resp.text()
+    assert '<html><body><h1>HEAD</h1>text</body></html>' == txt
 
-        self.loop.run_until_complete(go())
 
-    def test_meth(self):
+@asyncio.coroutine
+def test_render_template(loop, test_client):
 
-        class Handler:
+    @asyncio.coroutine
+    def func(request):
+        return aiohttp_jinja2.render_template(
+            'tmpl.jinja2', request,
+            {'head': 'HEAD', 'text': 'text'})
 
-            @aiohttp_jinja2.template('tmpl.jinja2')
-            @asyncio.coroutine
-            def meth(self, request):
-                return {'head': 'HEAD', 'text': 'text'}
+    template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
 
-        @asyncio.coroutine
-        def go():
-            template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({
+        'tmpl.jinja2': template
+    }))
 
-            handler = Handler()
+    app.router.add_route('*', '/', func)
 
-            resp = yield from self._create_app_with_template(template,
-                                                             handler.meth)
+    client = yield from test_client(app)
 
-            self.assertEqual(200, resp.status)
-            txt = yield from resp.text()
-            self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
-                             txt)
+    resp = yield from client.get('/')
 
-        self.loop.run_until_complete(go())
+    assert 200 == resp.status
+    txt = yield from resp.text()
+    assert '<html><body><h1>HEAD</h1>text</body></html>' == txt
 
-    def test_convert_func_to_coroutine(self):
 
-        @aiohttp_jinja2.template('tmpl.jinja2')
-        def func(request):
-            return {'head': 'HEAD', 'text': 'text'}
+@asyncio.coroutine
+def test_template_not_found(loop):
 
-        @asyncio.coroutine
-        def go():
-            template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
+    @asyncio.coroutine
+    def func(request):
+        return aiohttp_jinja2.render_template('template', request, {})
 
-            resp = yield from self._create_app_with_template(template, func)
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({}))
 
-            txt = yield from resp.text()
-            self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
-                             txt)
+    app.router.add_route('GET', '/', func)
 
-        self.loop.run_until_complete(go())
+    req = make_mocked_request('GET', '/', app=app)
 
-    def test_render_not_initialized(self):
+    with pytest.raises(web.HTTPInternalServerError) as ctx:
+        yield from func(req)
 
-        @asyncio.coroutine
-        def func(request):
-            return aiohttp_jinja2.render_template('template', request, {})
+    t = "Template 'template' not found"
+    assert t == ctx.value.text
+    assert t == ctx.value.reason
 
-        @asyncio.coroutine
-        def go():
-            app = web.Application(loop=self.loop)
 
-            app.router.add_route('GET', '/', func)
+@asyncio.coroutine
+def test_render_not_mapping(loop):
 
-            req = self.make_request(app, 'GET', '/')
-            msg = "Template engine is not initialized, " \
-                  "call aiohttp_jinja2.setup(..., app_key={}" \
-                  ") first".format(aiohttp_jinja2.APP_KEY)
+    @aiohttp_jinja2.template('tmpl.jinja2')
+    @asyncio.coroutine
+    def func(request):
+        return 123
 
-            with self.assertRaisesRegex(web.HTTPInternalServerError,
-                                        re.escape(msg)) as ctx:
-                yield from func(req)
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
+        {'tmpl.jinja2': 'tmpl'}))
 
-            self.assertEqual(msg, ctx.exception.text)
+    app.router.add_route('GET', '/', func)
 
-        self.loop.run_until_complete(go())
+    req = make_mocked_request('GET', '/', app=app)
+    msg = "context should be mapping, not <class 'int'>"
+    with pytest.raises(web.HTTPInternalServerError) as ctx:
+        yield from func(req)
 
-    def test_set_status(self):
+    assert msg == ctx.value.text
 
-        @aiohttp_jinja2.template('tmpl.jinja2', status=201)
-        def func(request):
-            return {'head': 'HEAD', 'text': 'text'}
 
-        @asyncio.coroutine
-        def go():
-            template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
+@asyncio.coroutine
+def test_render_without_context(loop, test_client):
 
-            resp = yield from self._create_app_with_template(template, func)
+    @aiohttp_jinja2.template('tmpl.jinja2')
+    def func(request):
+        pass
 
-            self.assertEqual(201, resp.status)
-            txt = yield from resp.text()
-            self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
-                             txt)
+    template = '<html><body><p>{{text}}</p></body></html>'
 
-        self.loop.run_until_complete(go())
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
+        {'tmpl.jinja2': template}))
 
-    def test_render_template(self):
+    app.router.add_route('GET', '/', func)
 
-        @asyncio.coroutine
-        def func(request):
-            return aiohttp_jinja2.render_template(
-                'tmpl.jinja2', request,
-                {'head': 'HEAD', 'text': 'text'})
+    client = yield from test_client(app)
+    resp = yield from client.get('/')
 
-        @asyncio.coroutine
-        def go():
-            template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
-
-            resp = yield from self._create_app_with_template(template, func)
-            self.assertEqual(200, resp.status)
-            txt = yield from resp.text()
-            self.assertEqual('<html><body><h1>HEAD</h1>text</body></html>',
-                             txt)
-
-        self.loop.run_until_complete(go())
-
-    def test_template_not_found(self):
-
-        @asyncio.coroutine
-        def func(request):
-            return aiohttp_jinja2.render_template('template', request, {})
-
-        @asyncio.coroutine
-        def go():
-            app = web.Application(loop=self.loop)
-            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({}))
-
-            app.router.add_route('GET', '/', func)
-
-            req = self.make_request(app, 'GET', '/')
-
-            with self.assertRaises(web.HTTPInternalServerError) as ctx:
-                yield from func(req)
-
-            t = "Template 'template' not found"
-            self.assertEqual(t, ctx.exception.text)
-            self.assertEqual(t, ctx.exception.reason)
-
-        self.loop.run_until_complete(go())
-
-    def test_render_not_mapping(self):
-
-        @aiohttp_jinja2.template('tmpl.jinja2')
-        @asyncio.coroutine
-        def func(request):
-            return 123
-
-        @asyncio.coroutine
-        def go():
-            app = web.Application(loop=self.loop)
-            aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
-                {'tmpl.jinja2': 'tmpl'}))
-
-            app.router.add_route('GET', '/', func)
-
-            req = self.make_request(app, 'GET', '/')
-            msg = "context should be mapping, not <class 'int'>"
-            with self.assertRaisesRegex(web.HTTPInternalServerError,
-                                        re.escape(msg)) as ctx:
-                yield from func(req)
-
-            self.assertEqual(msg, ctx.exception.text)
-
-        self.loop.run_until_complete(go())
-
-    def test_render_without_context(self):
-
-        @aiohttp_jinja2.template('tmpl.jinja2')
-        def func(request):
-            pass
-
-        @asyncio.coroutine
-        def go():
-            template = '<html><body><p>{{text}}</p></body></html>'
-
-            resp = yield from self._create_app_with_template(template, func)
-
-            self.assertEqual(200, resp.status)
-            txt = yield from resp.text()
-            self.assertEqual('<html><body><p></p></body></html>',
-                             txt)
-
-        self.loop.run_until_complete(go())
+    assert 200 == resp.status
+    txt = yield from resp.text()
+    assert '<html><body><p></p></body></html>' == txt

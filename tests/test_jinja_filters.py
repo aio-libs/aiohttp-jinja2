@@ -1,12 +1,13 @@
-import aiohttp
-import aiohttp_jinja2
 import asyncio
+
 import jinja2
-import pytest
+from aiohttp import web
+
+import aiohttp_jinja2
 
 
-@pytest.mark.run_loop
-def test_jinja_filters(create_server, loop):
+@asyncio.coroutine
+def test_jinja_filters(test_client, loop):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     @asyncio.coroutine
@@ -16,7 +17,7 @@ def test_jinja_filters(create_server, loop):
     def add_2(value):
         return value + 2
 
-    app, url = yield from create_server()
+    app = web.Application(loop=loop)
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.DictLoader({'tmpl.jinja2': "{{ 5|add_2 }}"}),
@@ -24,8 +25,9 @@ def test_jinja_filters(create_server, loop):
     )
 
     app.router.add_route('GET', '/', index)
+    client = yield from test_client(app)
 
-    resp = yield from aiohttp.request('GET', url, loop=loop)
+    resp = yield from client.get('/')
     assert 200 == resp.status
     txt = yield from resp.text()
     assert '7' == txt

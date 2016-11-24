@@ -1,20 +1,20 @@
-import aiohttp
-import aiohttp_jinja2
 import asyncio
+
 import jinja2
-import pytest
+from aiohttp import web
+
+import aiohttp_jinja2
 
 
-@pytest.mark.run_loop
-def test_context_processors(create_server, loop):
+@asyncio.coroutine
+def test_context_processors(test_client, loop):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     @asyncio.coroutine
     def func(request):
         return {'bar': 2}
 
-    app, url = yield from create_server(
-        middlewares=[
+    app = web.Application(loop=loop, middlewares=[
             aiohttp_jinja2.context_processors_middleware])
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
         {'tmpl.jinja2':
@@ -26,41 +26,44 @@ def test_context_processors(create_server, loop):
             lambda request: {'foo': 1, 'bar': 'should be overwriten'}),
     )
 
-    app.router.add_route('GET', '/', func)
+    app.router.add_get('/', func)
 
-    resp = yield from aiohttp.request('GET', url, loop=loop)
+    client = yield from test_client(app)
+
+    resp = yield from client.get('/')
     assert 200 == resp.status
     txt = yield from resp.text()
     assert 'foo: 1, bar: 2, path: /' == txt
 
 
-@pytest.mark.run_loop
-def test_context_is_response(create_server, loop):
+@asyncio.coroutine
+def test_context_is_response(test_client, loop):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     def func(request):
-        return aiohttp.web_exceptions.HTTPForbidden()
+        return web.HTTPForbidden()
 
-    app, url = yield from create_server()
+    app = web.Application(loop=loop)
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
         {'tmpl.jinja2': "template"}))
 
     app.router.add_route('GET', '/', func)
+    client = yield from test_client(app)
 
-    resp = yield from aiohttp.request('GET', url, loop=loop)
+    resp = yield from client.get('/')
     assert 403 == resp.status
     yield from resp.release()
 
 
-@pytest.mark.run_loop
-def test_context_processors_new_setup_style(create_server, loop):
+@asyncio.coroutine
+def test_context_processors_new_setup_style(test_client, loop):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     @asyncio.coroutine
     def func(request):
         return {'bar': 2}
 
-    app, url = yield from create_server()
+    app = web.Application(loop=loop)
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.DictLoader(
@@ -74,8 +77,9 @@ def test_context_processors_new_setup_style(create_server, loop):
                                     'bar': 'should be overwriten'})))
 
     app.router.add_route('GET', '/', func)
+    client = yield from test_client(app)
 
-    resp = yield from aiohttp.request('GET', url, loop=loop)
+    resp = yield from client.get('/')
     assert 200 == resp.status
     txt = yield from resp.text()
     assert 'foo: 1, bar: 2, path: /' == txt
