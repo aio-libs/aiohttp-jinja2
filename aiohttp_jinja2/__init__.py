@@ -6,7 +6,7 @@ from aiohttp import web
 from aiohttp.abc import AbstractView
 
 
-__version__ = '0.10.0'
+__version__ = '0.11.0'
 
 __all__ = ('setup', 'get_env', 'render_template', 'template')
 
@@ -16,7 +16,8 @@ REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
 APP_CONTEXT_PROCESSORS_KEY = 'aiohttp_jinja2_context_processors'
 
 
-def setup(app, *args, app_key=APP_KEY, context_processors=(), filters=None, **kwargs):
+def setup(app, *args, app_key=APP_KEY, context_processors=(),
+          filters=None, **kwargs):
     env = jinja2.Environment(*args, **kwargs)
     if filters is not None:
         env.filters.update(filters)
