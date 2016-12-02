@@ -5,7 +5,7 @@ python:
   - nightly
 
 install:
-  - pip install --upgrade pip
+  - pip install --upgrade pip wheel
   - pip install codecov
   - pip install -r requirements-dev.txt
 
@@ -19,3 +19,14 @@ env:
   matrix:
     - PYTHONASYNCIODEBUG=x
     - PYTHONASYNCIODEBUG=
+
+deploy:
+  provider: pypi
+  user: andrew.svetlov
+  password:
+    secure: KqaSYG0N4pQGt4I2kabD81obvVCUbavbgm/C8qp0YRyPjCqhZlpMBOIxIEHqGmT3tayqjEc52W3kY3ulEHSUIpOHZDoKjdiodjWxmMdB4J7vdrH8WLkjWimeAxwCuWZWekv0NFlo8t47xZjgXWAjsfLr1K4binNssHqtyLzCIUw=
+  distributions: "sdist bdist_wheel"
+  on:
+    tags: true
+    all_branches: true
+    python: 3.5

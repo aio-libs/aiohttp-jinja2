@@ -6,7 +6,7 @@ from aiohttp import web
 from aiohttp.abc import AbstractView
 
 
-__version__ = '0.11.0'
+__version__ = '0.12.0'
 
 __all__ = ('setup', 'get_env', 'render_template', 'template')
 
