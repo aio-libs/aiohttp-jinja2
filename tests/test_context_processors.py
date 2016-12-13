@@ -83,3 +83,31 @@ def test_context_processors_new_setup_style(test_client, loop):
     assert 200 == resp.status
     txt = yield from resp.text()
     assert 'foo: 1, bar: 2, path: /' == txt
+
+
+@asyncio.coroutine
+def test_context_not_tainted(test_client, loop):
+
+    global_context = {'version': 1}
+
+    @aiohttp_jinja2.template('tmpl.jinja2')
+    @asyncio.coroutine
+    def func(request):
+        return global_context
+
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(
+        app,
+        loader=jinja2.DictLoader({'tmpl.jinja2': 'foo: {{ foo }}'}),
+        context_processors=[asyncio.coroutine(
+                                lambda request: {'foo': 1})])
+
+    app.router.add_get('/', func)
+    client = yield from test_client(app)
+
+    resp = yield from client.get('/')
+    assert 200 == resp.status
+    txt = yield from resp.text()
+    assert 'foo: 1' == txt
+
+    assert 'foo' not in global_context
