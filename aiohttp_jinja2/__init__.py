@@ -12,8 +12,8 @@ __all__ = ('setup', 'get_env', 'render_template', 'template')
 
 
 APP_KEY = 'aiohttp_jinja2_environment'
-REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
 APP_CONTEXT_PROCESSORS_KEY = 'aiohttp_jinja2_context_processors'
+REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
 
 
 def setup(app, *args, app_key=APP_KEY, context_processors=(),
@@ -58,10 +58,8 @@ def render_string(template_name, request, context, *, app_key=APP_KEY):
         text = "context should be mapping, not {}".format(type(context))
         # same reason as above
         raise web.HTTPInternalServerError(reason=text, text=text)
-    if REQUEST_CONTEXT_KEY in request:
-        for k, v in request.get(REQUEST_CONTEXT_KEY, {}).items():
-            if k not in context:
-                context[k] = v
+    if request.get(REQUEST_CONTEXT_KEY):
+        context = dict(request[REQUEST_CONTEXT_KEY], **context)
     text = template.render(context)
     return text
 
