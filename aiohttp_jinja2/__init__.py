@@ -6,13 +6,13 @@ from aiohttp import web
 from aiohttp.abc import AbstractView
 
 
-__version__ = '0.12.0'
+__version__ = '0.13.0'
 
 __all__ = ('setup', 'get_env', 'render_template', 'template')
 
 
-APP_KEY = 'aiohttp_jinja2_environment'
 APP_CONTEXT_PROCESSORS_KEY = 'aiohttp_jinja2_context_processors'
+APP_KEY = 'aiohttp_jinja2_environment'
 REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
 
 
