@@ -1,5 +1,5 @@
 flake8==3.2.1
-coverage==4.3.3
+coverage==4.3.4
 sphinx==1.5.1
 alabaster>=0.6.2
 aiohttp==1.2.0
