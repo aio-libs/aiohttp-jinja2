@@ -27,7 +27,7 @@ def setup(app, *args, app_key=APP_KEY, context_processors=(),
         app.middlewares.append(context_processors_middleware)
 
     def url(__aiohttp_jinja2_route_name, **kwargs):
-        return app.router[__aiohttp_jinja2_route_name].url(**kwargs)
+        return app.router[__aiohttp_jinja2_route_name].url_for(**kwargs)
 
     env.globals['url'] = url
     env.globals['app'] = app
