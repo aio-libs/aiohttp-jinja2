@@ -31,7 +31,7 @@ def test_url(test_client, loop):
     app = web.Application(loop=loop)
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
         {'tmpl.jinja2':
-         "{{ url('other', parts={'name': 'John_Doe'})}}"}))
+         "{{ url('other', name='John_Doe')}}"}))
 
     app.router.add_route('GET', '/', index)
     app.router.add_route('GET', '/user/{name}', other, name='other')
