@@ -1,5 +1,14 @@
 aiohttp_jinja2
 ==============
+.. image:: https://travis-ci.org/aio-libs/aiohttp-jinja2.svg?branch=master
+    :target: https://travis-ci.org/aio-libs/aiohttp-jinja2
+.. image:: https://codecov.io/gh/aio-libs/aiohttp-jinja2/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/aio-libs/aiohttp-jinja2
+.. image:: https://img.shields.io/pypi/v/aiohttp-jinja2.svg
+    :target: https://pypi.python.org/pypi/aiohttp-jinja2
+.. image:: https://readthedocs.org/projects/aiohttp-jinja2/badge/?version=latest
+    :target: http://aiohttp-jinja2.readthedocs.io/en/latest/?badge=latest
+
 
 jinja2_ template renderer for `aiohttp.web`__.
 
