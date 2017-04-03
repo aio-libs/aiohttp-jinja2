@@ -3,7 +3,7 @@ coverage==4.3.4
 sphinx==1.5.3
 alabaster>=0.6.2
 aiohttp==2.0.1
-jinja2==2.9.5
+jinja2==2.9.6
 pytest==3.0.7
 pytest-cov==2.4.0
 yarl==0.10.0
