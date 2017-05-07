@@ -65,8 +65,8 @@ def render_string(template_name, request, context, *, app_key=APP_KEY):
 
 
 def render_template(template_name, request, context, *,
-                    app_key=APP_KEY, encoding='utf-8'):
-    response = web.Response()
+                    app_key=APP_KEY, encoding='utf-8', status=200):
+    response = web.Response(status=status)
     if context is None:
         context = {}
     text = render_string(template_name, request, context, app_key=app_key)
