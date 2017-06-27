@@ -29,10 +29,10 @@ Install from PyPI::
 Developing
 ----------
 
-Install requirement and launch tests::
+Install requirements and launch tests::
 
-    pip install -r requirements-dev.txt
-    py.test tests
+    pip install -e .[test]
+    pytest tests
 
 
 Usage
