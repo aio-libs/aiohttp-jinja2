@@ -1,6 +1,6 @@
-import codecs
 import os
 import re
+import codecs
 
 from setuptools import setup
 
@@ -15,11 +15,17 @@ with codecs.open(os.path.join(os.path.abspath(os.path.dirname(
 def read(f):
     return open(os.path.join(os.path.dirname(__file__), f)).read().strip()
 
-install_requires = ['aiohttp>=0.20', 'jinja2>=2.7']
-tests_require = install_requires + ['nose']
+install_requires = [
+    'aiohttp>=0.20',
+    'jinja2>=2.7',
+]
+tests_require = install_requires + [
+    'pytest>=3.0.7',
+]
 
 
-setup(name='aiohttp-jinja2',
+setup(
+    name='aiohttp-jinja2',
       version=version,
       description=("jinja2 template renderer for aiohttp.web "
                    "(http server for asyncio)"),
@@ -38,4 +44,8 @@ setup(name='aiohttp-jinja2',
       license='Apache 2',
       packages=['aiohttp_jinja2'],
       install_requires=install_requires,
-      include_package_data=True)
+    extras_require={
+        'test': tests_require,
+    },
+  include_package_data=True
+)
