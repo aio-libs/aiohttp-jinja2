@@ -7,9 +7,10 @@ import jinja2
 
 @jinja2.contextfilter
 def reverse_url(context, name, **parts):
-    """
-    filter for generating urls, see 
-    http://aiohttp.readthedocs.io/en/stable/web.html#reverse-url-constructing-using-named-resources
+    """Filter for generating urls.
+
+    See http://aiohttp.readthedocs.io/en/stable/web.html#
+    reverse-url-constructing-using-named-resources
 
     Usage:
 
@@ -39,8 +40,7 @@ def reverse_url(context, name, **parts):
 
 @jinja2.contextfilter
 def static_url(context, static_file_path):
-    """
-    filter for generating urls for static files. 
+    """Filter for generating urls for static files.
     
     NOTE: you'll need to set app['static_root_url'] to be used as
      the root for the urls returned. 
@@ -58,12 +58,14 @@ def static_url(context, static_file_path):
     try:
         static_url = app['static_root_url']
     except KeyError:
-        raise RuntimeError('app does not define a static root url '
-                           '"static_root_url", you need to set the url root '
-                           'with `app[\'static_root_url\'] = \'<static root>\'`.')
-    return '{}/{}'.format(
-        static_url.rstrip('/'),
-        static_file_path.lstrip('/')
+        raise RuntimeError(
+            "app does not define a static root url 'static_root_url', "
+            "you need to set the url root with "
+            "`app['static_root_url'] = '<static root>'`."
+        )
+    return '{static_url}/{file_path}'.format(
+        static_url=static_url.rstrip('/'),
+        file_path=static_file_path.lstrip('/'),
     )
 
 

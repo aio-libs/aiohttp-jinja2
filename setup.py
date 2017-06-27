@@ -21,6 +21,14 @@ install_requires = [
 ]
 tests_require = install_requires + [
     'pytest>=3.0.7',
+    'flake8==3.3.0',
+    'coverage==4.3.4',
+    'sphinx==1.5.3',
+    'alabaster>=0.6.2',
+    'pytest-cov==2.4.0',
+    'yarl==0.10.0',
+    'multidict==2.1.4',
+    'pytest-aiohttp==0.1.3',
 ]
 
 
