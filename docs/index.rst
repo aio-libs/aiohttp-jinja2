@@ -124,10 +124,10 @@ Or with arguments::
         <a href="{{ url('user', id=123) }}">User Page</a>
     </body>
 
-A query can be added to the url with the special ``query`` keyword argument::
+A query can be added to the url with the special ``query_`` keyword argument::
 
     <body>
-        <a href="{{ url('user', id=123, query={'foo': 'bar'}) }}">User Page</a>
+        <a href="{{ url('user', id=123, query_={'foo': 'bar'}) }}">User Page</a>
     </body>
 
 

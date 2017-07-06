@@ -54,7 +54,7 @@ def test_url_with_query(test_client, loop):
     app = web.Application(loop=loop)
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
         {'tmpl.jinja2':
-         "{{ url('index', query={'foo': 'bar'})}}"}))
+         "{{ url('index', query_={'foo': 'bar'})}}"}))
 
     app.router.add_get('/', index, name='index')
     client = yield from test_client(app)
@@ -82,8 +82,7 @@ def test_helpers_disabled(test_client, loop):
         app,
         default_helpers=False,
         loader=jinja2.DictLoader(
-            {'tmpl.jinja2':
-             "{{ url('index', query={'foo': 'bar'})}}"})
+            {'tmpl.jinja2': "{{ url('index')}}"})
     )
 
     app.router.add_route('GET', '/', index)
