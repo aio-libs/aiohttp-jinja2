@@ -61,7 +61,4 @@ def static_url(context, static_file_path):
         raise RuntimeError('app does not define a static root url '
                            '"static_root_url", you need to set the url root '
                            'with `app[\'static_root_url\'] = \'<static root>\'`.')
-    return '{}/{}'.format(
-        static_url.rstrip('/'),
-        static_file_path.lstrip('/')
-    )
+    return '{}/{}'.format(static_url.rstrip('/'), static_file_path.lstrip('/'))

@@ -4,7 +4,7 @@ import jinja2
 from collections import Mapping
 from aiohttp import web
 from aiohttp.abc import AbstractView
-from .helpers import static_url, reverse_url
+from .helpers import reverse_url, static_url
 
 
 __version__ = '0.13.0'
