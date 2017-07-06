@@ -4,7 +4,7 @@ import jinja2
 from collections import Mapping
 from aiohttp import web
 from aiohttp.abc import AbstractView
-from .helpers import reverse_url, static_url
+from .helpers import GLOBAL_HELPERS
 
 
 __version__ = '0.13.0'
@@ -21,8 +21,7 @@ def setup(app, *args, app_key=APP_KEY, context_processors=(),
           filters=None, default_helpers=True, **kwargs):
     env = jinja2.Environment(*args, **kwargs)
     if default_helpers:
-        env.filters['static'] = static_url
-        env.globals['url'] = reverse_url
+        env.globals.update(GLOBAL_HELPERS)
     if filters is not None:
         env.filters.update(filters)
     app[app_key] = env

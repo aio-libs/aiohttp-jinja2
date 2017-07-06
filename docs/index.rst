@@ -97,16 +97,69 @@ As you can see, there is a built-in :func:`request_processor`, which
 adds current :class:`aiohttp.web.Request` into context of templates
 under ``'request'`` name.
 
-By default there are two aiohttp specific :attr:`jinja2.Environment().globals` available in templates:
+Default Globals
+...............
 
-- ``url``: Resolve a named route url
-- ``app``: Use any properties on the app instance
+.. highlight:: html+jinja
+
+``app`` is always made in templates via :attr:`jinja2.Environment().globals`::
 
     <body>
         <h1>Welcome to {{ app['name'] }}</h1>
+    </body>
+
+
+Two more helpers are also enabled by default: ``url`` and ``static``.
+
+``url`` can be used with just a view name::
+
+    <body>
         <a href="{{ url('index') }}">Index Page</a>
     </body>
 
+
+Or with arguments::
+
+    <body>
+        <a href="{{ url('user', id=123) }}">User Page</a>
+    </body>
+
+A query can be added to the url with the special ``query`` keyword argument::
+
+    <body>
+        <a href="{{ url('user', id=123, query={'foo': 'bar'}) }}">User Page</a>
+    </body>
+
+
+For a view defined by ``app.router.add_get('/user-profile/{id}/', user, name='user')``, the above would give::
+
+    <body>
+        <a href="/user-profile/123/?foo=bar">User Page</a>
+    </body>
+
+
+This is useful as it would allow your static path to switch in deployment or testing with just one line.
+
+The ``static`` function has similar usage, except it requires you to set ``static_root_url`` on the app
+
+.. code-block:: ruby
+
+    app = web.Application()
+    aiohttp_jinja2.setup(app,
+        loader=jinja2.FileSystemLoader('/path/to/templates/folder'))
+    app['static_root_url'] = '/static'
+
+Then in the template::
+
+        <script src="{{ static('dist/main.js') }}"></script>
+
+
+Would result in::
+
+        <script src="/static/dist/main.js"></script>
+
+
+Both ``url`` and ``static`` can be disabled by passing ``default_helpers=False`` to ``aiohttp_jinja2.setup``.
 
 Library Installation
 --------------------

@@ -1,6 +1,6 @@
 """
-useful context filters, see
-http://jinja.pocoo.org/docs/dev/api/#jinja2.contextfilter
+useful context functions, see
+http://jinja.pocoo.org/docs/dev/api/#jinja2.contextfunction
 """
 import jinja2
 
@@ -37,7 +37,7 @@ def reverse_url(context, route_name, **parts):
     return app.router[route_name].url(**kwargs)
 
 
-@jinja2.contextfilter
+@jinja2.contextfunction
 def static_url(context, static_file_path):
     """
     filter for generating urls for static files.
@@ -62,3 +62,9 @@ def static_url(context, static_file_path):
                            '"static_root_url", you need to set the url root '
                            'with `app[\'static_root_url\'] = \'<static root>\'`.')
     return '{}/{}'.format(static_url.rstrip('/'), static_file_path.lstrip('/'))
+
+
+GLOBAL_HELPERS = dict(
+    url=reverse_url,
+    static=static_url,
+)
