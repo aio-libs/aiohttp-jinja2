@@ -4,7 +4,7 @@ import jinja2
 from collections import Mapping
 from aiohttp import web
 from aiohttp.abc import AbstractView
-from .helpers import DEFAULT_FILTERS
+from .helpers import static_url, reverse_url
 
 
 __version__ = '0.13.0'
@@ -18,10 +18,11 @@ REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
 
 
 def setup(app, *args, app_key=APP_KEY, context_processors=(),
-          filters=None, default_filters=True, **kwargs):
+          filters=None, default_helpers=True, **kwargs):
     env = jinja2.Environment(*args, **kwargs)
-    if default_filters:
-        env.filters.update(DEFAULT_FILTERS)
+    if default_helpers:
+        env.filters['static'] = static_url
+        env.globals['url'] = reverse_url
     if filters is not None:
         env.filters.update(filters)
     app[app_key] = env
