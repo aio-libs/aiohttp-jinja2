@@ -66,6 +66,35 @@ def test_url_with_query(test_client, loop):
 
 
 @asyncio.coroutine
+def test_helpers_disabled(test_client, loop):
+
+    @aiohttp_jinja2.template('tmpl.jinja2')
+    @asyncio.coroutine
+    def index(request):
+        return {}
+
+    @asyncio.coroutine
+    def other(request):
+        return
+
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(
+        app,
+        default_helpers=False,
+        loader=jinja2.DictLoader(
+            {'tmpl.jinja2':
+             "{{ url('index', query={'foo': 'bar'})}}"})
+    )
+
+    app.router.add_route('GET', '/', index)
+    app.router.add_route('GET', '/user/{name}', other, name='other')
+    client = yield from test_client(app)
+
+    resp = yield from client.get('/')
+    assert 500 == resp.status  # url function is not defined
+
+
+@asyncio.coroutine
 def test_static(test_client, loop):
 
     @aiohttp_jinja2.template('tmpl.jinja2')

@@ -47,7 +47,7 @@ def static_url(context, static_file_path):
 
     Usage:
 
-      {{ 'styles.css'|static }} might become
+      {{ static('styles.css') }} might become
         "/static/styles.css" or "http://mycdn.example.com/styles.css"
 
     :param context: jinja2 context
