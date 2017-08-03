@@ -2,7 +2,7 @@ flake8==3.4.1
 coverage==4.4
 sphinx==1.6.3
 alabaster>=0.6.2
-aiohttp==2.2.3
+aiohttp==2.2.5
 jinja2==2.9.6
 pytest==3.2.0
 pytest-cov==2.5.1
