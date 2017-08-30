@@ -201,7 +201,7 @@ Reference
    *app_key* is an optional key for application dict, :const:`APP_KEY`
    by default.
 
-   The functions is rougly equivalent for::
+   The functions is roughly equivalent for::
 
       def setup(app, *args, app_key=APP_KEY, **kwargs):
           env = jinja2.Environment(*args, **kwargs)
