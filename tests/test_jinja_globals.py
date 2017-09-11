@@ -6,23 +6,15 @@ from aiohttp import web
 import aiohttp_jinja2
 
 
-def test_get_env(loop):
-    app = web.Application(loop=loop)
-    aiohttp_jinja2.setup(
-        app,
-        loader=jinja2.DictLoader({
-            'tmpl.jinja2': "tmpl"
-        }),
-        enable_async=False,
-    )
-
+def test_get_env(app_with_template):
+    app = app_with_template("tmpl")
     env = aiohttp_jinja2.get_env(app)
     assert isinstance(env, jinja2.Environment)
     assert env is aiohttp_jinja2.get_env(app)
 
 
 @asyncio.coroutine
-def test_url(test_client, loop):
+def test_url(app_with_template, test_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     @asyncio.coroutine
@@ -33,15 +25,7 @@ def test_url(test_client, loop):
     def other(request):
         return
 
-    app = web.Application(loop=loop)
-    aiohttp_jinja2.setup(
-        app,
-        loader=jinja2.DictLoader({
-            'tmpl.jinja2': "{{ url('other', name='John_Doe')}}"
-         }),
-        enable_async=False,
-    )
-
+    app = app_with_template("{{ url('other', name='John_Doe')}}")
     app.router.add_route('GET', '/', index)
     app.router.add_route('GET', '/user/{name}', other, name='other')
     client = yield from test_client(app)
@@ -53,22 +37,14 @@ def test_url(test_client, loop):
 
 
 @asyncio.coroutine
-def test_url_with_query(test_client, loop):
+def test_url_with_query(app_with_template, test_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     @asyncio.coroutine
     def index(request):
         return {}
 
-    app = web.Application(loop=loop)
-    aiohttp_jinja2.setup(
-        app,
-        loader=jinja2.DictLoader({
-            'tmpl.jinja2': "{{ url('index', query_={'foo': 'bar'})}}"
-        }),
-        enable_async=False,
-     )
-
+    app = app_with_template("{{ url('index', query_={'foo': 'bar'})}}")
     app.router.add_get('/', index, name='index')
     client = yield from test_client(app)
 
@@ -109,21 +85,14 @@ def test_helpers_disabled(test_client, loop):
 
 
 @asyncio.coroutine
-def test_static(test_client, loop):
+def test_static(app_with_template, test_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     @asyncio.coroutine
     def index(request):
         return {}
 
-    app = web.Application(loop=loop)
-    aiohttp_jinja2.setup(
-        app,
-        loader=jinja2.DictLoader({
-            'tmpl.jinja2': "{{ static('whatever.js') }}"
-        }),
-        enable_async=False,
-    )
+    app = app_with_template("{{ static('whatever.js') }}")
 
     app['static_root_url'] = '/static'
     app.router.add_route('GET', '/', index)
@@ -136,22 +105,14 @@ def test_static(test_client, loop):
 
 
 @asyncio.coroutine
-def test_static_var_missing(test_client, loop):
+def test_static_var_missing(app_with_template, test_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     @asyncio.coroutine
     def index(request):
         return {}
 
-    app = web.Application(loop=loop)
-    aiohttp_jinja2.setup(
-        app,
-        loader=jinja2.DictLoader({
-            'tmpl.jinja2': "{{ static('whatever.js') }}"
-        }),
-        enable_async=False,
-    )
-
+    app = app_with_template("{{ static('whatever.js') }}")
     app.router.add_route('GET', '/', index)
     client = yield from test_client(app)
 
