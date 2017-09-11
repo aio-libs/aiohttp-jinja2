@@ -18,8 +18,8 @@ REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
 
 
 def setup(app, *args, app_key=APP_KEY, context_processors=(),
-          filters=None, default_helpers=True, **kwargs):
-    env = jinja2.Environment(*args, **kwargs)
+          filters=None, default_helpers=True, enable_async=True, **kwargs):
+    env = jinja2.Environment(*args, enable_async=enable_async, **kwargs)
     if default_helpers:
         env.globals.update(GLOBAL_HELPERS)
     if filters is not None:
