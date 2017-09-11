@@ -31,8 +31,8 @@ Developing
 
 Install requirement and launch tests::
 
-    pip install -r requirements-dev.txt
-    py.test tests
+    pip install -e .[tests]
+    pytest tests
 
 
 Usage
