@@ -4,10 +4,10 @@ flake:
 	flake8 aiohttp_jinja2 tests 
 
 test: flake
-	py.test -s ./tests/
+	pytest -s ./tests/
 
 cov cover coverage:
-	py.test --cov=aiohttp_jinja2 --cov-report=html --cov-report=term ./tests/
+	pytest --cov=aiohttp_jinja2 --cov-report=html --cov-report=term ./tests/
 	@echo "open file://`pwd`/htmlcov/index.html"
 
 clean:
