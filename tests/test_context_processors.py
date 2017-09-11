@@ -16,14 +16,19 @@ def test_context_processors(test_client, loop):
 
     app = web.Application(loop=loop, middlewares=[
             aiohttp_jinja2.context_processors_middleware])
-    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
-        {'tmpl.jinja2':
-         'foo: {{ foo }}, bar: {{ bar }}, path: {{ request.path }}'}))
+    aiohttp_jinja2.setup(
+        app,
+        loader=jinja2.DictLoader({
+            'tmpl.jinja2': ("foo: {{ foo }}, bar: {{ bar }}, "
+                            "path: {{ request.path }}")
+        }),
+        enable_async=False,
+    )
 
     app['aiohttp_jinja2_context_processors'] = (
         aiohttp_jinja2.request_processor,
         asyncio.coroutine(
-            lambda request: {'foo': 1, 'bar': 'should be overwriten'}),
+            lambda request: {'foo': 1, 'bar': 'should be overwritten'}),
     )
 
     app.router.add_get('/', func)
@@ -37,15 +42,13 @@ def test_context_processors(test_client, loop):
 
 
 @asyncio.coroutine
-def test_context_is_response(test_client, loop):
+def test_context_is_response(app_with_template, test_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     def func(request):
         return web.HTTPForbidden()
 
-    app = web.Application(loop=loop)
-    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
-        {'tmpl.jinja2': "template"}))
+    app = app_with_template("tmpl")
 
     app.router.add_route('GET', '/', func)
     client = yield from test_client(app)
@@ -63,18 +66,18 @@ def test_context_processors_new_setup_style(test_client, loop):
     def func(request):
         return {'bar': 2}
 
+    template = "foo: {{ foo }}, bar: {{ bar }}, path: {{ request.path }}"
+    ctx_coro = asyncio.coroutine(
+        lambda request: {'foo': 1, 'bar': 'should be overwritten'})
     app = web.Application(loop=loop)
     aiohttp_jinja2.setup(
         app,
-        loader=jinja2.DictLoader(
-            {'tmpl.jinja2':
-             'foo: {{ foo }}, bar: {{ bar }}, '
-             'path: {{ request.path }}'}),
-        context_processors=(aiohttp_jinja2.request_processor,
-                            asyncio.coroutine(
-                                lambda request: {
-                                    'foo': 1,
-                                    'bar': 'should be overwriten'})))
+        loader=jinja2.DictLoader({
+            'tmpl.jinja2': template
+        }),
+        context_processors=(aiohttp_jinja2.request_processor, ctx_coro),
+        enable_async=False,
+    )
 
     app.router.add_route('GET', '/', func)
     client = yield from test_client(app)
@@ -96,11 +99,13 @@ def test_context_not_tainted(test_client, loop):
         return global_context
 
     app = web.Application(loop=loop)
+    ctx_coro = asyncio.coroutine(lambda request: {'foo': 1})
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.DictLoader({'tmpl.jinja2': 'foo: {{ foo }}'}),
-        context_processors=[asyncio.coroutine(
-                                lambda request: {'foo': 1})])
+        context_processors=[ctx_coro],
+        enable_async=False,
+    )
 
     app.router.add_get('/', func)
     client = yield from test_client(app)
