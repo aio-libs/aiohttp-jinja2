@@ -13,7 +13,7 @@ def app_with_template(loop):
             loader=jinja2.DictLoader({
                 'tmpl.jinja2': template
             }),
-            enable_async=False,
+            enable_async=True,
          )
         return app
 

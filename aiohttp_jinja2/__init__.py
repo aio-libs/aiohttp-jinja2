@@ -38,6 +38,7 @@ def get_env(app, *, app_key=APP_KEY):
     return app.get(app_key)
 
 
+@asyncio.coroutine
 def render_string(template_name, request, context, *, app_key=APP_KEY):
     env = request.app.get(app_key)
     if env is None:
@@ -59,16 +60,18 @@ def render_string(template_name, request, context, *, app_key=APP_KEY):
         raise web.HTTPInternalServerError(reason=text, text=text)
     if request.get(REQUEST_CONTEXT_KEY):
         context = dict(request[REQUEST_CONTEXT_KEY], **context)
-    text = template.render(context)
+    text = yield from template.render(context)
     return text
 
 
+@asyncio.coroutine
 def render_template(template_name, request, context, *,
                     app_key=APP_KEY, encoding='utf-8', status=200):
     response = web.Response(status=status)
     if context is None:
         context = {}
-    text = render_string(template_name, request, context, app_key=app_key)
+    text = yield from render_string(template_name, request, context,
+                                    app_key=app_key)
     response.content_type = 'text/html'
     response.charset = encoding
     response.text = text
@@ -95,8 +98,9 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
             else:
                 request = args[-1]
 
-            response = render_template(template_name, request, context,
-                                       app_key=app_key, encoding=encoding)
+            response = yield from render_template(
+                template_name, request, context,
+                app_key=app_key, encoding=encoding)
             response.set_status(status)
             return response
         return wrapped
