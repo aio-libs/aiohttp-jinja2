@@ -45,6 +45,11 @@ Before template rendering you have to setup *jinja2 environment* first::
         loader=jinja2.FileSystemLoader('/path/to/templates/folder'))
 
 
+
+`Async rendering feature <http://jinja.pocoo.org/docs/2.9/api/#async-support>`_
+is enabled by default. You *might want* to disable that providing ``enable_async=False``
+keyword argument to ``setup`` method.
+
 After that you may to use template engine in your *web-handlers*. The
 most convenient way is to decorate a *web-handler*.
 

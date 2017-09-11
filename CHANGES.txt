@@ -4,11 +4,8 @@ CHANGES
 0.15.0 (2017-xx-xx)
 -------------------
 
--
+- Enable async support feature available in Jinja 2.9 #152
 
--
-
--
 
 0.13.0 (2016-12-14)
 -------------------
