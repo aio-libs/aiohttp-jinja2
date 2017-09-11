@@ -9,7 +9,7 @@ import aiohttp_jinja2
 
 
 @asyncio.coroutine
-def test_func(loop, test_client):
+def test_func(app_with_template, test_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     @asyncio.coroutine
@@ -17,10 +17,7 @@ def test_func(loop, test_client):
         return {'head': 'HEAD', 'text': 'text'}
 
     template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
-    app = web.Application(loop=loop)
-    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({
-        'tmpl.jinja2': template
-    }))
+    app = app_with_template(template)
 
     app.router.add_route('*', '/', func)
 

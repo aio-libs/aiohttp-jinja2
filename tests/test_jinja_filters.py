@@ -21,7 +21,8 @@ def test_jinja_filters(test_client, loop):
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.DictLoader({'tmpl.jinja2': "{{ 5|add_2 }}"}),
-        filters={'add_2': add_2}
+        filters={'add_2': add_2},
+        enable_async=False,
     )
 
     app.router.add_route('GET', '/', index)
