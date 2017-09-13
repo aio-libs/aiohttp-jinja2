@@ -22,7 +22,7 @@ def test_context_processors(test_client, loop):
             'tmpl.jinja2': ("foo: {{ foo }}, bar: {{ bar }}, "
                             "path: {{ request.path }}")
         }),
-        enable_async=False,
+        enable_async=True,
     )
 
     app['aiohttp_jinja2_context_processors'] = (
@@ -76,7 +76,7 @@ def test_context_processors_new_setup_style(test_client, loop):
             'tmpl.jinja2': template
         }),
         context_processors=(aiohttp_jinja2.request_processor, ctx_coro),
-        enable_async=False,
+        enable_async=True,
     )
 
     app.router.add_route('GET', '/', func)
@@ -104,7 +104,7 @@ def test_context_not_tainted(test_client, loop):
         app,
         loader=jinja2.DictLoader({'tmpl.jinja2': 'foo: {{ foo }}'}),
         context_processors=[ctx_coro],
-        enable_async=False,
+        enable_async=True,
     )
 
     app.router.add_get('/', func)

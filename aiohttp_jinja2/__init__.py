@@ -60,7 +60,7 @@ def render_string(template_name, request, context, *, app_key=APP_KEY):
         raise web.HTTPInternalServerError(reason=text, text=text)
     if request.get(REQUEST_CONTEXT_KEY):
         context = dict(request[REQUEST_CONTEXT_KEY], **context)
-    text = yield from template.render(context)
+    text = yield from template.render_async(context)
     return text
 
 

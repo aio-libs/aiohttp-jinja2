@@ -242,7 +242,6 @@ def test_render_without_context(app_with_template, test_client):
 
     client = yield from test_client(app)
     resp = yield from client.get('/')
-
     assert 200 == resp.status
     txt = yield from resp.text()
     assert '<html><body><p></p></body></html>' == txt
