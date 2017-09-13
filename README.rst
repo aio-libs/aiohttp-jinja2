@@ -48,9 +48,12 @@ Before template rendering you have to setup *jinja2 environment* first::
 
 `Async rendering feature <http://jinja.pocoo.org/docs/2.9/api/#async-support>`_
 is enabled by default. You *might want* to disable that providing ``enable_async=False``
-keyword argument to ``setup`` method.
+keyword argument to ``setup`` method. There is no difference in usage between two of
+them. In async mode enabled if you try to invoke sync Jinja2 methods (e.g. ``render``)
+it will internally invoke corresponding sync method (e.g. ``render_async``) and run it
+as part of the current event loop until the execution finished.
 
-After that you may to use template engine in your *web-handlers*. The
+After that you may want to use template engine in your *web-handlers*. The
 most convenient way is to decorate a *web-handler*.
 
 Using the function based web handlers::
@@ -100,4 +103,5 @@ Or, again, a class based view::
 License
 -------
 
-``aiohttp_jinja2`` is offered under the Apache 2 license.
+``aiohttp_jinja2`` is offered under the
+`Apache 2 license <https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)>`_.
