@@ -102,7 +102,9 @@ def test_render_not_initialized(loop):
 
     @asyncio.coroutine
     def func(request):
-        return aiohttp_jinja2.render_template('template', request, {})
+        response = yield from aiohttp_jinja2.render_template(
+            'template', request, {})
+        return response
 
     app = web.Application(loop=loop)
 
@@ -145,9 +147,10 @@ def test_render_template(app_with_template, test_client):
 
     @asyncio.coroutine
     def func(request):
-        return aiohttp_jinja2.render_template(
+        response = yield from aiohttp_jinja2.render_template(
             'tmpl.jinja2', request,
             {'head': 'HEAD', 'text': 'text'})
+        return response
 
     template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
 
@@ -168,9 +171,10 @@ def test_render_template_custom_status(app_with_template, test_client):
 
     @asyncio.coroutine
     def func(request):
-        return aiohttp_jinja2.render_template(
+        response = yield from aiohttp_jinja2.render_template(
             'tmpl.jinja2', request,
             {'head': 'HEAD', 'text': 'text'}, status=404)
+        return response
 
     template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
 
@@ -191,7 +195,9 @@ def test_template_not_found(loop):
 
     @asyncio.coroutine
     def func(request):
-        return aiohttp_jinja2.render_template('template', request, {})
+        response = yield from aiohttp_jinja2.render_template(
+            'template', request, {})
+        return response
 
     app = web.Application(loop=loop)
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({}))
