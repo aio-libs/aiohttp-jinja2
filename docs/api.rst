@@ -39,7 +39,18 @@ parameters.
 
 Example of usage
 ^^^^^^^^^^^^^^^^
-here we go
+Simple initialization::
+
+   import jinja2
+   import aiohttp_jinja2
+   from aiohttp import web
+
+
+   app = web.Application()
+   aiohttp_jinja2.setup(
+      app,
+      loader=jinja2.FileSystemLoader('/path/to/templates/folder'),
+   )
 
 
 .. function:: render_string(template_name, request, context, *,
@@ -73,5 +84,14 @@ here we go
 
 Example of usage
 ^^^^^^^^^^^^^^^^
+Assuming the initialization from the example about has been done::
 
-here we go
+   async def handler(request):
+      context = {'foo': 'bar'}
+      response = aiohttp_jinja2.render_template('tmpl.jinja2',
+                                                request,
+                                                context)
+      return response
+
+   app.router.add_get('/tmpl', handler)
+
