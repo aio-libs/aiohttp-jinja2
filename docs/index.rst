@@ -177,7 +177,7 @@ Please feel free to file an issue on `bug tracker
 <https://github.com/aio-libs/aiohttp_jinja2/issues>`_ if you have found a bug
 or have some suggestion for library improvement.
 
-The library uses `Travis <https://travis-ci.org/aio-libs/aiohttp_jinja2>`_ for
+The library uses `Travis <https://travis-ci.org/aio-libs/aiohttp-jinja2>`_ for
 Continuous Integration.
 
 IRC channel

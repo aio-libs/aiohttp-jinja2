@@ -1,6 +1,8 @@
 API
 ===
 
+This page describes module API with detailed explanations of the functions
+parameters.
 
 .. module:: aiohttp_jinja2
 .. highlight:: python
@@ -34,3 +36,42 @@ API
    :param ``*args``: positional arguments passed into environment constructor.
    :param ``**kwargs``: any arbitrary keyword arguments you want to pass to
                         :class:`jinja2.Environment` environment.
+
+Example of usage
+^^^^^^^^^^^^^^^^
+here we go
+
+
+.. function:: render_string(template_name, request, context, *,
+                            app_key=APP_KEY)
+
+   Renders template specified and returns resulting string.
+
+   :param str template_name: Name of the template you want to render. Usually
+                             it's a filename without extension on your
+                             filesystem.
+   :param request: request to the main application that implies template
+                   rendering.
+   :type request: :class:`aiohttp.web.Request`
+
+   :param context: set of variables that are used to fill the template.
+   :param str app_key: is an optional key for application dict.
+
+
+.. function:: render_template(template_name, request, context, *,
+                              app_key=APP_KEY, encoding='utf-8', status=200)
+
+   :param str template_name: Name of the template you want to render.
+   :param request: request to the main application that implies template
+                   rendering.
+   :type request: :class:`aiohttp.web.Request`
+
+   :param dict context: set of variables that are used to fill the template.
+   :param app_key: is an optional key for application dict.
+   :param int status: desc.
+
+
+Example of usage
+^^^^^^^^^^^^^^^^
+
+here we go
