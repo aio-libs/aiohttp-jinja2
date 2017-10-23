@@ -1,6 +1,6 @@
 flake8==3.5.0
 coverage==4.4.1
-sphinx==1.6.4
+sphinx==1.6.5
 alabaster>=0.6.2
 aiohttp==2.2.5
 jinja2==2.9.6
