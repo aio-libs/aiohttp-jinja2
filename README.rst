@@ -44,6 +44,10 @@ Before template rendering you have to setup *jinja2 environment* first::
     aiohttp_jinja2.setup(app,
         loader=jinja2.FileSystemLoader('/path/to/templates/folder'))
 
+Import::
+
+    import aiohttp_jinja2
+    import jinja2
 
 After that you may to use template engine in your *web-handlers*. The
 most convenient way is to decorate a *web-handler*.
