@@ -25,7 +25,7 @@ def setup(app, *args, app_key=APP_KEY, context_processors=(),
     if filters is not None:
         env.filters.update(filters)
     if 'autoescape' not in kwargs:
-        env.autoescape = aiohttp_jinja2_autoescape
+        env.autoescape = lambda _: True
     app[app_key] = env
     if context_processors:
         app[APP_CONTEXT_PROCESSORS_KEY] = context_processors
@@ -34,12 +34,6 @@ def setup(app, *args, app_key=APP_KEY, context_processors=(),
     env.globals['app'] = app
 
     return env
-
-
-def aiohttp_jinja2_autoescape(template):
-    if template is None:
-        return True
-    return template.endswith(('.html', '.htm', '.xml', '.xhtml', '.jinja2'))
 
 
 def get_env(app, *, app_key=APP_KEY):
