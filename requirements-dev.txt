@@ -7,6 +7,6 @@ jinja2==2.10
 pytest==3.3.2
 pytest-cov==2.5.1
 yarl==1.1.0
-multidict==3.3.2
+multidict==4.0.0
 pytest-aiohttp==0.3.0
 -e .
