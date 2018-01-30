@@ -16,7 +16,6 @@ def read(f):
     return open(os.path.join(os.path.dirname(__file__), f)).read().strip()
 
 install_requires = ['aiohttp>=2.3.0', 'jinja2>=2.7']
-tests_require = install_requires + ['nose']
 
 
 setup(name='aiohttp-jinja2',
@@ -31,6 +30,7 @@ setup(name='aiohttp-jinja2',
           'Programming Language :: Python :: 3',
           'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
           'Topic :: Internet :: WWW/HTTP',
           'Framework :: AsyncIO',
       ],
