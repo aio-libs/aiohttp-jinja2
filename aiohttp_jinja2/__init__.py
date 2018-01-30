@@ -104,16 +104,15 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
     return wrapper
 
 
+@web.middleware
 @asyncio.coroutine
-def context_processors_middleware(app, handler):
-    @asyncio.coroutine
-    def middleware(request):
-        request[REQUEST_CONTEXT_KEY] = {}
-        for processor in app[APP_CONTEXT_PROCESSORS_KEY]:
-            request[REQUEST_CONTEXT_KEY].update(
-                (yield from processor(request)))
-        return (yield from handler(request))
-    return middleware
+def context_processors_middleware(request, handler):
+
+    request[REQUEST_CONTEXT_KEY] = {}
+    for processor in request.app[APP_CONTEXT_PROCESSORS_KEY]:
+        request[REQUEST_CONTEXT_KEY].update(
+            (yield from processor(request)))
+    return (yield from handler(request))
 
 
 @asyncio.coroutine
