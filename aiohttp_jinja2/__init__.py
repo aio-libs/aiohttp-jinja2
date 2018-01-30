@@ -19,6 +19,7 @@ REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
 
 def setup(app, *args, app_key=APP_KEY, context_processors=(),
           filters=None, default_helpers=True, **kwargs):
+    kwargs.setdefault('autoescape', True)
     env = jinja2.Environment(*args, **kwargs)
     if default_helpers:
         env.globals.update(GLOBAL_HELPERS)

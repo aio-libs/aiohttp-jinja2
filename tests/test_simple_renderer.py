@@ -278,3 +278,45 @@ def test_render_without_context(loop, test_client):
     assert 200 == resp.status
     txt = yield from resp.text()
     assert '<html><body><p></p></body></html>' == txt
+
+
+@asyncio.coroutine
+def test_render_default_is_autoescaped(loop, test_client):
+
+    @aiohttp_jinja2.template('tmpl.jinja2')
+    def func(request):
+        return {'text': '<script>alert(1)</script>'}
+
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
+        {'tmpl.jinja2': '<html>{{text}}</html>'}))
+
+    app.router.add_route('GET', '/', func)
+
+    client = yield from test_client(app)
+    resp = yield from client.get('/')
+
+    assert 200 == resp.status
+    txt = yield from resp.text()
+    assert '<html>&lt;script&gt;alert(1)&lt;/script&gt;</html>' == txt
+
+
+@asyncio.coroutine
+def test_render_can_disable_autoescape(loop, test_client):
+
+    @aiohttp_jinja2.template('tmpl.jinja2')
+    def func(request):
+        return {'text': '<script>alert(1)</script>'}
+
+    app = web.Application(loop=loop)
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
+        {'tmpl.jinja2': '<html>{{text}}</html>'}), autoescape=False)
+
+    app.router.add_route('GET', '/', func)
+
+    client = yield from test_client(app)
+    resp = yield from client.get('/')
+
+    assert 200 == resp.status
+    txt = yield from resp.text()
+    assert '<html><script>alert(1)</script></html>' == txt
