@@ -1,6 +1,8 @@
 import asyncio
+import logging
 
 import jinja2
+import pytest
 from aiohttp import web
 
 import aiohttp_jinja2
@@ -68,14 +70,12 @@ def test_url_with_query(test_client, loop):
 @asyncio.coroutine
 def test_helpers_disabled(test_client, loop):
 
-    @aiohttp_jinja2.template('tmpl.jinja2')
     @asyncio.coroutine
     def index(request):
-        return {}
-
-    @asyncio.coroutine
-    def other(request):
-        return
+        with pytest.raises(jinja2.UndefinedError,
+                           match="'url' is undefined"):
+            aiohttp_jinja2.render_template('tmpl.jinja2', request, {})
+        return web.Response()
 
     app = web.Application(loop=loop)
     aiohttp_jinja2.setup(
@@ -86,11 +86,10 @@ def test_helpers_disabled(test_client, loop):
     )
 
     app.router.add_route('GET', '/', index)
-    app.router.add_route('GET', '/user/{name}', other, name='other')
     client = yield from test_client(app)
 
     resp = yield from client.get('/')
-    assert 500 == resp.status  # url function is not defined
+    assert 200 == resp.status
 
 
 @asyncio.coroutine
@@ -117,12 +116,13 @@ def test_static(test_client, loop):
 
 
 @asyncio.coroutine
-def test_static_var_missing(test_client, loop):
+def test_static_var_missing(test_client, loop, caplog):
 
-    @aiohttp_jinja2.template('tmpl.jinja2')
     @asyncio.coroutine
     def index(request):
-        return {}
+        with pytest.raises(RuntimeError, match='static_root_url') as ctx:
+            aiohttp_jinja2.render_template('tmpl.jinja2', request, {})
+        return web.Response()
 
     app = web.Application(loop=loop)
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
@@ -133,4 +133,4 @@ def test_static_var_missing(test_client, loop):
     client = yield from test_client(app)
 
     resp = yield from client.get('/')
-    assert 500 == resp.status  # static_root_url is not set
+    assert 200 == resp.status  # static_root_url is not set

@@ -39,9 +39,10 @@ def static_url(context, static_file_path):
     try:
         static_url = app['static_root_url']
     except KeyError:
-        raise RuntimeError("app does not define a static root url "
-                           "'static_root_url', you need to set the url root "
-                           "with app['static_root_url'] = '<static root>'.")
+        raise RuntimeError(
+            "app does not define a static root url "
+            "'static_root_url', you need to set the url root "
+            "with app['static_root_url'] = '<static root>'.") from None
     return '{}/{}'.format(static_url.rstrip('/'), static_file_path.lstrip('/'))
 
 
