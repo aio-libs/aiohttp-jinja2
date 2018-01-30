@@ -1,5 +1,4 @@
 import asyncio
-import logging
 
 import jinja2
 import pytest
@@ -120,7 +119,7 @@ def test_static_var_missing(test_client, loop, caplog):
 
     @asyncio.coroutine
     def index(request):
-        with pytest.raises(RuntimeError, match='static_root_url') as ctx:
+        with pytest.raises(RuntimeError, match='static_root_url'):
             aiohttp_jinja2.render_template('tmpl.jinja2', request, {})
         return web.Response()
 
