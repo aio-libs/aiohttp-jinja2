@@ -325,3 +325,23 @@ async def test_render_bare_funcs_deprecated(aiohttp_client):
     assert 200 == resp.status
     txt = await resp.text()
     assert 'OK' == txt
+
+
+async def test_skip_render_for_response_from_handler(aiohttp_client):
+
+    @aiohttp_jinja2.template('tmpl.jinja2')
+    async def func(request):
+        return web.Response(text='OK')
+
+    app = web.Application()
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
+        {'tmpl.jinja2': '{{text}}'}))
+
+    app.router.add_route('GET', '/', func)
+
+    client = await aiohttp_client(app)
+    resp = await client.get('/')
+
+    assert 200 == resp.status
+    txt = await resp.text()
+    assert 'OK' == txt
