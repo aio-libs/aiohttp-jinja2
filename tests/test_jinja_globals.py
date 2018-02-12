@@ -1,5 +1,3 @@
-import asyncio
-
 import jinja2
 import pytest
 from aiohttp import web
@@ -7,8 +5,8 @@ from aiohttp import web
 import aiohttp_jinja2
 
 
-def test_get_env(loop):
-    app = web.Application(loop=loop)
+def test_get_env():
+    app = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
         {'tmpl.jinja2': "tmpl"}))
 
@@ -17,66 +15,59 @@ def test_get_env(loop):
     assert env is aiohttp_jinja2.get_env(app)
 
 
-@asyncio.coroutine
-def test_url(test_client, loop):
+async def test_url(aiohttp_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
-    @asyncio.coroutine
-    def index(request):
+    async def index(request):
         return {}
 
-    @asyncio.coroutine
-    def other(request):
+    async def other(request):
         return
 
-    app = web.Application(loop=loop)
+    app = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
         {'tmpl.jinja2':
          "{{ url('other', name='John_Doe')}}"}))
 
     app.router.add_route('GET', '/', index)
     app.router.add_route('GET', '/user/{name}', other, name='other')
-    client = yield from test_client(app)
+    client = await aiohttp_client(app)
 
-    resp = yield from client.get('/')
+    resp = await client.get('/')
     assert 200 == resp.status
-    txt = yield from resp.text()
+    txt = await resp.text()
     assert '/user/John_Doe' == txt
 
 
-@asyncio.coroutine
-def test_url_with_query(test_client, loop):
+async def test_url_with_query(aiohttp_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
-    @asyncio.coroutine
-    def index(request):
+    async def index(request):
         return {}
 
-    app = web.Application(loop=loop)
+    app = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
         {'tmpl.jinja2':
          "{{ url('index', query_={'foo': 'bar'})}}"}))
 
     app.router.add_get('/', index, name='index')
-    client = yield from test_client(app)
+    client = await aiohttp_client(app)
 
-    resp = yield from client.get('/')
+    resp = await client.get('/')
     assert 200 == resp.status
-    txt = yield from resp.text()
+    txt = await resp.text()
     assert '/?foo=bar' == txt
 
 
-@asyncio.coroutine
-def test_helpers_disabled(test_client, loop):
+async def test_helpers_disabled(aiohttp_client):
 
-    @asyncio.coroutine
-    def index(request):
+    async def index(request):
         with pytest.raises(jinja2.UndefinedError,
                            match="'url' is undefined"):
             aiohttp_jinja2.render_template('tmpl.jinja2', request, {})
         return web.Response()
 
-    app = web.Application(loop=loop)
+    app = web.Application()
     aiohttp_jinja2.setup(
         app,
         default_helpers=False,
@@ -85,51 +76,47 @@ def test_helpers_disabled(test_client, loop):
     )
 
     app.router.add_route('GET', '/', index)
-    client = yield from test_client(app)
+    client = await aiohttp_client(app)
 
-    resp = yield from client.get('/')
+    resp = await client.get('/')
     assert 200 == resp.status
 
 
-@asyncio.coroutine
-def test_static(test_client, loop):
+async def test_static(aiohttp_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
-    @asyncio.coroutine
-    def index(request):
+    async def index(request):
         return {}
 
-    app = web.Application(loop=loop)
+    app = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
         {'tmpl.jinja2':
          "{{ static('whatever.js') }}"}))
 
     app['static_root_url'] = '/static'
     app.router.add_route('GET', '/', index)
-    client = yield from test_client(app)
+    client = await aiohttp_client(app)
 
-    resp = yield from client.get('/')
+    resp = await client.get('/')
     assert 200 == resp.status
-    txt = yield from resp.text()
+    txt = await resp.text()
     assert '/static/whatever.js' == txt
 
 
-@asyncio.coroutine
-def test_static_var_missing(test_client, loop, caplog):
+async def test_static_var_missing(aiohttp_client, caplog):
 
-    @asyncio.coroutine
-    def index(request):
+    async def index(request):
         with pytest.raises(RuntimeError, match='static_root_url'):
             aiohttp_jinja2.render_template('tmpl.jinja2', request, {})
         return web.Response()
 
-    app = web.Application(loop=loop)
+    app = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
         {'tmpl.jinja2':
          "{{ static('whatever.js') }}"}))
 
     app.router.add_route('GET', '/', index)
-    client = yield from test_client(app)
+    client = await aiohttp_client(app)
 
-    resp = yield from client.get('/')
+    resp = await client.get('/')
     assert 200 == resp.status  # static_root_url is not set
