@@ -55,3 +55,4 @@ target/
 
 coverage/
 .idea/
+.pytest_cache
