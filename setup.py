@@ -15,7 +15,7 @@ with codecs.open(os.path.join(os.path.abspath(os.path.dirname(
 def read(f):
     return open(os.path.join(os.path.dirname(__file__), f)).read().strip()
 
-install_requires = ['aiohttp>=2.3.0', 'jinja2>=2.7']
+install_requires = ['aiohttp>=3.0.0', 'jinja2>=2.7']
 
 
 setup(name='aiohttp-jinja2',
@@ -28,7 +28,6 @@ setup(name='aiohttp-jinja2',
           'Intended Audience :: Developers',
           'Programming Language :: Python',
           'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
           'Topic :: Internet :: WWW/HTTP',
@@ -39,5 +38,6 @@ setup(name='aiohttp-jinja2',
       url='https://github.com/aio-libs/aiohttp_jinja2/',
       license='Apache 2',
       packages=['aiohttp_jinja2'],
+      python_requires='>=3.5.3',
       install_requires=install_requires,
       include_package_data=True)
