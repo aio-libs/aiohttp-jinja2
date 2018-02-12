@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+1.0.0 (2018-02-13)
+------------------
+
+- Pin to aiohttp 3.0+
+
+- Deprecate non-async handlers support
+
 0.15.0 (2018-01-30)
 -------------------
 

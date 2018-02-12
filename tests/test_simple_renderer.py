@@ -126,7 +126,7 @@ async def test_render_not_initialized():
 async def test_set_status(aiohttp_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2', status=201)
-    def func(request):
+    async def func(request):
         return {'head': 'HEAD', 'text': 'text'}
 
     template = '<html><body><h1>{{head}}</h1>{{text}}</body></html>'
@@ -240,7 +240,7 @@ async def test_render_not_mapping():
 async def test_render_without_context(aiohttp_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
-    def func(request):
+    async def func(request):
         pass
 
     template = '<html><body><p>{{text}}</p></body></html>'
@@ -262,7 +262,7 @@ async def test_render_without_context(aiohttp_client):
 async def test_render_default_is_autoescaped(aiohttp_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
-    def func(request):
+    async def func(request):
         return {'text': '<script>alert(1)</script>'}
 
     app = web.Application()
@@ -282,7 +282,7 @@ async def test_render_default_is_autoescaped(aiohttp_client):
 async def test_render_can_disable_autoescape(aiohttp_client):
 
     @aiohttp_jinja2.template('tmpl.jinja2')
-    def func(request):
+    async def func(request):
         return {'text': '<script>alert(1)</script>'}
 
     app = web.Application()
@@ -297,3 +297,31 @@ async def test_render_can_disable_autoescape(aiohttp_client):
     assert 200 == resp.status
     txt = await resp.text()
     assert '<html><script>alert(1)</script></html>' == txt
+
+
+async def test_render_bare_funcs_deprecated(aiohttp_client):
+
+    def wrapper(func):
+        async def wrapped(request):
+            with pytest.warns(DeprecationWarning,
+                              match='Bare functions are deprecated'):
+                return await func(request)
+        return wrapped
+
+    @wrapper
+    @aiohttp_jinja2.template('tmpl.jinja2')
+    def func(request):
+        return {'text': 'OK'}
+
+    app = web.Application()
+    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader(
+        {'tmpl.jinja2': '{{text}}'}))
+
+    app.router.add_route('GET', '/', func)
+
+    client = await aiohttp_client(app)
+    resp = await client.get('/')
+
+    assert 200 == resp.status
+    txt = await resp.text()
+    assert 'OK' == txt

@@ -1,5 +1,6 @@
 import asyncio
 import functools
+import warnings
 import jinja2
 from collections import Mapping
 from aiohttp import web
@@ -85,6 +86,8 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
             if asyncio.iscoroutinefunction(func):
                 coro = func
             else:
+                warnings.warn("Bare functions are deprecated, "
+                              "use async ones", DeprecationWarning)
                 coro = asyncio.coroutine(func)
             context = yield from coro(*args)
             if isinstance(context, web.StreamResponse):
