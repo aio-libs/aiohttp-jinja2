@@ -1,14 +1,20 @@
 CHANGES
 =======
 
-0.15.0 (2017-xx-xx)
+0.16.0 (2018-02-12)
 -------------------
 
--
+- Pin to aiohttp 3.0+
 
--
+- Deprecate non-async handlers support
 
--
+0.15.0 (2018-01-30)
+-------------------
+
+- Upgrade middleware to new style from aiohttp 2.3+ #182
+
+- Autoescape all templates by default #179
+
 
 0.13.0 (2016-12-14)
 -------------------

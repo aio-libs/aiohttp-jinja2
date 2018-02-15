@@ -131,16 +131,19 @@ A query can be added to the url with the special ``query_`` keyword argument::
     </body>
 
 
-For a view defined by ``app.router.add_get('/user-profile/{id}/', user, name='user')``, the above would give::
+For a view defined by ``app.router.add_get('/user-profile/{id}/',
+user, name='user')``, the above would give::
 
     <body>
         <a href="/user-profile/123/?foo=bar">User Page</a>
     </body>
 
 
-This is useful as it would allow your static path to switch in deployment or testing with just one line.
+This is useful as it would allow your static path to switch in
+deployment or testing with just one line.
 
-The ``static`` function has similar usage, except it requires you to set ``static_root_url`` on the app
+The ``static`` function has similar usage, except it requires you to
+set ``static_root_url`` on the app
 
 .. code-block:: ruby
 
@@ -159,7 +162,8 @@ Would result in::
         <script src="/static/dist/main.js"></script>
 
 
-Both ``url`` and ``static`` can be disabled by passing ``default_helpers=False`` to ``aiohttp_jinja2.setup``.
+Both ``url`` and ``static`` can be disabled by passing
+``default_helpers=False`` to ``aiohttp_jinja2.setup``.
 
 Library Installation
 --------------------
@@ -243,7 +247,9 @@ Reference
    Returned response has *Content-Type* header set to ``'text/html'``.
 
 
-.. function:: setup(app, *args, app_key=APP_KEY, **kwargs)
+.. function:: setup(app, *args, app_key=APP_KEY, autoescape=True, \
+                    context_processors=(), filters=None, \
+                    deault_helpers=True, **kwargs)
 
    Initialize :class:`jinja2.Environment` object.
 
@@ -254,12 +260,17 @@ Reference
    *app_key* is an optional key for application dict, :const:`APP_KEY`
    by default.
 
-   The functions is roughly equivalent for::
+   *autoescape* is passed to :class:`jinja2.Environemnt`, see
+    `Autoescaping` for more details.
 
-      def setup(app, *args, app_key=APP_KEY, **kwargs):
-          env = jinja2.Environment(*args, **kwargs)
-          app[app_key] = env
-          return env
+   *context_processors* is a collection of context processors to be
+   called before rendering a template.
+
+   *filters* is a collection of custom filters, see
+   :ref:`writing-filters` for details.
+
+   *default_helpers* is a boolean flag, ``static_url`` and ``url``
+   jinja2 functions are added to environment if ``True`` (default).
 
 
 .. decorator:: template(template_name, *, app_key=APP_KEY, encoding='utf-8',\
