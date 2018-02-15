@@ -18,8 +18,8 @@ parameters.
    :param app: :class:`aiohttp.web.Application` instance to initialize template
                system on.
 
-   :param str app_key: key that will be used to access templating environment
-                       from application dictionary object.
+   :param str app_key: optional key that will be used to access templating
+                       environment from application dictionary object.
 
    :param context_processors: list of :ref:`aiohttp-web-middlewares`. These are
                               context processors used to rewrite or inject some
@@ -37,6 +37,36 @@ parameters.
    :param ``*args``: positional arguments passed into environment constructor.
    :param ``**kwargs``: any arbitrary keyword arguments you want to pass to
                         :class:`jinja2.Environment` environment.
+
+
+.. function:: get_env(app, *, app_key)
+
+   Get aiohttp-jinja2 environment from an application instance by key.
+
+   :param app: :class:`aiohttp.web.Application` instance to get variables from.
+
+   :param str app_key: optinal key that will be used to access templating
+                       environment from application dictionary object.
+
+
+.. function:: template(template_name, *, app_key, encoding, status)
+
+   Behaves as a decorator around view functions accepting template name that
+   should be rendered as a result. Supports both synchronous and asynchronous
+   functions.
+
+   :param str template_name: name of the template file that will be looked up
+                             by the loader. Raises a 500 error in case template
+                             was not found.
+
+   :param str app_key: optional key that will be used to access templating
+                       environment from application dictionary object.
+
+   :param str encoding: encoding that will be set as a charset property on the
+                        response for rendered template, default to utf-8.
+
+   :params int status: http status code that will be set on resulting response.
+
 
 Example of usage
 ^^^^^^^^^^^^^^^^
