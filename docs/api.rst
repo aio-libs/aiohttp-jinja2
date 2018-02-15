@@ -26,7 +26,8 @@ parameters.
                               variables during the processing of a request.
    :type context_processors: :class:`list`
 
-   :param filters: desc.
+   :param filters: list of functions allowing to modify variables within a
+                   template.
    :type filters: :class:`list`
 
    :param bool default_helpers: whether to use default global helper in
