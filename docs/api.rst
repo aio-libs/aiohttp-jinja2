@@ -26,7 +26,8 @@ Describes the module API with detailed explanations of functions parameters.
                               variables during the processing of a request.
    :type context_processors: :class:`list`
 
-   :param filters: extra jinja filters http://jinja.pocoo.org/docs/2.10/templates/#filters
+   :param filters: extra jinja filters (`link to docs
+                   <http://jinja.pocoo.org/docs/2.10/templates/#filters>`).
    :type filters: :class:`list`
 
    :param bool default_helpers: whether to use default global helper in
