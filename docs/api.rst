@@ -1,8 +1,7 @@
 API
 ===
 
-This page describes module API with detailed explanations of the functions
-parameters.
+Describes the module API with detailed explanations of functions parameters.
 
 .. module:: aiohttp_jinja2
 .. highlight:: python
@@ -12,22 +11,22 @@ parameters.
                     filters=None, default_helpers=True, **kwargs)
 
    Function responsible for initializing templating system on application. This
-   one is required to be called first in order to start using this package with
-   your application.
+￼  much be called before freezing or running the application in order to use
+   *aiohttp-jinja*.
 
    :param app: :class:`aiohttp.web.Application` instance to initialize template
                system on.
 
    :param str app_key: optional key that will be used to access templating
-                       environment from application dictionary object.
+                       environment from application dictionary object. Defaults
+                       to `aiohttp_jinja2_environment`.
 
    :param context_processors: list of :ref:`aiohttp-web-middlewares`. These are
                               context processors used to rewrite or inject some
                               variables during the processing of a request.
    :type context_processors: :class:`list`
 
-   :param filters: list of functions allowing to modify variables within a
-                   template.
+   :param filters: extra jinja filters http://jinja.pocoo.org/docs/2.10/templates/#filters
    :type filters: :class:`list`
 
    :param bool default_helpers: whether to use default global helper in
@@ -45,22 +44,24 @@ parameters.
 
    :param app: :class:`aiohttp.web.Application` instance to get variables from.
 
-   :param str app_key: optinal key that will be used to access templating
-                       environment from application dictionary object.
+   :param str app_key: optional key that will be used to access templating
+                           environment from application dictionary object. Defaults
+                           to `aiohttp_jinja2_environment`.
 
 
 .. function:: template(template_name, *, app_key, encoding, status)
 
    Behaves as a decorator around view functions accepting template name that
-   should be rendered as a result. Supports both synchronous and asynchronous
-   functions.
+   should be used to render the response. Supports both synchronous and
+   asynchronous functions.
 
    :param str template_name: name of the template file that will be looked up
                              by the loader. Raises a 500 error in case template
                              was not found.
 
    :param str app_key: optional key that will be used to access templating
-                       environment from application dictionary object.
+                       environment from application dictionary object. Defaults
+                       to `aiohttp_jinja2_environment`.
 
    :param str encoding: encoding that will be set as a charset property on the
                         response for rendered template, default to utf-8.
@@ -92,25 +93,29 @@ Simple initialization::
    :param str template_name: Name of the template you want to render. Usually
                              it's a filename without extension on your
                              filesystem.
-   :param request: request to the main application that implies template
-                   rendering.
+   :param request: aiohttp request associated with an application where
+                   aiohttp-jinja rendering is configured.
    :type request: :class:`aiohttp.web.Request`
 
-   :param context: set of variables that are used to fill the template.
-   :param str app_key: is an optional key for application dict.
+   :param dict context: dictionary used as context when rendering the template.
+   :param str app_key: optional key that will be used to access templating
+                       environment from application dictionary object. Defaults
+                       to `aiohttp_jinja2_environment`.
 
 
 .. function:: render_template(template_name, request, context, *,
                               app_key=APP_KEY, encoding='utf-8', status=200)
 
    :param str template_name: Name of the template you want to render.
-   :param request: request to the main application that implies template
-                   rendering.
+   :param request: aiohttp request associated with an application where
+                   aiohttp-jinja rendering is configured.
    :type request: :class:`aiohttp.web.Request`
 
-   :param dict context: set of variables that are used to fill the template.
-   :param app_key: is an optional key for application dict.
-   :param int status: desc.
+   :param dict context: dictionary used as context when rendering the template.
+   :param str app_key: optional key that will be used to access templating
+                       environment from application dictionary object. Defaults
+                       to `aiohttp_jinja2_environment`.
+   :param int status: http status code that will be set on resulting response.
 
 
 Example of usage
