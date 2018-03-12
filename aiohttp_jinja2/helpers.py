@@ -19,6 +19,20 @@ def url_for(context, __route_name, **parts):
     if 'query_' in parts:
         query = parts.pop('query_')
 
+    for key in parts:
+        val = parts[key]
+        if isinstance(val, str):
+            # if type is inherited from str expilict cast to str makes sense
+            # if type is exactly str the operation is very fast
+            val = str(val)
+        elif type(val) is int:
+            # int inherited classes like bool are forbidden
+            val = str(val)
+        else:
+            raise TypeError("argument value should be str or int, "
+                            "got {} -> [{}] {!r}".format(key, type(val), val))
+        parts[key] = val
+
     url = app.router[__route_name].url_for(**parts)
     if query:
         url = url.with_query(query)
