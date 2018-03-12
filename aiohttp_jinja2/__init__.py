@@ -10,7 +10,7 @@ from .helpers import GLOBAL_HELPERS
 
 __version__ = '0.16.0'
 
-__all__ = ('setup', 'get_env', 'render_template', 'template')
+__all__ = ('setup', 'get_env', 'render_template', 'render_string', 'template')
 
 
 APP_CONTEXT_PROCESSORS_KEY = 'aiohttp_jinja2_context_processors'

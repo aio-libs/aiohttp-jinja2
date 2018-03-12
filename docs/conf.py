@@ -137,7 +137,7 @@ html_theme_options = {
     'github_repo': 'aiohttp_jinja2',
     'github_button': True,
     'github_banner': True,
-    'travis_button': True,
+    'travis_button': 'aio-libs/aiohttp-jinja2',
     'pre_bg': '#FFF6E5',
     'note_bg': '#E5ECD1',
     'note_border': '#BFCF8C',
