@@ -109,7 +109,8 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
 @web.middleware
 async def context_processors_middleware(request, handler):
 
-    request[REQUEST_CONTEXT_KEY] = {}
+    if REQUEST_CONTEXT_KEY not in request:
+        request[REQUEST_CONTEXT_KEY] = {}
     for processor in request.app[APP_CONTEXT_PROCESSORS_KEY]:
         request[REQUEST_CONTEXT_KEY].update(await processor(request))
     return await handler(request)
