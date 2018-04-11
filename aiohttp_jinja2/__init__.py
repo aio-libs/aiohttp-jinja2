@@ -8,7 +8,7 @@ from aiohttp.abc import AbstractView
 from .helpers import GLOBAL_HELPERS
 
 
-__version__ = '0.17.0'
+__version__ = '1.0.0'
 
 __all__ = ('setup', 'get_env', 'render_template', 'render_string', 'template')
 

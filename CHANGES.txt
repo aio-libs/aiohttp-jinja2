@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+1.0.0 (2018-03-12)
+-------------------
+
+- Allow context_processors to compose from parent apps #195
+
 0.17.0 (2018-03-12)
 -------------------
 
