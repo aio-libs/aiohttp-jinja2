@@ -45,7 +45,8 @@ async def test_nested_context_processors(aiohttp_client):
             aiohttp_jinja2.context_processors_middleware])
     aiohttp_jinja2.setup(subapp, loader=jinja2.DictLoader(
         {'tmpl.jinja2':
-         'foo: {{ foo }}, bar: {{ bar }}, baz: {{ baz }}, path: {{ request.path }}'}))
+         'foo: {{ foo }}, bar: {{ bar }}, '
+         'baz: {{ baz }}, path: {{ request.path }}'}))
 
     async def subprocessor(request):
         return {'foo': 1,
@@ -71,7 +72,6 @@ async def test_nested_context_processors(aiohttp_client):
     )
 
     app.add_subapp('/sub/', subapp)
-
 
     client = await aiohttp_client(app)
 
