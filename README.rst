@@ -38,13 +38,17 @@ Install requirement and launch tests::
 Usage
 -----
 
-Before template rendering you have to setup *jinja2 environment* first::
+Before template rendering you have to setup *jinja2 environment* first:
+
+.. code-block:: python
 
     app = web.Application()
     aiohttp_jinja2.setup(app,
         loader=jinja2.FileSystemLoader('/path/to/templates/folder'))
 
-Import::
+Import:
+
+.. code-block:: python
 
     import aiohttp_jinja2
     import jinja2
@@ -52,14 +56,18 @@ Import::
 After that you may to use template engine in your *web-handlers*. The
 most convenient way is to decorate a *web-handler*.
 
-Using the function based web handlers::
+Using the function based web handlers:
+
+.. code-block:: python
 
     @aiohttp_jinja2.template('tmpl.jinja2')
     def handler(request):
         return {'name': 'Andrew', 'surname': 'Svetlov'}
 
 Or for `Class Based Views
-<https://aiohttp.readthedocs.io/en/stable/web.html#class-based-views>`::
+<https://aiohttp.readthedocs.io/en/stable/web.html#class-based-views>`:
+
+.. code-block:: python
 
     class Handler(web.View):
         @aiohttp_jinja2.template('tmpl.jinja2')
@@ -74,7 +82,9 @@ template named ``tmpl.jinja2`` for getting resulting HTML text.
 If you need more complex processing (set response headers for example)
 you may call ``render_template`` function.
 
-Using a function based web handler::
+Using a function based web handler:
+
+.. code-block:: python
 
     async def handler(request):
         context = {'name': 'Andrew', 'surname': 'Svetlov'}
@@ -84,7 +94,9 @@ Using a function based web handler::
         response.headers['Content-Language'] = 'ru'
         return response
 
-Or, again, a class based view::
+Or, again, a class based view:
+
+.. code-block:: python
 
     class Handler(web.View):
         async def get(self):
