@@ -1,7 +1,6 @@
 import codecs
 import os
 import re
-
 from setuptools import setup
 
 with codecs.open(os.path.join(os.path.abspath(os.path.dirname(
@@ -14,6 +13,7 @@ with codecs.open(os.path.join(os.path.abspath(os.path.dirname(
 
 def read(f):
     return open(os.path.join(os.path.dirname(__file__), f)).read().strip()
+
 
 install_requires = ['aiohttp>=3.0.0', 'jinja2>=2.7']
 
