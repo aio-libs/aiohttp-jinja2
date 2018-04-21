@@ -4,16 +4,35 @@ import re
 
 from setuptools import setup
 
-with codecs.open(os.path.join(os.path.abspath(os.path.dirname(
-        __file__)), 'aiohttp_jinja2', '__init__.py'), 'r', 'latin1') as fp:
-    try:
-        version = re.findall(r"^__version__ = '([^']+)'$", fp.read(), re.M)[0]
-    except IndexError:
-        raise RuntimeError('Unable to determine version.')
+
+def _get_version():
+    PATH_TO_INIT_PY = \
+        os.path.join(
+            os.path.abspath(os.path.dirname(__file__)),
+            'aiohttp_jinja2',
+            '__init__.py'
+        )
+
+    with codecs.open(PATH_TO_INIT_PY, 'r', 'latin1') as fp:
+        try:
+            for line in fp.readlines():
+                if line:
+                    line = line.strip()
+                    version = re.findall(
+                        r"^__version__ = '([^']+)'$", line, re.M
+                    )
+                    if version:
+                        return version[0]
+        except IndexError:
+            raise RuntimeError('Unable to determine version.')
+
+
+version = _get_version()
 
 
 def read(f):
     return open(os.path.join(os.path.dirname(__file__), f)).read().strip()
+
 
 install_requires = ['aiohttp>=3.0.0', 'jinja2>=2.7']
 

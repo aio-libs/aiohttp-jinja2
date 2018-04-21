@@ -56,3 +56,6 @@ target/
 coverage/
 .idea/
 .pytest_cache
+
+# code editors
+.vscode

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # aiohttp_jinja2 documentation build configuration file, created by
@@ -19,21 +18,37 @@ import codecs
 import re
 
 
-_docs_path = os.path.dirname(__file__)
-_version_path = os.path.abspath(os.path.join(_docs_path,
-                                             '..',
-                                             'aiohttp_jinja2',
-                                             '__init__.py'))
-with codecs.open(_version_path, 'r', 'latin1') as fp:
-    try:
-        _version_info = re.search(r"^__version__ = '"
-                                  r"(?P<major>\d+)"
-                                  r"\.(?P<minor>\d+)"
-                                  r"\.(?P<patch>\d+)"
-                                  r"(?P<tag>.*)?'$",
-                                  fp.read(), re.M).groupdict()
-    except IndexError:
-        raise RuntimeError('Unable to determine version.')
+def _get_version_info():
+    PATH_TO_INIT_PY = \
+        os.path.join(
+            os.path.dirname(__file__),
+            '..',
+            'aiohttp_jinja2',
+            '__init__.py'
+        )
+
+    with codecs.open(PATH_TO_INIT_PY, 'r', 'latin1') as fp:
+        try:
+            for line in fp.readlines():
+                if line:
+                    line = line.strip()
+                    version = \
+                        re.search(
+                            r"^__version__ = '"
+                            r"(?P<major>\d+)"
+                            r"\.(?P<minor>\d+)"
+                            r"\.(?P<patch>\d+)"
+                            r"(?P<tag>.*)?'$",
+                            line,
+                            re.M
+                        )
+                    if version:
+                        return version.groupdict()
+        except IndexError:
+            raise RuntimeError('Unable to determine version.')
+
+
+_version_info = _get_version_info()
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
