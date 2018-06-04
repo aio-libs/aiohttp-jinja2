@@ -86,7 +86,7 @@ Simple initialization::
    )
 
 
-.. function:: render_string(template_name, request, context, *,
+.. function:: render_string(template_name, request, context, *, \
                             app_key=APP_KEY)
 
    Renders template specified and returns resulting string.
@@ -104,7 +104,7 @@ Simple initialization::
                        to `aiohttp_jinja2_environment`.
 
 
-.. function:: render_template(template_name, request, context, *,
+.. function:: render_template(template_name, request, context, *, \
                               app_key=APP_KEY, encoding='utf-8', status=200)
 
    :param str template_name: Name of the template you want to render.
@@ -121,7 +121,7 @@ Simple initialization::
 
 Example of usage
 ^^^^^^^^^^^^^^^^
-Assuming the initialization from the example about has been done::
+Assuming the initialization from the example above has been done::
 
    async def handler(request):
       context = {'foo': 'bar'}
