@@ -7,11 +7,11 @@ Describes the module API with detailed explanations of functions parameters.
 .. highlight:: python
 
 
-.. function:: setup(app, *args, app_key=APP_KEY, context_processors=(),
+.. function:: setup(app, *args, app_key=APP_KEY, context_processors=(), \
                     filters=None, default_helpers=True, **kwargs)
 
-   Function responsible for initializing templating system on application. This
-￼  much be called before freezing or running the application in order to use
+   Function responsible for initializing templating system on application. It
+   must be called before freezing or running the application in order to use
    *aiohttp-jinja*.
 
    :param app: :class:`aiohttp.web.Application` instance to initialize template
