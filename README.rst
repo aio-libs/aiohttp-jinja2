@@ -65,7 +65,7 @@ Using the function based web handlers:
         return {'name': 'Andrew', 'surname': 'Svetlov'}
 
 Or for `Class Based Views
-<https://aiohttp.readthedocs.io/en/stable/web.html#class-based-views>`:
+<https://aiohttp.readthedocs.io/en/stable/web_quickstart.html#class-based-views>`:
 
 .. code-block:: python
 
