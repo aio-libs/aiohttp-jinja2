@@ -97,6 +97,28 @@ As you can see, there is a built-in :func:`request_processor`, which
 adds current :class:`aiohttp.web.Request` into context of templates
 under ``'request'`` name.
 
+Here is an example of how to add current user dependant logic
+to template (requires ``aiohttp_security`` library)::
+
+    from aiohttp_security import authorized_userid
+
+    async def current_user_ctx_processor(request):
+        userid = await authorized_userid(request)
+        is_anonymous = not bool(userid)
+        return {'current_user': {'is_anonymous': is_anonymous}}
+
+Template::
+
+    <body>
+        <div>
+            {% if current_user.is_anonymous %}
+                <a href="{{ url('login') }}">Login</a>
+            {% else %}
+                <a href="{{ url('logout') }}">Logout</a>
+            {% endif %}
+        </div>
+    </body>
+
 Default Globals
 ...............
 
