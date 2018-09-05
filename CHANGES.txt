@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+1.1.0 (xxxx-xx-xx)
+------------------
+
+- Bump minimal supported ``aiohttp`` version to 3.2
+
+- Use ``request.config_dict`` for accessing ``jinja2`` environment. It
+  allows to reuse jinja rendering engine from parent application.
+
 1.0.0 (2018-03-12)
 -------------------
 
