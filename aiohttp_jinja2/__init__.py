@@ -41,7 +41,7 @@ def get_env(app, *, app_key=APP_KEY):
 
 
 def render_string(template_name, request, context, *, app_key=APP_KEY):
-    env = request.app.get(app_key)
+    env = request.config_dict.get(app_key)
     if env is None:
         text = ("Template engine is not initialized, "
                 "call aiohttp_jinja2.setup(..., app_key={}) first"
@@ -111,7 +111,7 @@ async def context_processors_middleware(request, handler):
 
     if REQUEST_CONTEXT_KEY not in request:
         request[REQUEST_CONTEXT_KEY] = {}
-    for processor in request.app[APP_CONTEXT_PROCESSORS_KEY]:
+    for processor in request.config_dict[APP_CONTEXT_PROCESSORS_KEY]:
         request[REQUEST_CONTEXT_KEY].update(await processor(request))
     return await handler(request)
 
