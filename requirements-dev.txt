@@ -6,7 +6,7 @@ alabaster>=0.6.2
 aiohttp==3.4.4
 jinja2==2.10
 pytest==3.8.0
-pytest-cov==2.5.1
+pytest-cov==2.6.0
 yarl==1.2.6
 multidict==4.3.1
 pytest-aiohttp==0.3.0
