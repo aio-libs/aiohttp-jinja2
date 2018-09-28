@@ -87,8 +87,8 @@ async def test_url_param_forbidden_type(aiohttp_client):
 
     async def index(request):
         with pytest.raises(TypeError,
-                           match=("argument value should be str or int, "
-                                  "got arg -> \[<class 'bool'>\] True")):
+                           match=(r"argument value should be str or int, "
+                                  r"got arg -> \[<class 'bool'>\] True")):
             aiohttp_jinja2.render_template('tmpl.jinja2', request, {})
         return web.Response()
 
