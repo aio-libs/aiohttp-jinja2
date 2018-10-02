@@ -21,9 +21,9 @@ env:
 
 deploy:
   provider: pypi
-  user: andrew.svetlov
+  user: aio-libs-bot
   password:
-    secure: KqaSYG0N4pQGt4I2kabD81obvVCUbavbgm/C8qp0YRyPjCqhZlpMBOIxIEHqGmT3tayqjEc52W3kY3ulEHSUIpOHZDoKjdiodjWxmMdB4J7vdrH8WLkjWimeAxwCuWZWekv0NFlo8t47xZjgXWAjsfLr1K4binNssHqtyLzCIUw=
+    secure: "gosnAInBMOhQgkhOE6mAN8PXhmq2ljKT3/SW4F0akcs5WL2RN5BhWU4A+xVi0mxFfUuYSls7peRcYF6wxZK3IKGnRG4O/qTiYtZucKVIu78sYNYmQ8odHUrJVHIEsiKI36ugRD2uTINF9rbY/prnO5HeMPlEnnioevK89exQIVuv92JFv4Tluuk16QPLydVtCKJ3pvRT4dI9a3psxoI/ASbVhIYSKf00j9S6L7lZTHlFEh0wf/0x7QaNnGCO4/2D2PwnGeCH/73rLBSpQlasyYx8AoZAfa0oHhRDOtqbUtbhmW/ND+ZuGUCEz7Dc5l/LGq0Ia0u8zHVBI5JFpY+uRKD5btt5x4DpYmOyOMD3B+1/tUYtlP9LaNQ3TO/NW3/ftHDcpMXh3WR8eFQ3x1KTJztSEaASNQ99YchzTWx1BM4vTEVUT7C/7Gyd+FD6JCu8AEUT9RPkFDhunw4/cpUifRcaAHDs73Rga9s706XwO/F+xrL4Fu9B/U9jDgE6ubXkfXz22JN4mKgYDKgTTGy+OHcFgiqNZBaFmMge8cTwIAod8MCsmN6znX0+2578UzXgXGG4eDlVwrenjibbXAQSXHXNTsrVBNgYoJ6e68gL0YxUjVUN/ox4G312RfM385KOao4AeMb4R5IyQ7s69f91Nxj6Gi2ChMNKBweFRlzibe4="
   distributions: "sdist bdist_wheel"
   on:
     tags: true
