@@ -5,7 +5,7 @@ sphinx==1.8.1
 alabaster>=0.6.2
 aiohttp==3.4.4
 jinja2==2.10
-pytest==3.9.3
+pytest==3.10.0
 pytest-cov==2.6.0
 yarl==1.2.6
 multidict==4.4.2
