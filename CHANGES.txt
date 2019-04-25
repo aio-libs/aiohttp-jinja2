@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+1.1.1 (2019-04-25)
+------------------
+
+- Bump minimal supported ``jinja2`` version to 2.10.1 to avoid security vulnerability problem.
+
+
 1.1.0 (2018-09-05)
 ------------------
 
