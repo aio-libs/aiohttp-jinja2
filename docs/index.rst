@@ -253,7 +253,7 @@ Reference
 
 
 .. function:: render_template(template_name, request, context, *, \
-                              app_key=APP_KEY, encoding='utf-8')
+                              app_key=APP_KEY, encoding='utf-8', status=200)
 
    Return :class:`aiohttp.web.Response` which contains template
    *template_name* filled with *context*.
