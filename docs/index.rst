@@ -60,10 +60,6 @@ Which can now to be used in any template::
         <p>The square of {{ value }} is {{ square }}.</p>
     {% endfor %}
 
-.. Adding the python code example didn't seem necessary to me, but here is one::
-    @aiohttp_jinja2.template('tmpl.jinja2')
-    async def squares(request):
-        return { 'values': [1, 2, 4], 'squares': [1, 4, 16]}
 
 In some cases, finer control over the dataflow may also be required.
 This can be worked out by explicitly asking for template to be rendered
