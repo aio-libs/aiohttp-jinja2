@@ -45,10 +45,29 @@ On handler call the :func:`template` decorator will pass
 returned dictionary ``{'name': 'Andrew', 'surname': 'Svetlov'}`` into
 template named ``"tmpl.jinja2"`` for getting resulting HTML text.
 
-If you need more complex processing (set response headers for example)
-you may call :func:`render_template` function.
+More complex template processing can be achieved by modifying the existing
+`list of global functions <http://jinja.pocoo.org/docs/2.10/templates/#builtin-globals>`_.
+Modification of Jinja2's environment can be done via :func:`get_env`.
+For example, adding the ``zip`` function::
 
-Using a function based web handler::
+    env = aiohttp_jinja2.get_env(app)
+    env.globals.update(zip=zip)
+
+
+Which can now to be used in any template::
+
+    {% for value, square in zip(values, squares) %}
+        <p>The square of {{ value }} is {{ square }}.</p>
+    {% endfor %}
+
+
+In some cases, finer control over the dataflow may also be required.
+This can be worked out by explicitly asking for template to be rendered
+using :func:`render_template`.
+Explicit rendering will allow to possibly
+pass some context to the renderer
+and also to modify its response on the fly.
+This can for example be used to set response headers::
 
     async def handler(request):
         context = {'name': 'Andrew', 'surname': 'Svetlov'}
@@ -58,7 +77,7 @@ Using a function based web handler::
         response.headers['Content-Language'] = 'ru'
         return response
 
-Or, again, a class-based view (:class:`aiohttp.web.View`)::
+This, again, can also be done with a class-based view (:class:`aiohttp.web.View`)::
 
     class Handler(web.View):
         async def get(self):
