@@ -2,6 +2,8 @@ language: python
 python:
   - 3.5
   - 3.6
+  - 3.7
+  - 3.8
 
 install:
   - pip install --upgrade pip wheel
@@ -14,11 +16,6 @@ script:
 after_success:
   codecov
 
-env:
-  matrix:
-    - PYTHONASYNCIODEBUG=x
-    - PYTHONASYNCIODEBUG=
-
 deploy:
   provider: pypi
   user: aio-libs-bot
@@ -28,4 +25,4 @@ deploy:
   on:
     tags: true
     all_branches: true
-    python: 3.6
+    python: 3.7
