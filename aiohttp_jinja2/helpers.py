@@ -2,18 +2,22 @@
 useful context functions, see
 http://jinja.pocoo.org/docs/dev/api/#jinja2.contextfunction
 """
+from typing import Any, Dict, cast
+
 import jinja2
+from aiohttp import web
+from yarl import URL
 
 
-@jinja2.contextfunction
-def url_for(context, __route_name, **parts):
+@jinja2.contextfunction  # type: ignore
+def url_for(context: Dict[str, Any], __route_name: str, **parts: Any) -> URL:
     """Filter for generating urls.
 
     Usage: {{ url('the-view-name') }} might become "/path/to/view" or
     {{ url('item-details', id=123, query={'active': 'true'}) }}
     might become "/items/1?active=true".
     """
-    app = context['app']
+    app = cast(web.Application, context['app'])
 
     query = None
     if 'query_' in parts:
@@ -39,8 +43,8 @@ def url_for(context, __route_name, **parts):
     return url
 
 
-@jinja2.contextfunction
-def static_url(context, static_file_path):
+@jinja2.contextfunction  # type: ignore
+def static_url(context: Dict[str, Any], static_file_path: str) -> str:
     """Filter for generating urls for static files.
 
     NOTE: you'll need

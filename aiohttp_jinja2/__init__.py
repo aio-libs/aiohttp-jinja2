@@ -2,7 +2,8 @@ import asyncio
 import functools
 import warnings
 import jinja2
-from collections import Mapping
+from collections.abc import Mapping
+from typing import Any, Awaitable, Callable, Dict, Iterable, Optional, cast
 from aiohttp import web
 from aiohttp.abc import AbstractView
 from .helpers import GLOBAL_HELPERS
@@ -18,10 +19,17 @@ APP_KEY = 'aiohttp_jinja2_environment'
 REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
 
 
-def setup(app, *args, app_key=APP_KEY, context_processors=(),
-          filters=None, default_helpers=True, autoescape=True,
-          **kwargs):
-    env = jinja2.Environment(*args, autoescape=autoescape, **kwargs)
+def setup(
+    app: web.Application,
+    *args: Any,
+    app_key: str = APP_KEY,
+    context_processors: Iterable[Callable[[web.Request], Dict[str, Any]]] = (),
+    filters: Optional[Iterable[Callable[..., str]]] = None,
+    default_helpers: bool = True,
+    **kwargs: Any
+) -> jinja2.Environment:
+    kwargs.setdefault("autoescape", True)
+    env = jinja2.Environment(*args, **kwargs)
     if default_helpers:
         env.globals.update(GLOBAL_HELPERS)
     if filters is not None:
@@ -36,11 +44,21 @@ def setup(app, *args, app_key=APP_KEY, context_processors=(),
     return env
 
 
-def get_env(app, *, app_key=APP_KEY):
-    return app.get(app_key)
+def get_env(
+    app: web.Application,
+    *,
+    app_key: str = APP_KEY
+) -> jinja2.Environment:
+    return cast(jinja2.Environment, app.get(app_key))
 
 
-def render_string(template_name, request, context, *, app_key=APP_KEY):
+def render_string(
+    template_name: str,
+    request: web.Request,
+    context: Dict[str, Any],
+    *,
+    app_key: str = APP_KEY
+) -> str:
     env = request.config_dict.get(app_key)
     if env is None:
         text = ("Template engine is not initialized, "
@@ -65,8 +83,15 @@ def render_string(template_name, request, context, *, app_key=APP_KEY):
     return text
 
 
-def render_template(template_name, request, context, *,
-                    app_key=APP_KEY, encoding='utf-8', status=200):
+def render_template(
+    template_name: str,
+    request: web.Request,
+    context: Dict[str, Any],
+    *,
+    app_key: str = APP_KEY,
+    encoding: str = 'utf-8',
+    status: int = 200
+) -> web.Response:
     response = web.Response(status=status)
     if context is None:
         context = {}
@@ -77,11 +102,17 @@ def render_template(template_name, request, context, *,
     return response
 
 
-def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
+def template(
+    template_name: str,
+    *,
+    app_key: str = APP_KEY,
+    encoding: str = 'utf-8',
+    status: int = 200
+) -> Any:
 
-    def wrapper(func):
+    def wrapper(func: Any) -> Any:
         @functools.wraps(func)
-        async def wrapped(*args):
+        async def wrapped(*args: Any) -> web.StreamResponse:
             if asyncio.iscoroutinefunction(func):
                 coro = func
             else:
@@ -107,7 +138,10 @@ def template(template_name, *, app_key=APP_KEY, encoding='utf-8', status=200):
 
 
 @web.middleware
-async def context_processors_middleware(request, handler):
+async def context_processors_middleware(
+    request: web.Request,
+    handler: Callable[[web.Request], Awaitable[web.StreamResponse]]
+) -> web.StreamResponse:
 
     if REQUEST_CONTEXT_KEY not in request:
         request[REQUEST_CONTEXT_KEY] = {}
@@ -116,5 +150,5 @@ async def context_processors_middleware(request, handler):
     return await handler(request)
 
 
-async def request_processor(request):
+async def request_processor(request: web.Request) -> Dict[str, web.Request]:
     return {'request': request}
