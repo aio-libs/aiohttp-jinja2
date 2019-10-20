@@ -2,6 +2,7 @@
 
 flake:
 	flake8 aiohttp_jinja2 tests 
+	mypy --strict aiohttp_jinja2
 
 test: flake
 	py.test -s ./tests/
