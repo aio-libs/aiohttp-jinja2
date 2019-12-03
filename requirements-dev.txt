@@ -1,7 +1,7 @@
 attrs==19.3.0
 flake8==3.7.9
 coverage==4.5.4
-sphinx==2.2.1
+sphinx==2.2.2
 alabaster>=0.6.2
 aiohttp==3.6.2
 jinja2==2.10.3
