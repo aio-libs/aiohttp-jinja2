@@ -7,6 +7,7 @@ from typing import Any, Awaitable, Callable, Dict, Iterable, Optional, cast
 from aiohttp import web
 from aiohttp.abc import AbstractView
 from .helpers import GLOBAL_HELPERS
+from .typedefs import Filters
 
 
 __version__ = '1.2.0'
@@ -24,7 +25,7 @@ def setup(
     *args: Any,
     app_key: str = APP_KEY,
     context_processors: Iterable[Callable[[web.Request], Dict[str, Any]]] = (),
-    filters: Optional[Iterable[Callable[..., str]]] = None,
+    filters: Optional[Filters] = None,
     default_helpers: bool = True,
     **kwargs: Any
 ) -> jinja2.Environment:
