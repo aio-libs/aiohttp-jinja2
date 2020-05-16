@@ -3,7 +3,7 @@ import functools
 import warnings
 import jinja2
 from collections.abc import Mapping
-from typing import Any, Awaitable, Callable, Dict, Iterable, Optional, cast
+from typing import Any, Awaitable, Callable, Dict, Iterable, Optional, Union, cast
 from aiohttp import web
 from aiohttp.abc import AbstractView
 from .helpers import GLOBAL_HELPERS
@@ -17,6 +17,11 @@ __all__ = ('setup', 'get_env', 'render_template', 'render_string', 'template')
 APP_CONTEXT_PROCESSORS_KEY = 'aiohttp_jinja2_context_processors'
 APP_KEY = 'aiohttp_jinja2_environment'
 REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
+
+_SimpleHandler = Callable[[web.Request], Awaitable[web.StreamResponse]]
+_ViewHandler = Callable[[Type[AbstractView]], Awaitable[web.StreamResponse]]
+_HandlerType = Union[_SimpleHandler, _ViewHandler]
+_TemplateHandler = Callable[[Union[web.Request, AbstractView]], Union[web.StreamResponse, Dict[str, Any]]]
 
 
 def setup(
@@ -108,26 +113,26 @@ def template(
     app_key: str = APP_KEY,
     encoding: str = 'utf-8',
     status: int = 200
-) -> Any:
+) -> Callable[_TemplateHandler, _HandlerType]:
 
-    def wrapper(func: Any) -> Any:
+    def wrapper(func: _TemplateHandler) -> _HandlerType:
         @functools.wraps(func)
-        async def wrapped(*args: Any) -> web.StreamResponse:
+        async def wrapped(request_view: Union[web.Request, AbstractView]) -> web.StreamResponse:
             if asyncio.iscoroutinefunction(func):
                 coro = func
             else:
                 warnings.warn("Bare functions are deprecated, "
                               "use async ones", DeprecationWarning)
                 coro = asyncio.coroutine(func)
-            context = await coro(*args)
+            context = await coro(request_view)
             if isinstance(context, web.StreamResponse):
                 return context
 
             # Supports class based views see web.View
-            if isinstance(args[0], AbstractView):
-                request = args[0].request
+            if isinstance(request_view, AbstractView):
+                request = request_view.request
             else:
-                request = args[-1]
+                request = request_view
 
             response = render_template(template_name, request, context,
                                        app_key=app_key, encoding=encoding)
