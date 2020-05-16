@@ -113,7 +113,7 @@ def template(
     app_key: str = APP_KEY,
     encoding: str = 'utf-8',
     status: int = 200
-) -> Callable[_TemplateHandler, _HandlerType]:
+) -> Callable[[_TemplateHandler], _HandlerType]:
 
     def wrapper(func: _TemplateHandler) -> _HandlerType:
         @functools.wraps(func)
