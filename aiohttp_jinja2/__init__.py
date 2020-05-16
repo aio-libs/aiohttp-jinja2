@@ -3,7 +3,7 @@ import functools
 import warnings
 import jinja2
 from collections.abc import Mapping
-from typing import Any, Awaitable, Callable, Dict, Iterable, Optional, Union, cast
+from typing import Any, Awaitable, Callable, Dict, Iterable, Optional, Type, Union, cast
 from aiohttp import web
 from aiohttp.abc import AbstractView
 from .helpers import GLOBAL_HELPERS
