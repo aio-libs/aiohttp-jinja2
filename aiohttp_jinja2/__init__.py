@@ -3,7 +3,7 @@ import functools
 import warnings
 import jinja2
 from collections.abc import Mapping
-from typing import Any, Awaitable, Callable, Dict, Iterable, Optional, Type, Union, cast
+from typing import Any, Awaitable, Callable, Dict, Iterable, Optional, Type, Union, cast, overload
 from aiohttp import web
 from aiohttp.abc import AbstractView
 from .helpers import GLOBAL_HELPERS
@@ -19,9 +19,14 @@ APP_KEY = 'aiohttp_jinja2_environment'
 REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
 
 _SimpleHandler = Callable[[web.Request], Awaitable[web.StreamResponse]]
+_MethodHandler = Callable[[Any, web.Request], Awaitable[web.StreamResponse]]
 _ViewHandler = Callable[[Type[AbstractView]], Awaitable[web.StreamResponse]]
-_HandlerType = Union[_SimpleHandler, _ViewHandler]
-_TemplateHandler = Callable[[Union[web.Request, AbstractView]], Union[web.StreamResponse, Dict[str, Any]]]
+_HandlerType = Union[_SimpleHandler, _MethodHandler, _ViewHandler]
+_TemplateReturnType = Awaitable[Union[web.StreamResponse, Dict[str, Any]]]
+_SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
+_MethodTemplateHandler = Callable[[Any, web.Request], _TemplateReturnType]
+_ViewTemplateHandler = Callable[[AbstractView], _TemplateReturnType]
+_TemplateHandler = Union[_SimpleTemplateHandler, _MethodTemplateHandler, _ViewTemplateHandler]
 
 
 def setup(
@@ -116,23 +121,32 @@ def template(
 ) -> Callable[[_TemplateHandler], _HandlerType]:
 
     def wrapper(func: _TemplateHandler) -> _HandlerType:
+        @overload
+        async def wrapped(request: web.Request) -> web.StreamResponse:
+            ...
+        @overload
+        async def wrapped(view: AbstractView) -> web.StreamResponse:
+            ...
+        @overload
+        async def wrapped(_self: Any, request: web.Request) -> web.StreamResponse:
+            ...
         @functools.wraps(func)
-        async def wrapped(request_view: Union[web.Request, AbstractView]) -> web.StreamResponse:
+        async def wrapped(*args):
             if asyncio.iscoroutinefunction(func):
                 coro = func
             else:
                 warnings.warn("Bare functions are deprecated, "
                               "use async ones", DeprecationWarning)
                 coro = asyncio.coroutine(func)
-            context = await coro(request_view)
+            context = await coro(*args)
             if isinstance(context, web.StreamResponse):
                 return context
 
             # Supports class based views see web.View
-            if isinstance(request_view, AbstractView):
-                request = request_view.request
+            if isinstance(args[0], AbstractView):
+                request = args[0].request
             else:
-                request = request_view
+                request = args[-1]
 
             response = render_template(template_name, request, context,
                                        app_key=app_key, encoding=encoding)
