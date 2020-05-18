@@ -22,7 +22,7 @@ _SimpleHandler = Callable[[web.Request], Awaitable[web.StreamResponse]]
 _MethodHandler = Callable[[Any, web.Request], Awaitable[web.StreamResponse]]
 _ViewHandler = Callable[[Type[AbstractView]], Awaitable[web.StreamResponse]]
 _HandlerType = Union[_SimpleHandler, _MethodHandler, _ViewHandler]
-_TemplateReturnType = Awaitable[Union[web.StreamResponse, Dict[str, Any]]]
+_TemplateReturnType = Awaitable[Union[web.StreamResponse, Mapping[str, Any]]]
 _SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
 _MethodTemplateHandler = Callable[[Any, web.Request], _TemplateReturnType]
 _ViewTemplateHandler = Callable[[AbstractView], _TemplateReturnType]
@@ -65,7 +65,7 @@ def get_env(
 def render_string(
     template_name: str,
     request: web.Request,
-    context: Dict[str, Any],
+    context: Mapping[str, Any],
     *,
     app_key: str = APP_KEY
 ) -> str:
@@ -96,7 +96,7 @@ def render_string(
 def render_template(
     template_name: str,
     request: web.Request,
-    context: Dict[str, Any],
+    context: Mapping[str, Any],
     *,
     app_key: str = APP_KEY,
     encoding: str = 'utf-8',
