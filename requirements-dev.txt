@@ -10,6 +10,6 @@ pytest-cov==2.10.0
 yarl==1.4.2
 multidict==4.7.6
 pytest-aiohttp==0.3.0
-pytest-sugar==0.9.3
+pytest-sugar==0.9.4
 mypy==0.782
 -e .
