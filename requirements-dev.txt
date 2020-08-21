@@ -1,4 +1,4 @@
-attrs==19.3.0
+attrs==20.1.0
 flake8==3.8.3
 coverage==5.2.1
 sphinx==3.2.1
