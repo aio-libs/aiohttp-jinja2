@@ -3,7 +3,9 @@ python:
   - 3.5
   - 3.6
   
-arch: ppc64le
+arch:
+  - ppc64le
+  - AMD64
 
 install:
   - pip install --upgrade pip wheel
