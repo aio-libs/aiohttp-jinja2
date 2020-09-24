@@ -7,7 +7,7 @@ aiohttp==3.6.2
 jinja2==2.11.2
 pytest==6.0.2
 pytest-cov==2.10.1
-yarl==1.5.1
+yarl==1.6.0
 multidict==4.7.6
 pytest-aiohttp==0.3.0
 pytest-sugar==0.9.4
