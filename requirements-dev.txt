@@ -1,5 +1,5 @@
 attrs==20.2.0
-flake8==3.8.3
+flake8==3.8.4
 coverage==5.3
 sphinx==3.2.1
 alabaster>=0.6.2
