@@ -85,7 +85,7 @@ jobs:
     - name: Install dependencies
       uses: py-actions/py-dependency-install@v2
       with:
-        path: requirements.txt
+        path: requirements-dev.txt
     - name: Run unittests
       env:
         COLOR: 'yes'
