@@ -3,7 +3,7 @@ import functools
 import warnings
 import jinja2
 from collections.abc import Mapping
-from typing import Any, Awaitable, Callable, Dict, Iterable, Optional, cast
+from typing import Any, Awaitable, Callable, Dict, Iterable, Optional, Type, Union, cast, overload
 from aiohttp import web
 from aiohttp.abc import AbstractView
 from .helpers import GLOBAL_HELPERS
@@ -18,6 +18,16 @@ __all__ = ('setup', 'get_env', 'render_template', 'render_string', 'template')
 APP_CONTEXT_PROCESSORS_KEY = 'aiohttp_jinja2_context_processors'
 APP_KEY = 'aiohttp_jinja2_environment'
 REQUEST_CONTEXT_KEY = 'aiohttp_jinja2_context'
+
+_SimpleHandler = Callable[[web.Request], Awaitable[web.StreamResponse]]
+_MethodHandler = Callable[[Any, web.Request], Awaitable[web.StreamResponse]]
+_ViewHandler = Callable[[Type[AbstractView]], Awaitable[web.StreamResponse]]
+_HandlerType = Union[_SimpleHandler, _MethodHandler, _ViewHandler]
+_TemplateReturnType = Awaitable[Union[web.StreamResponse, Mapping[str, Any]]]
+_SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
+_MethodTemplateHandler = Callable[[Any, web.Request], _TemplateReturnType]
+_ViewTemplateHandler = Callable[[AbstractView], _TemplateReturnType]
+_TemplateHandler = Union[_SimpleTemplateHandler, _MethodTemplateHandler, _ViewTemplateHandler]
 
 
 def setup(
@@ -56,7 +66,7 @@ def get_env(
 def render_string(
     template_name: str,
     request: web.Request,
-    context: Dict[str, Any],
+    context: Mapping[str, Any],
     *,
     app_key: str = APP_KEY
 ) -> str:
@@ -87,7 +97,7 @@ def render_string(
 def render_template(
     template_name: str,
     request: web.Request,
-    context: Dict[str, Any],
+    context: Mapping[str, Any],
     *,
     app_key: str = APP_KEY,
     encoding: str = 'utf-8',
@@ -109,11 +119,20 @@ def template(
     app_key: str = APP_KEY,
     encoding: str = 'utf-8',
     status: int = 200
-) -> Any:
+) -> Callable[[_TemplateHandler], _HandlerType]:
 
-    def wrapper(func: Any) -> Any:
+    def wrapper(func: _TemplateHandler) -> _HandlerType:
+        @overload
+        async def wrapped(request: web.Request) -> web.StreamResponse:
+            ...
+        @overload
+        async def wrapped(view: AbstractView) -> web.StreamResponse:
+            ...
+        @overload
+        async def wrapped(_self: Any, request: web.Request) -> web.StreamResponse:
+            ...
         @functools.wraps(func)
-        async def wrapped(*args: Any) -> web.StreamResponse:
+        async def wrapped(*args):
             if asyncio.iscoroutinefunction(func):
                 coro = func
             else:
