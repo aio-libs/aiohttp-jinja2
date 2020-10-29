@@ -9,7 +9,7 @@ from aiohttp import web
 from yarl import URL
 
 
-@jinja2.contextfunction  # type: ignore
+@jinja2.contextfunction
 def url_for(context: Dict[str, Any], __route_name: str, **parts: Any) -> URL:
     """Filter for generating urls.
 
@@ -43,7 +43,7 @@ def url_for(context: Dict[str, Any], __route_name: str, **parts: Any) -> URL:
     return url
 
 
-@jinja2.contextfunction  # type: ignore
+@jinja2.contextfunction
 def static_url(context: Dict[str, Any], static_file_path: str) -> str:
     """Filter for generating urls for static files.
 
