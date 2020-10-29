@@ -1,7 +1,7 @@
 aiohttp_jinja2
 ==============
-.. image:: https://travis-ci.org/aio-libs/aiohttp-jinja2.svg?branch=master
-    :target: https://travis-ci.org/aio-libs/aiohttp-jinja2
+.. image:: https://github.com/aio-libs/aiohttp-jinja2/workflows/CI/badge.svg
+    :target: https://github.com/aio-libs/aiohttp-jinja2/actions?query=workflow%3ACI
 .. image:: https://codecov.io/gh/aio-libs/aiohttp-jinja2/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/aio-libs/aiohttp-jinja2
 .. image:: https://img.shields.io/pypi/v/aiohttp-jinja2.svg
