@@ -17,11 +17,11 @@ def url_for(context: Dict[str, Any], __route_name: str, **parts: Any) -> URL:
     {{ url('item-details', id=123, query={'active': 'true'}) }}
     might become "/items/1?active=true".
     """
-    app = cast(web.Application, context['app'])
+    app = cast(web.Application, context["app"])
 
     query = None
-    if 'query_' in parts:
-        query = parts.pop('query_')
+    if "query_" in parts:
+        query = parts.pop("query_")
 
     for key in parts:
         val = parts[key]
@@ -33,8 +33,10 @@ def url_for(context: Dict[str, Any], __route_name: str, **parts: Any) -> URL:
             # int inherited classes like bool are forbidden
             val = str(val)
         else:
-            raise TypeError("argument value should be str or int, "
-                            "got {} -> [{}] {!r}".format(key, type(val), val))
+            raise TypeError(
+                "argument value should be str or int, "
+                "got {} -> [{}] {!r}".format(key, type(val), val)
+            )
         parts[key] = val
 
     url = app.router[__route_name].url_for(**parts)
@@ -53,15 +55,16 @@ def static_url(context: Dict[str, Any], static_file_path: str) -> str:
     Usage: {{ static('styles.css') }} might become
     "/static/styles.css" or "http://mycdn.example.com/styles.css"
     """
-    app = context['app']
+    app = context["app"]
     try:
-        static_url = app['static_root_url']
+        static_url = app["static_root_url"]
     except KeyError:
         raise RuntimeError(
             "app does not define a static root url "
             "'static_root_url', you need to set the url root "
-            "with app['static_root_url'] = '<static root>'.") from None
-    return '{}/{}'.format(static_url.rstrip('/'), static_file_path.lstrip('/'))
+            "with app['static_root_url'] = '<static root>'."
+        ) from None
+    return "{}/{}".format(static_url.rstrip("/"), static_file_path.lstrip("/"))
 
 
 GLOBAL_HELPERS = dict(

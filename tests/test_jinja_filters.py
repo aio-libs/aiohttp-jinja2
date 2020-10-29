@@ -5,8 +5,7 @@ import aiohttp_jinja2
 
 
 async def test_jinja_filters(aiohttp_client):
-
-    @aiohttp_jinja2.template('tmpl.jinja2')
+    @aiohttp_jinja2.template("tmpl.jinja2")
     async def index(request):
         return {}
 
@@ -16,14 +15,14 @@ async def test_jinja_filters(aiohttp_client):
     app = web.Application()
     aiohttp_jinja2.setup(
         app,
-        loader=jinja2.DictLoader({'tmpl.jinja2': "{{ 5|add_2 }}"}),
-        filters={'add_2': add_2}
+        loader=jinja2.DictLoader({"tmpl.jinja2": "{{ 5|add_2 }}"}),
+        filters={"add_2": add_2},
     )
 
-    app.router.add_route('GET', '/', index)
+    app.router.add_route("GET", "/", index)
     client = await aiohttp_client(app)
 
-    resp = await client.get('/')
+    resp = await client.get("/")
     assert 200 == resp.status
     txt = await resp.text()
-    assert '7' == txt
+    assert "7" == txt
