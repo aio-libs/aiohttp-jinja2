@@ -1,13 +1,13 @@
 import asyncio
 import functools
 import warnings
-from collections.abc import Mapping
 from typing import (
     Any,
     Awaitable,
     Callable,
     Dict,
     Iterable,
+    Mapping,
     Optional,
     Type,
     Union,
