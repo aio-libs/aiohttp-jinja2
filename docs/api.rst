@@ -131,4 +131,3 @@ Assuming the initialization from the example above has been done::
       return response
 
    app.router.add_get('/tmpl', handler)
-

@@ -1,16 +1,18 @@
 # Some simple testing tasks (sorry, UNIX only).
 
-flake:
-	flake8 aiohttp_jinja2 tests 
+.PHONY: fmt
+fmt:
+	python -m pre_commit run --all-files --show-diff-on-failure
+
+.PHONY: lint
+lint: fmt
 	mypy --strict aiohttp_jinja2
 
-test: flake
+.PHONY: test
+test:
 	py.test -s ./tests/
 
-cov cover coverage:
-	py.test --cov=aiohttp_jinja2 --cov-report=html --cov-report=term ./tests/
-	@echo "open file://`pwd`/htmlcov/index.html"
-
+.PHONY: clean
 clean:
 	rm -rf `find . -name __pycache__`
 	rm -f `find . -type f -name '*.py[co]' `
@@ -25,8 +27,7 @@ clean:
 	rm -rf build
 	rm -rf cover
 
+.PHONY: doc
 doc:
 	make -C docs html
 	@echo "open file://`pwd`/docs/_build/html/index.html"
-
-.PHONY: all build venv flake test vtest testloop cov clean doc
