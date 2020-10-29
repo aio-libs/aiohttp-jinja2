@@ -28,11 +28,11 @@ def _get_version_info():
                 if line:
                     line = line.strip()
                     version = re.search(
-                        r"^__version__ = '"
+                        r'^__version__ = "'
                         r"(?P<major>\d+)"
                         r"\.(?P<minor>\d+)"
                         r"\.(?P<patch>\d+)"
-                        r"(?P<tag>.*)?'$",
+                        r'(?P<tag>.*)?"$',
                         line,
                         re.M,
                     )

@@ -15,7 +15,7 @@ def _get_version():
             for line in fp.readlines():
                 if line:
                     line = line.strip()
-                    version = re.findall(r"^__version__ = '([^']+)'$", line, re.M)
+                    version = re.findall(r'^__version__ = "([^"]+)"$', line, re.M)
                     if version:
                         return version[0]
         except IndexError:
