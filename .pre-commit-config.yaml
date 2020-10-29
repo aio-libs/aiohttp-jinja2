@@ -1,11 +1,4 @@
 repos:
-- repo: local
-  hooks:
-  - id: check-changes
-    name: Check CHANGES
-    language: system
-    entry: ./tools/check_changes.py
-    pass_filenames: false
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: 'v3.3.0'
   hooks:
