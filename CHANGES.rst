@@ -1,12 +1,14 @@
 CHANGES
 =======
 
-1.3.0 (XXXX-XX-XX)
+1.3.0 (2020-10-30)
 ------------------
 
 - Remove Any from template annotations #343
 
 - Fix type annotation for filters in ``aiohttp_jinja2.setup`` #330
+
+- Drop Python 3.5, support Python 3.9
 
 
 1.2.0 (2019-10-21)
