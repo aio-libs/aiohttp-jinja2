@@ -1,3 +1,5 @@
+from typing import Dict, Union
+
 import jinja2
 from aiohttp import web
 
@@ -17,7 +19,7 @@ async def test_context_processors(aiohttp_client):
         ),
     )
 
-    async def processor(request):
+    async def processor(request: web.Request) -> Dict[str, Union[str, int]]:
         return {"foo": 1, "bar": "should be overwriten"}
 
     app["aiohttp_jinja2_context_processors"] = (

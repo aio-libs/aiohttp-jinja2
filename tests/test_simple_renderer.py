@@ -1,3 +1,5 @@
+from typing import Awaitable, Callable, Dict, TypeVar
+
 import jinja2
 import pytest
 from aiohttp import web
@@ -5,10 +7,12 @@ from aiohttp.test_utils import make_mocked_request
 
 import aiohttp_jinja2
 
+_T = TypeVar("_T")
+
 
 async def test_func(aiohttp_client):
     @aiohttp_jinja2.template("tmpl.jinja2")
-    async def func(request):
+    async def func(request: web.Request) -> Dict[str, str]:
         return {"head": "HEAD", "text": "text"}
 
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
@@ -28,7 +32,7 @@ async def test_func(aiohttp_client):
 async def test_render_class_based_view(aiohttp_client):
     class MyView(web.View):
         @aiohttp_jinja2.template("tmpl.jinja2")
-        async def get(self):
+        async def get(self) -> Dict[str, str]:
             return {"head": "HEAD", "text": "text"}
 
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
@@ -92,7 +96,7 @@ async def test_convert_func_to_coroutine(aiohttp_client):
 
 
 async def test_render_not_initialized():
-    async def func(request):
+    async def func(request: web.Request) -> web.Response:
         return aiohttp_jinja2.render_template("template", request, {})
 
     app = web.Application()
@@ -178,7 +182,7 @@ async def test_render_template_custom_status(aiohttp_client):
 
 
 async def test_template_not_found():
-    async def func(request):
+    async def func(request: web.Request) -> web.Response:
         return aiohttp_jinja2.render_template("template", request, {})
 
     app = web.Application()
@@ -277,8 +281,8 @@ async def test_render_can_disable_autoescape(aiohttp_client):
 
 
 async def test_render_bare_funcs_deprecated(aiohttp_client):
-    def wrapper(func):
-        async def wrapped(request):
+    def wrapper(func: Callable[[web.Request], Awaitable[_T]]) -> Callable[[web.Request], Awaitable[_T]]:
+        async def wrapped(request: web.Request) -> _T:
             with pytest.warns(
                 DeprecationWarning, match="Bare functions are deprecated"
             ):
@@ -288,7 +292,7 @@ async def test_render_bare_funcs_deprecated(aiohttp_client):
 
     @wrapper
     @aiohttp_jinja2.template("tmpl.jinja2")
-    def func(request):
+    def func(request: web.Request) -> Dict[str, str]:
         return {"text": "OK"}
 
     app = web.Application()
