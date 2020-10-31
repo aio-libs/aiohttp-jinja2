@@ -43,12 +43,14 @@ _TemplateHandler = Union[
     _SimpleTemplateHandler, _MethodTemplateHandler, _ViewTemplateHandler
 ]
 
+_ContextProcessor = Callable[[web.Request], Awaitable[Dict[str, Any]]]
+
 
 def setup(
     app: web.Application,
     *args: Any,
     app_key: str = APP_KEY,
-    context_processors: Iterable[Callable[[web.Request], Dict[str, Any]]] = (),
+    context_processors: Iterable[_ContextProcessor] = (),
     filters: Optional[Filters] = None,
     default_helpers: bool = True,
     **kwargs: Any,
@@ -109,7 +111,7 @@ def render_string(
 def render_template(
     template_name: str,
     request: web.Request,
-    context: Mapping[str, Any],
+    context: Optional[Mapping[str, Any]],
     *,
     app_key: str = APP_KEY,
     encoding: str = "utf-8",
