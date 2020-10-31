@@ -11,7 +11,7 @@ from yarl import URL
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
-    
+
     class _Context(TypedDict, total=False):
         app: web.Application
 
