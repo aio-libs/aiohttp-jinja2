@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+1.3.1 (XXXX-XX-XX)
+------------------
+
+- Fix type annotation for ``context_processors`` argument #354
+
 1.3.0 (2020-10-30)
 ------------------
 
