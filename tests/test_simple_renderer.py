@@ -281,7 +281,9 @@ async def test_render_can_disable_autoescape(aiohttp_client):
 
 
 async def test_render_bare_funcs_deprecated(aiohttp_client):
-    def wrapper(func: Callable[[web.Request], Awaitable[_T]]) -> Callable[[web.Request], Awaitable[_T]]:
+    def wrapper(
+        func: Callable[[web.Request], Awaitable[_T]]
+    ) -> Callable[[web.Request], Awaitable[_T]]:
         async def wrapped(request: web.Request) -> _T:
             with pytest.warns(
                 DeprecationWarning, match="Bare functions are deprecated"
