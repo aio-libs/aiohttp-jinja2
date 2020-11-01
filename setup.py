@@ -29,7 +29,7 @@ def read(f):
     return open(os.path.join(os.path.dirname(__file__), f)).read().strip()
 
 
-install_requires = ["aiohttp>=3.2.0", "jinja2>=2.10.1"]
+install_requires = ["aiohttp>=3.6.3", "jinja2>=2.10.1"]
 
 
 setup(
