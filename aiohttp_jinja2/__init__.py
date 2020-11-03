@@ -10,7 +10,6 @@ from typing import (
     Mapping,
     Optional,
     Protocol,
-    Type,
     Union,
     cast,
     overload,
