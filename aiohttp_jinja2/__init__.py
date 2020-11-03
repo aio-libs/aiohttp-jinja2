@@ -54,7 +54,9 @@ if sys.version_info >= (3, 8):
             ...
 
         @overload
-        async def __call__(self, _self: Any, request: web.Request) -> web.StreamResponse:
+        async def __call__(
+            self, _self: Any, request: web.Request
+        ) -> web.StreamResponse:
             ...
 
 
