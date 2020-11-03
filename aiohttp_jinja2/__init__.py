@@ -45,11 +45,16 @@ _ContextProcessor = Callable[[web.Request], Awaitable[Dict[str, Any]]]
 
 class _TemplateWrapped(Protocol):
     @overload
-    async def __call__(self, request: web.Request, /) -> web.StreamResponse: ...
+    async def __call__(self, request: web.Request, /) -> web.StreamResponse:
+        ...
+
     @overload
-    async def __call__(self, view: AbstractView, /) -> web.StreamResponse: ...
+    async def __call__(self, view: AbstractView, /) -> web.StreamResponse:
+        ...
+
     @overload
-    async def __call__(self, _self: Any, request: web.Request, /) -> web.StreamResponse: ...
+    async def __call__(self, _self: Any, request: web.Request, /) -> web.StreamResponse:
+        ...
 
 
 def setup(
