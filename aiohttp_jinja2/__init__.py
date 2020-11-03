@@ -44,15 +44,15 @@ _ContextProcessor = Callable[[web.Request], Awaitable[Dict[str, Any]]]
 
 class _TemplateWrapped(Protocol):
     @overload
-    async def __call__(self, request: web.Request, /) -> web.StreamResponse:
+    async def __call__(self, request: web.Request) -> web.StreamResponse:
         ...
 
     @overload
-    async def __call__(self, view: AbstractView, /) -> web.StreamResponse:
+    async def __call__(self, view: AbstractView) -> web.StreamResponse:
         ...
 
     @overload
-    async def __call__(self, _self: Any, request: web.Request, /) -> web.StreamResponse:
+    async def __call__(self, _self: Any, request: web.Request) -> web.StreamResponse:
         ...
 
 
@@ -146,15 +146,15 @@ def template(
 ) -> Callable[[_TemplateHandler], _TemplateWrapped]:
     def wrapper(func: _TemplateHandler) -> _TemplateWrapped:
         @overload
-        async def wrapped(request: web.Request, /) -> web.StreamResponse:
+        async def wrapped(request: web.Request) -> web.StreamResponse:
             ...
 
         @overload
-        async def wrapped(view: AbstractView, /) -> web.StreamResponse:
+        async def wrapped(view: AbstractView) -> web.StreamResponse:
             ...
 
         @overload
-        async def wrapped(_self: Any, request: web.Request, /) -> web.StreamResponse:
+        async def wrapped(_self: Any, request: web.Request) -> web.StreamResponse:
             ...
 
         @functools.wraps(func)
