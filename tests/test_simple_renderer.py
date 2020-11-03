@@ -292,7 +292,7 @@ async def test_render_bare_funcs_deprecated(aiohttp_client):
 
         return wrapped
 
-    @wrapper
+    @wrapper  # type: ignore[arg-type]  # Deprecated functionality
     @aiohttp_jinja2.template("tmpl.jinja2")
     def func(request: web.Request) -> Dict[str, str]:
         return {"text": "OK"}

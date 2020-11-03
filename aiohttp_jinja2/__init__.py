@@ -9,6 +9,7 @@ from typing import (
     Iterable,
     Mapping,
     Optional,
+    Protocol,
     Type,
     Union,
     cast,
@@ -31,10 +32,6 @@ APP_CONTEXT_PROCESSORS_KEY = "aiohttp_jinja2_context_processors"
 APP_KEY = "aiohttp_jinja2_environment"
 REQUEST_CONTEXT_KEY = "aiohttp_jinja2_context"
 
-_SimpleHandler = Callable[[web.Request], Awaitable[web.StreamResponse]]
-_MethodHandler = Callable[[Any, web.Request], Awaitable[web.StreamResponse]]
-_ViewHandler = Callable[[Type[AbstractView]], Awaitable[web.StreamResponse]]
-_HandlerType = Union[_SimpleHandler, _MethodHandler, _ViewHandler]
 _TemplateReturnType = Awaitable[Union[web.StreamResponse, Mapping[str, Any]]]
 _SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
 _MethodTemplateHandler = Callable[[Any, web.Request], _TemplateReturnType]
@@ -44,6 +41,15 @@ _TemplateHandler = Union[
 ]
 
 _ContextProcessor = Callable[[web.Request], Awaitable[Dict[str, Any]]]
+
+
+class _TemplateWrapped(Protocol):
+    @overload
+    async def __call__(self, request: web.Request, /) -> web.StreamResponse: ...
+    @overload
+    async def __call__(self, view: AbstractView, /) -> web.StreamResponse: ...
+    @overload
+    async def __call__(self, _self: Any, request: web.Request, /) -> web.StreamResponse: ...
 
 
 def setup(
@@ -133,18 +139,18 @@ def template(
     app_key: str = APP_KEY,
     encoding: str = "utf-8",
     status: int = 200,
-) -> Callable[[_TemplateHandler], _HandlerType]:
-    def wrapper(func: _TemplateHandler) -> _HandlerType:
+) -> Callable[[_TemplateHandler], _TemplateWrapped]:
+    def wrapper(func: _TemplateHandler) -> _TemplateWrapped:
         @overload
-        async def wrapped(request: web.Request) -> web.StreamResponse:
+        async def wrapped(request: web.Request, /) -> web.StreamResponse:
             ...
 
         @overload
-        async def wrapped(view: AbstractView) -> web.StreamResponse:
+        async def wrapped(view: AbstractView, /) -> web.StreamResponse:
             ...
 
         @overload
-        async def wrapped(_self: Any, request: web.Request) -> web.StreamResponse:
+        async def wrapped(_self: Any, request: web.Request, /) -> web.StreamResponse:
             ...
 
         @functools.wraps(func)
@@ -153,7 +159,7 @@ def template(
                 coro = func
             else:
                 warnings.warn(
-                    "Bare functions are deprecated, " "use async ones",
+                    "Bare functions are deprecated, use async ones",
                     DeprecationWarning,
                 )
                 coro = asyncio.coroutine(func)
