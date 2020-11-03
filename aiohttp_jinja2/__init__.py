@@ -1,5 +1,6 @@
 import asyncio
 import functools
+import sys
 import warnings
 from typing import (
     Any,
@@ -9,7 +10,6 @@ from typing import (
     Iterable,
     Mapping,
     Optional,
-    Protocol,
     Union,
     cast,
     overload,
@@ -41,19 +41,25 @@ _TemplateHandler = Union[
 
 _ContextProcessor = Callable[[web.Request], Awaitable[Dict[str, Any]]]
 
+if sys.version_info >= (3, 8):
+    from typing import Protocol
 
-class _TemplateWrapped(Protocol):
-    @overload
-    async def __call__(self, request: web.Request) -> web.StreamResponse:
-        ...
+    class _TemplateWrapped(Protocol):
+        @overload
+        async def __call__(self, request: web.Request) -> web.StreamResponse:
+            ...
 
-    @overload
-    async def __call__(self, view: AbstractView) -> web.StreamResponse:
-        ...
+        @overload
+        async def __call__(self, view: AbstractView) -> web.StreamResponse:
+            ...
 
-    @overload
-    async def __call__(self, _self: Any, request: web.Request) -> web.StreamResponse:
-        ...
+        @overload
+        async def __call__(self, _self: Any, request: web.Request) -> web.StreamResponse:
+            ...
+
+
+else:
+    _TemplateWrapped = Callable[[Any, ...], web.StreamResponse]
 
 
 def setup(
