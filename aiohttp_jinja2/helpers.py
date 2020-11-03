@@ -3,7 +3,7 @@ useful context functions, see
 http://jinja.pocoo.org/docs/dev/api/#jinja2.contextfunction
 """
 import sys
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 import jinja2
 from aiohttp import web
@@ -21,7 +21,7 @@ else:
 
 
 @jinja2.contextfunction
-def url_for(context: _Context, __route_name: str, **parts: Union[str, int]) -> URL:
+def url_for(context: _Context, __route_name: str, query_: Optional[Dict[str, str]] = None, **parts: Union[str, int]) -> URL:
     """Filter for generating urls.
 
     Usage: {{ url('the-view-name') }} might become "/path/to/view" or
@@ -29,10 +29,6 @@ def url_for(context: _Context, __route_name: str, **parts: Union[str, int]) -> U
     might become "/items/1?active=true".
     """
     app = context["app"]
-
-    query = None
-    if "query_" in parts:
-        query = str(parts.pop("query_"))
 
     parts_clean: Dict[str, str] = {}
     for key in parts:
@@ -52,8 +48,8 @@ def url_for(context: _Context, __route_name: str, **parts: Union[str, int]) -> U
         parts_clean[key] = val
 
     url = app.router[__route_name].url_for(**parts_clean)
-    if query:
-        url = url.with_query(query)
+    if query_:
+        url = url.with_query(query_)
     return url
 
 
