@@ -61,7 +61,7 @@ if sys.version_info >= (3, 8):
 
 
 else:
-    _TemplateWrapped = Callable[[Any, ...], web.StreamResponse]
+    _TemplateWrapped = Callable[[...], web.StreamResponse]
 
 
 def setup(
