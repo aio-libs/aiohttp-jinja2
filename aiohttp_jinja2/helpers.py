@@ -21,7 +21,12 @@ else:
 
 
 @jinja2.contextfunction
-def url_for(context: _Context, __route_name: str, query_: Optional[Dict[str, str]] = None, **parts: Union[str, int]) -> URL:
+def url_for(
+    context: _Context,
+    __route_name: str,
+    query_: Optional[Dict[str, str]] = None,
+    **parts: Union[str, int]
+) -> URL:
     """Filter for generating urls.
 
     Usage: {{ url('the-view-name') }} might become "/path/to/view" or
