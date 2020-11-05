@@ -1,5 +1,6 @@
 import asyncio
 import functools
+import sys
 import warnings
 from typing import (
     Any,
@@ -9,7 +10,6 @@ from typing import (
     Iterable,
     Mapping,
     Optional,
-    Type,
     Union,
     cast,
     overload,
@@ -31,10 +31,6 @@ APP_CONTEXT_PROCESSORS_KEY = "aiohttp_jinja2_context_processors"
 APP_KEY = "aiohttp_jinja2_environment"
 REQUEST_CONTEXT_KEY = "aiohttp_jinja2_context"
 
-_SimpleHandler = Callable[[web.Request], Awaitable[web.StreamResponse]]
-_MethodHandler = Callable[[Any, web.Request], Awaitable[web.StreamResponse]]
-_ViewHandler = Callable[[Type[AbstractView]], Awaitable[web.StreamResponse]]
-_HandlerType = Union[_SimpleHandler, _MethodHandler, _ViewHandler]
 _TemplateReturnType = Awaitable[Union[web.StreamResponse, Mapping[str, Any]]]
 _SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
 _MethodTemplateHandler = Callable[[Any, web.Request], _TemplateReturnType]
@@ -43,12 +39,36 @@ _TemplateHandler = Union[
     _SimpleTemplateHandler, _MethodTemplateHandler, _ViewTemplateHandler
 ]
 
+_ContextProcessor = Callable[[web.Request], Awaitable[Dict[str, Any]]]
+
+if sys.version_info >= (3, 8):
+    from typing import Protocol
+
+    class _TemplateWrapped(Protocol):
+        @overload
+        async def __call__(self, request: web.Request) -> web.StreamResponse:
+            ...
+
+        @overload
+        async def __call__(self, view: AbstractView) -> web.StreamResponse:
+            ...
+
+        @overload
+        async def __call__(
+            self, _self: Any, request: web.Request
+        ) -> web.StreamResponse:
+            ...
+
+
+else:
+    _TemplateWrapped = Callable[..., web.StreamResponse]
+
 
 def setup(
     app: web.Application,
     *args: Any,
     app_key: str = APP_KEY,
-    context_processors: Iterable[Callable[[web.Request], Dict[str, Any]]] = (),
+    context_processors: Iterable[_ContextProcessor] = (),
     filters: Optional[Filters] = None,
     default_helpers: bool = True,
     **kwargs: Any,
@@ -109,7 +129,7 @@ def render_string(
 def render_template(
     template_name: str,
     request: web.Request,
-    context: Mapping[str, Any],
+    context: Optional[Mapping[str, Any]],
     *,
     app_key: str = APP_KEY,
     encoding: str = "utf-8",
@@ -131,8 +151,8 @@ def template(
     app_key: str = APP_KEY,
     encoding: str = "utf-8",
     status: int = 200,
-) -> Callable[[_TemplateHandler], _HandlerType]:
-    def wrapper(func: _TemplateHandler) -> _HandlerType:
+) -> Callable[[_TemplateHandler], _TemplateWrapped]:
+    def wrapper(func: _TemplateHandler) -> _TemplateWrapped:
         @overload
         async def wrapped(request: web.Request) -> web.StreamResponse:
             ...
@@ -151,7 +171,7 @@ def template(
                 coro = func
             else:
                 warnings.warn(
-                    "Bare functions are deprecated, " "use async ones",
+                    "Bare functions are deprecated, use async ones",
                     DeprecationWarning,
                 )
                 coro = asyncio.coroutine(func)

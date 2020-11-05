@@ -2,27 +2,40 @@
 useful context functions, see
 http://jinja.pocoo.org/docs/dev/api/#jinja2.contextfunction
 """
-from typing import Any, Dict, cast
+import sys
+from typing import Any, Dict, Optional, Union
 
 import jinja2
 from aiohttp import web
 from yarl import URL
 
+if sys.version_info >= (3, 8):
+    from typing import TypedDict
+
+    class _Context(TypedDict, total=False):
+        app: web.Application
+
+
+else:
+    _Context = Dict[str, Any]
+
 
 @jinja2.contextfunction
-def url_for(context: Dict[str, Any], __route_name: str, **parts: Any) -> URL:
+def url_for(
+    context: _Context,
+    __route_name: str,
+    query_: Optional[Dict[str, str]] = None,
+    **parts: Union[str, int]
+) -> URL:
     """Filter for generating urls.
 
     Usage: {{ url('the-view-name') }} might become "/path/to/view" or
     {{ url('item-details', id=123, query={'active': 'true'}) }}
     might become "/items/1?active=true".
     """
-    app = cast(web.Application, context["app"])
+    app = context["app"]
 
-    query = None
-    if "query_" in parts:
-        query = parts.pop("query_")
-
+    parts_clean: Dict[str, str] = {}
     for key in parts:
         val = parts[key]
         if isinstance(val, str):
@@ -37,16 +50,16 @@ def url_for(context: Dict[str, Any], __route_name: str, **parts: Any) -> URL:
                 "argument value should be str or int, "
                 "got {} -> [{}] {!r}".format(key, type(val), val)
             )
-        parts[key] = val
+        parts_clean[key] = val
 
-    url = app.router[__route_name].url_for(**parts)
-    if query:
-        url = url.with_query(query)
+    url = app.router[__route_name].url_for(**parts_clean)
+    if query_:
+        url = url.with_query(query_)
     return url
 
 
 @jinja2.contextfunction
-def static_url(context: Dict[str, Any], static_file_path: str) -> str:
+def static_url(context: _Context, static_file_path: str) -> str:
     """Filter for generating urls for static files.
 
     NOTE: you'll need
