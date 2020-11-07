@@ -18,7 +18,11 @@ async def test_func(aiohttp_client, enable_async):
 
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
     app = web.Application()
-    aiohttp_jinja2.setup(app, enable_async=enable_async, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
+    aiohttp_jinja2.setup(
+        app,
+        enable_async=enable_async,
+        loader=jinja2.DictLoader({"tmpl.jinja2": template})
+    )
 
     app.router.add_route("*", "/", func)
 
@@ -142,7 +146,11 @@ async def _test_render_template(func, aiohttp_client, enable_async):
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
 
     app = web.Application()
-    aiohttp_jinja2.setup(app, enable_async=enable_async, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
+    aiohttp_jinja2.setup(
+        app,
+        enable_async=enable_async,
+        loader=jinja2.DictLoader({"tmpl.jinja2": template})
+    )
 
     app.router.add_route("*", "/", func)
 

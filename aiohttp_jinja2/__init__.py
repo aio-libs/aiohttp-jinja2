@@ -188,7 +188,9 @@ async def render_template_async(
     status: int = 200,
 ) -> web.Response:
     response, context = _render_template(context, encoding, status)
-    response.text = await render_string_async(template_name, request, context, app_key=app_key)
+    response.text = await render_string_async(
+        template_name, request, context, app_key=app_key
+    )
     return response
 
 
