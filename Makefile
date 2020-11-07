@@ -11,7 +11,7 @@ fmt:
 
 .PHONY: lint
 lint: fmt
-	mypy --strict aiohttp_jinja2
+	mypy --strict
 
 .PHONY: test
 test:
