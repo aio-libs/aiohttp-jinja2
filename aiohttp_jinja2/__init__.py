@@ -10,6 +10,7 @@ from typing import (
     Iterable,
     Mapping,
     Optional,
+    Tuple,
     TypeVar,
     Union,
     cast,
@@ -97,13 +98,12 @@ def get_env(app: web.Application, *, app_key: str = APP_KEY) -> jinja2.Environme
     return cast(jinja2.Environment, app.get(app_key))
 
 
-def render_string(
+def _render_string(
     template_name: str,
     request: web.Request,
     context: Mapping[str, Any],
-    *,
-    app_key: str = APP_KEY,
-) -> str:
+    app_key: str,
+) -> Tuple[jinja2.Template, Mapping[str, Any]]:
     env = request.config_dict.get(app_key)
     if env is None:
         text = (
@@ -126,8 +126,42 @@ def render_string(
         raise web.HTTPInternalServerError(reason=text, text=text)
     if request.get(REQUEST_CONTEXT_KEY):
         context = dict(request[REQUEST_CONTEXT_KEY], **context)
-    text = template.render(context)
-    return text
+    return template, context
+
+
+def render_string(
+    template_name: str,
+    request: web.Request,
+    context: Mapping[str, Any],
+    *,
+    app_key: str = APP_KEY,
+) -> str:
+    template, context = _render_string(template_name, request, context, app_key)
+    return template.render(context)
+
+
+async def render_string_async(
+    template_name: str,
+    request: web.Request,
+    context: Mapping[str, Any],
+    *,
+    app_key: str = APP_KEY,
+) -> str:
+    template, context = _render_string(template_name, request, context, app_key)
+    return await template.render_async(context)
+
+
+def _render_template(
+    context: Optional[Mapping[str, Any]],
+    encoding: str,
+    status: int,
+) -> Tuple[web.Response, Mapping[str, Any]]:
+    response = web.Response(status=status)
+    if context is None:
+        context = {}
+    response.content_type = "text/html"
+    response.charset = encoding
+    return response, context
 
 
 def render_template(
@@ -139,13 +173,22 @@ def render_template(
     encoding: str = "utf-8",
     status: int = 200,
 ) -> web.Response:
-    response = web.Response(status=status)
-    if context is None:
-        context = {}
-    text = render_string(template_name, request, context, app_key=app_key)
-    response.content_type = "text/html"
-    response.charset = encoding
-    response.text = text
+    response, context = _render_template(context, encoding, status)
+    response.text = render_string(template_name, request, context, app_key=app_key)
+    return response
+
+
+async def render_template_async(
+    template_name: str,
+    request: web.Request,
+    context: Optional[Mapping[str, Any]],
+    *,
+    app_key: str = APP_KEY,
+    encoding: str = "utf-8",
+    status: int = 200,
+) -> web.Response:
+    response, context = _render_template(context, encoding, status)
+    response.text = await render_string_async(template_name, request, context, app_key=app_key)
     return response
 
 
@@ -197,9 +240,15 @@ def template(
             else:
                 request = args[-1]
 
-            response = render_template(
-                template_name, request, context, app_key=app_key, encoding=encoding
-            )
+            env = request.config_dict.get(app_key)
+            if env and env.is_async:
+                response = await render_template_async(
+                    template_name, request, context, app_key=app_key, encoding=encoding
+                )
+            else:
+                response = render_template(
+                    template_name, request, context, app_key=app_key, encoding=encoding
+                )
             response.set_status(status)
             return response
 
