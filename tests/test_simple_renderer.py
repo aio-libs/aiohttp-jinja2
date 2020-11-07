@@ -10,14 +10,15 @@ import aiohttp_jinja2
 _T = TypeVar("_T")
 
 
-async def test_func(aiohttp_client):
+@pytest.mark.parametrize("enable_async", (False, True))
+async def test_func(aiohttp_client, enable_async):
     @aiohttp_jinja2.template("tmpl.jinja2")
     async def func(request: web.Request) -> Dict[str, str]:
         return {"head": "HEAD", "text": "text"}
 
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
     app = web.Application()
-    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
+    aiohttp_jinja2.setup(app, enable_async=enable_async, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
 
     app.router.add_route("*", "/", func)
 
@@ -137,16 +138,11 @@ async def test_set_status(aiohttp_client):
     assert "<html><body><h1>HEAD</h1>text</body></html>" == txt
 
 
-async def test_render_template(aiohttp_client):
-    async def func(request):
-        return aiohttp_jinja2.render_template(
-            "tmpl.jinja2", request, {"head": "HEAD", "text": "text"}
-        )
-
+async def _test_render_template(func, aiohttp_client, enable_async):
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
 
     app = web.Application()
-    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
+    aiohttp_jinja2.setup(app, enable_async=enable_async, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
 
     app.router.add_route("*", "/", func)
 
@@ -157,6 +153,24 @@ async def test_render_template(aiohttp_client):
     assert 200 == resp.status
     txt = await resp.text()
     assert "<html><body><h1>HEAD</h1>text</body></html>" == txt
+
+
+async def test_render_template(aiohttp_client):
+    async def func(request):
+        return aiohttp_jinja2.render_template(
+            "tmpl.jinja2", request, {"head": "HEAD", "text": "text"}
+        )
+
+    await _test_render_template(func, aiohttp_client, enable_async=False)
+
+
+async def test_render_template_async(aiohttp_client):
+    async def func(request):
+        return await aiohttp_jinja2.render_template_async(
+            "tmpl.jinja2", request, {"head": "HEAD", "text": "text"}
+        )
+
+    await _test_render_template(func, aiohttp_client, enable_async=True)
 
 
 async def test_render_template_custom_status(aiohttp_client):
