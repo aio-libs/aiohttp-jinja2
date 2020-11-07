@@ -158,7 +158,7 @@ def template(
 ) -> _TemplateWrapper:
     @overload
     def wrapper(
-        func: _SimpleTemplateHandler
+        func: _SimpleTemplateHandler,
     ) -> Callable[[web.Request], Awaitable[web.StreamResponse]]:
         ...
 
