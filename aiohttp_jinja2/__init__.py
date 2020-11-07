@@ -34,12 +34,6 @@ REQUEST_CONTEXT_KEY = "aiohttp_jinja2_context"
 
 _TemplateReturnType = Awaitable[Union[web.StreamResponse, Mapping[str, Any]]]
 _SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
-_MethodTemplateHandler = Callable[[Any, web.Request], _TemplateReturnType]
-_ViewTemplateHandler = Callable[[AbstractView], _TemplateReturnType]
-_TemplateHandler = Union[
-    _SimpleTemplateHandler, _MethodTemplateHandler, _ViewTemplateHandler
-]
-
 _ContextProcessor = Callable[[web.Request], Awaitable[Dict[str, Any]]]
 
 _T = TypeVar("_T")
@@ -50,15 +44,21 @@ if sys.version_info >= (3, 8):
 
     class _TemplateWrapper(Protocol):
         @overload
-        def __call__(self, func: _SimpleTemplateHandler) -> Callable[[web.Request], Awaitable[web.StreamResponse]]:
+        def __call__(
+            self, func: _SimpleTemplateHandler
+        ) -> Callable[[web.Request], Awaitable[web.StreamResponse]]:
             ...
 
         @overload
-        def __call__(self, func: Callable[[_AbstractView], _TemplateReturnType]) -> Callable[[_AbstractView], Awaitable[web.StreamResponse]]:
+        def __call__(
+            self, func: Callable[[_AbstractView], _TemplateReturnType]
+        ) -> Callable[[_AbstractView], Awaitable[web.StreamResponse]]:
             ...
 
         @overload
-        def __call__(self, func: Callable[[_T, web.Request], _TemplateReturnType]) -> Callable[[_T, web.Request], Awaitable[web.StreamResponse]]:
+        def __call__(
+            self, func: Callable[[_T, web.Request], _TemplateReturnType]
+        ) -> Callable[[_T, web.Request], Awaitable[web.StreamResponse]]:
             ...
 
 
@@ -157,18 +157,26 @@ def template(
     status: int = 200,
 ) -> _TemplateWrapper:
     @overload
-    def wrapper(func: _SimpleTemplateHandler) -> Callable[[web.Request], Awaitable[web.StreamResponse]]:
+    def wrapper(
+        func: _SimpleTemplateHandler
+    ) -> Callable[[web.Request], Awaitable[web.StreamResponse]]:
         ...
 
     @overload
-    def wrapper(func: Callable[[_AbstractView], _TemplateReturnType]) -> Callable[[_AbstractView], Awaitable[web.StreamResponse]]:
+    def wrapper(
+        func: Callable[[_AbstractView], _TemplateReturnType]
+    ) -> Callable[[_AbstractView], Awaitable[web.StreamResponse]]:
         ...
 
     @overload
-    def wrapper(func: Callable[[_T, web.Request], _TemplateReturnType]) -> Callable[[_T, web.Request], Awaitable[web.StreamResponse]]:
+    def wrapper(
+        func: Callable[[_T, web.Request], _TemplateReturnType]
+    ) -> Callable[[_T, web.Request], Awaitable[web.StreamResponse]]:
         ...
 
-    def wrapper(func: Callable[..., _TemplateReturnType]) -> Callable[..., Awaitable[web.StreamResponse]]:
+    def wrapper(
+        func: Callable[..., _TemplateReturnType]
+    ) -> Callable[..., Awaitable[web.StreamResponse]]:
         @functools.wraps(func)
         async def wrapped(*args: Any) -> web.StreamResponse:
             if asyncio.iscoroutinefunction(func):
