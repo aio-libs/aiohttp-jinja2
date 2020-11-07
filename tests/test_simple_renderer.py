@@ -201,8 +201,8 @@ async def test_template_not_found():
 
 
 async def test_render_not_mapping():
-    @aiohttp_jinja2.template("tmpl.jinja2")
-    async def func(request):
+    @aiohttp_jinja2.template("tmpl.jinja2")  # type: ignore[arg-type]
+    async def func(request: web.Request) -> int:
         return 123
 
     app = web.Application()
