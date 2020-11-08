@@ -132,7 +132,7 @@ def _render_string(
 def render_string(
     template_name: str,
     request: web.Request,
-    context: Optional[Mapping[str, Any]],
+    context: Mapping[str, Any],
     *,
     app_key: str = APP_KEY,
 ) -> str:
