@@ -1,13 +1,15 @@
 CHANGES
 =======
 
-1.3.1 (XXXX-XX-XX)
+1.4.0 (2020-11-12)
 ------------------
 
 - Fix type annotation for ``context_processors`` argument #354
 
 - Bump the minimal supported ``aiohttp`` version to 3.6.3 to avoid problems
   with uncompatibility between ``aiohttp`` and ``yarl``
+
+- Add async rendering support #393
 
 1.3.0 (2020-10-30)
 ------------------
