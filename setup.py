@@ -4,6 +4,7 @@ import re
 
 from setuptools import setup
 
+# TEST
 
 def _get_version():
     PATH_TO_INIT_PY = os.path.join(
