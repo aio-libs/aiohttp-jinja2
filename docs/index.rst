@@ -138,6 +138,24 @@ Template::
         </div>
     </body>
 
+Async functions
+...............
+
+If you pass the ``enable_async`` parameter to the setup function, then you
+will need to use the async functions for rendering::
+
+    aiohttp_jinja2.setup(
+        app, enable_async=True,
+        loader=jinja2.FileSystemLoader('/path/to/templates/folder'))
+
+    ...
+
+    async def handler(request):
+        return await aiohttp_jinja2.render_template_async(
+            'tmpl.jinja2', request)
+
+The ``@aiohttp_jinja2.template`` decorator will work for both cases.
+
 Default Globals
 ...............
 
