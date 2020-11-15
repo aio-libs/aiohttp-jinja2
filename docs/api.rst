@@ -104,6 +104,17 @@ Simple initialization::
                        to `aiohttp_jinja2_environment`.
 
 
+.. function:: async render_string_async(template_name, request, context, *, \
+                                        app_key=APP_KEY)
+
+    Async version of ``render_string()``.
+
+    Replaces ``render_string()`` when ``enable_async=True`` is passed to the
+    ``setup()`` call.
+
+    See ``render_string()`` for parameter usage.
+
+
 .. function:: render_template(template_name, request, context, *, \
                               app_key=APP_KEY, encoding='utf-8', status=200)
 
@@ -117,6 +128,18 @@ Simple initialization::
                        environment from application dictionary object. Defaults
                        to `aiohttp_jinja2_environment`.
    :param int status: http status code that will be set on resulting response.
+
+
+.. function:: async render_template_async(
+        template_name, request, context, *, \
+        app_key=APP_KEY, encoding='utf-8', status=200)
+
+    Async version of ``render_template()``.
+
+    Replaces ``render_template()`` when ``enable_async=True`` is passed to the
+    ``setup()`` call.
+
+    See ``render_template()`` for parameter usage.
 
 
 Example of usage
