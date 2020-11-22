@@ -104,8 +104,9 @@ Simple initialization::
                        to `aiohttp_jinja2_environment`.
 
 
-.. function:: async render_string_async(template_name, request, context, *, \
-                                        app_key=APP_KEY)
+.. function:: render_string_async(template_name, request, context, *, \
+                                  app_key=APP_KEY)
+    :async:
 
     Async version of ``render_string()``.
 
@@ -130,9 +131,10 @@ Simple initialization::
    :param int status: http status code that will be set on resulting response.
 
 
-.. function:: async render_template_async(
+.. function:: render_template_async( \
         template_name, request, context, *, \
         app_key=APP_KEY, encoding='utf-8', status=200)
+    :async:
 
     Async version of ``render_template()``.
 
