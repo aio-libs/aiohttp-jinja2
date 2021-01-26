@@ -215,9 +215,7 @@ def template(
         func: Callable[..., _TemplateReturnType]
     ) -> Callable[..., Awaitable[web.StreamResponse]]:
         @functools.wraps(func)
-        async def wrapped(
-            *args: Union[web.Request, _AbstractView, object]
-        ) -> web.StreamResponse:
+        async def wrapped(*args: Any) -> web.StreamResponse:  # type: ignore[misc]
             if asyncio.iscoroutinefunction(func):
                 coro = func
             else:
