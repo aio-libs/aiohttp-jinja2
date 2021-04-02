@@ -110,7 +110,7 @@ def _render_string(
     try:
         template = env.get_template(template_name)
     except jinja2.TemplateNotFound as e:
-        text = f"Template '{template_name}' not found"
+        text = "Template {} not found".format(template_name)
         raise web.HTTPInternalServerError(reason=text, text=text) from e
     if not isinstance(context, Mapping):
         text = "context should be mapping, not {}".format(type(context))
