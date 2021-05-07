@@ -1,7 +1,7 @@
 -e .
 aiohttp==3.7.4.post0
 alabaster>=0.6.2
-attrs==20.3.0
+attrs==21.1.0
 coverage==5.5
 flake8==3.9.1
 jinja2==2.11.3
