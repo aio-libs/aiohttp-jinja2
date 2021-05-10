@@ -3,7 +3,7 @@ aiohttp==3.7.4.post0
 alabaster>=0.6.2
 attrs==20.3.0
 coverage==5.5
-flake8==3.9.1
+flake8==3.9.2
 jinja2==2.11.3
 multidict==5.1.0
 mypy==0.812; implementation_name=="cpython"
