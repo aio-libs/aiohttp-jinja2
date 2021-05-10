@@ -13,5 +13,5 @@ pytest-aiohttp==0.3.0
 pytest-cov==2.11.1
 pytest-cov==2.11.1
 pytest-sugar==0.9.4
-sphinx==3.5.4
+sphinx==4.0.0
 yarl==1.6.3
