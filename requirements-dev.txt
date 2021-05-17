@@ -10,8 +10,8 @@ mypy==0.812; implementation_name=="cpython"
 pre-commit==2.12.1
 pytest==6.2.4
 pytest-aiohttp==0.3.0
-pytest-cov==2.11.1
-pytest-cov==2.11.1
+pytest-cov==2.12.0
+pytest-cov==2.12.0
 pytest-sugar==0.9.4
 sphinx==4.0.0
 yarl==1.6.3
