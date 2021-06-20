@@ -11,7 +11,7 @@ fmt:
 
 .PHONY: lint
 lint: fmt
-	mypy --strict
+	mypy
 
 .PHONY: test
 test:
