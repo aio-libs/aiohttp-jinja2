@@ -1,5 +1,6 @@
 import asyncio
 import functools
+import sys
 import warnings
 from typing import (
     Any,
@@ -19,7 +20,11 @@ from typing import (
 import jinja2
 from aiohttp import web
 from aiohttp.abc import AbstractView
-from typing_extensions import Protocol
+
+if sys.version_info >= (3, 8):
+    from typing import Protocol
+else:
+    from typing_extensions import Protocol
 
 from .helpers import GLOBAL_HELPERS
 from .typedefs import Filters
