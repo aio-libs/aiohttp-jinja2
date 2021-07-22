@@ -55,6 +55,7 @@ setup(
         "Development Status :: 5 - Production/Stable",
         "Topic :: Internet :: WWW/HTTP",
         "Framework :: AsyncIO",
+        "Framework :: aiohttp",
     ],
     author="Andrew Svetlov",
     author_email="andrew.svetlov@gmail.com",
