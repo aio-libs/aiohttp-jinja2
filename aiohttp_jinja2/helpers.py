@@ -30,7 +30,7 @@ def url_for(
     """Filter for generating urls.
 
     Usage: {{ url('the-view-name') }} might become "/path/to/view" or
-    {{ url('item-details', id=123, query={'active': 'true'}) }}
+    {{ url('item-details', id=123, query_={'active': 'true'}) }}
     might become "/items/1?active=true".
     """
     app = context["app"]
