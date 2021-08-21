@@ -62,7 +62,7 @@ setup(
     url="https://github.com/aio-libs/aiohttp_jinja2/",
     license="Apache 2",
     packages=["aiohttp_jinja2"],
-    python_requires=">=3.5.3",
+    python_requires=">=3.6",
     install_requires=install_requires,
     include_package_data=True,
 )
