@@ -1,7 +1,13 @@
 CHANGES
 =======
 
-1.4.1 (2020-11-23)
+1.5 (2021-08-21)
+----------------
+
+- Drop support for jinaj2 <3. Add support for 3+.
+- Don't require ``typing_extensions`` on Python 3.8+.
+
+1.4.2 (2020-11-23)
 ------------------
 
 - Add CHANGES.rst to MANIFEST.in and sdist #402
