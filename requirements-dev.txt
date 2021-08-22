@@ -15,7 +15,6 @@ pre-commit==2.14.0
 pytest==6.2.4
 pytest-aiohttp==0.3.0
 pytest-cov==2.12.1
-pytest-cov==2.12.1
 pytest-sugar==0.9.4
 sphinx==4.1.2
 yarl==1.6.3
