@@ -7,6 +7,9 @@ Describes the module API with detailed explanations of functions parameters.
 .. highlight:: python
 
 
+APP_KEY
+-------
+
 .. data:: APP_KEY
 
    The key name in :class:`aiohttp.web.Application` dictionary,
@@ -17,7 +20,8 @@ Describes the module API with detailed explanations of functions parameters.
    it to :mod:`aiohttp_jinja2` functions.
 
 
-
+setup
+-----
 
 .. function:: setup(app, *args, app_key=APP_KEY, context_processors=(), \
                     autoescape=True, \
@@ -54,19 +58,24 @@ Describes the module API with detailed explanations of functions parameters.
    :param ``**kwargs``: any arbitrary keyword arguments you want to pass to
                         :class:`jinja2.Environment` environment.
 
+   Simple initialization::
 
-.. function:: get_env(app, *, app_key)
+      import jinja2
+      import aiohttp_jinja2
+      from aiohttp import web
 
-   Get aiohttp-jinja2 environment from an application instance by key.
-
-   :param app: :class:`aiohttp.web.Application` instance to get variables from.
-
-   :param str app_key: optional key that will be used to access templating
-                           environment from application dictionary object. Defaults
-                           to `aiohttp_jinja2_environment`.
+      app = web.Application()
+      aiohttp_jinja2.setup(
+         app,
+         loader=jinja2.FileSystemLoader('/path/to/templates/folder'),
+      )
 
 
-.. function:: template(template_name, *, app_key, encoding, status)
+@template
+--------
+
+.. decorator:: template(template_name, *, app_key=APP_KEY, \
+                        encoding='utf-8', status=200)
 
    Behaves as a decorator around view functions accepting template name that
    should be used to render the response. Supports both synchronous and
@@ -86,18 +95,17 @@ Describes the module API with detailed explanations of functions parameters.
    :params int status: http status code that will be set on resulting response.
 
 
-   Simple initialization::
+   Simple usage example::
 
-      import jinja2
-      import aiohttp_jinja2
-      from aiohttp import web
+      @jinja2.template('tmpl.jinja2')
+      async def handler(request):
+         context = {'foo': 'bar'}
+         return context
 
-      app = web.Application()
-      aiohttp_jinja2.setup(
-         app,
-         loader=jinja2.FileSystemLoader('/path/to/templates/folder'),
-      )
+      app.router.add_get('/tmpl', handler)
 
+render_string
+-------------
 
 .. function:: render_string(template_name, request, context, *, \
                             app_key=APP_KEY)
@@ -117,6 +125,9 @@ Describes the module API with detailed explanations of functions parameters.
                        to `aiohttp_jinja2_environment`.
 
 
+render_string_async
+-------------------
+
 .. function:: render_string_async(template_name, request, context, *, \
                                   app_key=APP_KEY)
     :async:
@@ -128,6 +139,10 @@ Describes the module API with detailed explanations of functions parameters.
 
     See ``render_string()`` for parameter usage.
 
+
+
+render_template
+---------------
 
 .. function:: render_template(template_name, request, context, *, \
                               app_key=APP_KEY, encoding='utf-8', status=200)
@@ -155,6 +170,9 @@ Describes the module API with detailed explanations of functions parameters.
       app.router.add_get('/tmpl', handler)
 
 
+render_template_async
+---------------------
+
 .. function:: render_template_async( \
         template_name, request, context, *, \
         app_key=APP_KEY, encoding='utf-8', status=200)
@@ -169,10 +187,12 @@ Describes the module API with detailed explanations of functions parameters.
 
 
 
-.. function:: get_env(app, app_key=APP_KEY)
+.. function:: get_env(app, *, app_key=APP_KEY)
 
-   Return :class:`jinja2.Environment` object which has stored in the
-   *app* (:class:`aiohttp.web.Application` instance).
+   Get aiohttp-jinja2 environment from an application instance by key.
 
-   *app_key* is an optional key for application dict, :const:`APP_KEY`
-   by default.
+   :param app: :class:`aiohttp.web.Application` instance to get variables from.
+
+   :param str app_key: optional key that will be used to access templating
+                           environment from application dictionary object. Defaults
+                           to `aiohttp_jinja2_environment`.
