@@ -21,7 +21,7 @@ def _get_version_info():
         os.path.dirname(__file__), "..", "aiohttp_jinja2", "__init__.py"
     )
 
-    with open(PATH_TO_INIT_PY, "r", encoding="latin1") as fp:
+    with open(PATH_TO_INIT_PY, encoding="latin1") as fp:
         try:
             version = re.search(
                 r'^__version__ = "'
