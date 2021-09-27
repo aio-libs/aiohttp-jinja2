@@ -15,7 +15,7 @@ lint: fmt
 
 .PHONY: test
 test:
-	py.test -s ./tests/
+	pytest -s ./tests/
 
 .PHONY: clean
 clean:
