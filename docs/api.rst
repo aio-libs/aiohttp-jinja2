@@ -7,7 +7,20 @@ Describes the module API with detailed explanations of functions parameters.
 .. highlight:: python
 
 
+.. data:: APP_KEY
+
+   The key name in :class:`aiohttp.web.Application` dictionary,
+   ``'aiohttp_jinja2_environment'`` for storing :term:`jinja2`
+   environment object (:class:`jinja2.Environment`).
+
+   Usually you don't need to operate with *application* manually, left
+   it to :mod:`aiohttp_jinja2` functions.
+
+
+
+
 .. function:: setup(app, *args, app_key=APP_KEY, context_processors=(), \
+                    autoescape=True, \
                     filters=None, default_helpers=True, **kwargs)
 
    Function responsible for initializing templating system on application. It
@@ -25,6 +38,9 @@ Describes the module API with detailed explanations of functions parameters.
                               context processors used to rewrite or inject some
                               variables during the processing of a request.
    :type context_processors: :class:`list`
+
+   :param autoescape: the argument is passed to :class:`jinja2.Environemnt`, see
+                           `Autoescaping` for more details.
 
    :param filters: extra jinja filters (`link to docs
                    <http://jinja.pocoo.org/docs/2.10/templates/#filters>`).
@@ -72,6 +88,7 @@ Describes the module API with detailed explanations of functions parameters.
 
 Example of usage
 ^^^^^^^^^^^^^^^^
+
 Simple initialization::
 
    import jinja2
@@ -156,3 +173,12 @@ Assuming the initialization from the example above has been done::
       return response
 
    app.router.add_get('/tmpl', handler)
+
+
+.. function:: get_env(app, app_key=APP_KEY)
+
+   Return :class:`jinja2.Environment` object which has stored in the
+   *app* (:class:`aiohttp.web.Application` instance).
+
+   *app_key* is an optional key for application dict, :const:`APP_KEY`
+   by default.

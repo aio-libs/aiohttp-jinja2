@@ -6,7 +6,6 @@
 aiohttp_jinja2
 ==============
 
-.. module:: aiohttp_jinja2
 .. currentmodule:: aiohttp_jinja2
 .. highlight:: python
 
@@ -250,104 +249,6 @@ You can discuss the library on Freenode_ at **#aio-libs** channel.
 
 .. _Freenode: http://freenode.net
 
-
-.. _aiohttp_jinja2-reference:
-
-Reference
----------
-
-
-.. data:: APP_KEY
-
-   The key name in :class:`aiohttp.web.Application` dictionary,
-   ``'aiohttp_jinja2_environment'`` for storing :term:`jinja2`
-   environment object (:class:`jinja2.Environment`).
-
-   Usually you don't need to operate with *application* manually, left
-   it to :mod:`aiohttp_jinja2` functions.
-
-
-.. function:: get_env(app, app_key=APP_KEY)
-
-   Return :class:`jinja2.Environment` object which has stored in the
-   *app* (:class:`aiohttp.web.Application` instance).
-
-   *app_key* is an optional key for application dict, :const:`APP_KEY`
-   by default.
-
-
-.. function:: render_string(template_name, request, context, *, \
-                            app_key=APP_KEY)
-
-   Return :class:`str` which contains template
-   *template_name* filled with *context*.
-
-   *request* is a parameter from :term:`web-handler`,
-   :class:`aiohttp.web.Request` instance.
-
-   *app_key* is an optional key for application dict, :const:`APP_KEY`
-   by default.
-
-
-.. function:: render_template(template_name, request, context, *, \
-                              app_key=APP_KEY, encoding='utf-8', status=200)
-
-   Return :class:`aiohttp.web.Response` which contains template
-   *template_name* filled with *context*.
-
-   *request* is a parameter from :term:`web-handler`,
-   :class:`aiohttp.web.Request` instance.
-
-   *app_key* is an optional key for application dict, :const:`APP_KEY`
-   by default.
-
-   *encoding* is response encoding, ``'utf-8'`` by default.
-
-   Returned response has *Content-Type* header set to ``'text/html'``.
-
-
-.. function:: setup(app, *args, app_key=APP_KEY, autoescape=True, \
-                    context_processors=(), filters=None, \
-                    deault_helpers=True, **kwargs)
-
-   Initialize :class:`jinja2.Environment` object.
-
-   *app* is :class:`aiohttp.web.Application` instance.
-
-   *args* and *kawargs* are passed into environment constructor.
-
-   *app_key* is an optional key for application dict, :const:`APP_KEY`
-   by default.
-
-   *autoescape* is passed to :class:`jinja2.Environemnt`, see
-    `Autoescaping` for more details.
-
-   *context_processors* is a collection of context processors to be
-   called before rendering a template.
-
-   *filters* is a collection of custom filters, see
-   :ref:`writing-filters` for details.
-
-   *default_helpers* is a boolean flag, ``static_url`` and ``url``
-   jinja2 functions are added to environment if ``True`` (default).
-
-
-.. decorator:: template(template_name, *, app_key=APP_KEY, encoding='utf-8',\
-                        status=200)
-
-   Decorate :term:`web-handler` to convert returned :class:`dict`
-   context into :class:`aiohtttp.web.Response` filled with
-   *template_name* template.
-
-   *app_key* is an optional key for application dict, :const:`APP_KEY`
-   by default.
-
-   *encoding* is response encoding, ``'utf-8'`` by default.
-
-   *status* is *HTTP status code* for returned response, *200* (OK) by
-   default.
-
-   Returned response has *Content-Type* header set to ``'text/html'``.
 
 
 License

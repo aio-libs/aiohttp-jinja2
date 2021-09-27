@@ -11,7 +11,6 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import codecs
 import os
 import re
 import sys
@@ -22,22 +21,18 @@ def _get_version_info():
         os.path.dirname(__file__), "..", "aiohttp_jinja2", "__init__.py"
     )
 
-    with codecs.open(PATH_TO_INIT_PY, "r", "latin1") as fp:
+    with open(PATH_TO_INIT_PY, "r", encoding="latin1") as fp:
         try:
-            for line in fp.readlines():
-                if line:
-                    line = line.strip()
-                    version = re.search(
-                        r'^__version__ = "'
-                        r"(?P<major>\d+)"
-                        r"\.(?P<minor>\d+)"
-                        r"\.(?P<patch>\d+)"
-                        r'(?P<tag>.*)?"$',
-                        line,
-                        re.M,
-                    )
-                    if version:
-                        return version.groupdict()
+            version = re.search(
+                r'^__version__ = "'
+                r"(?P<major>\d+)"
+                r"\.(?P<minor>\d+)"
+                r"(\.(?P<patch>\d+)"
+                r'(?P<tag>.*)?)?"$',
+                fp.read(),
+                re.M,
+            )
+            return version.groupdict()
         except IndexError:
             raise RuntimeError("Unable to determine version.")
 
@@ -80,7 +75,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "aiohttp_jinja2"
-copyright = "2015-2018 Andrew Svetlov and aio-libs team"
+copyright = "2015-2021 Andrew Svetlov and aio-libs team"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -327,5 +322,5 @@ texinfo_documents = [
 intersphinx_mapping = {
     "http://docs.python.org/3": None,
     "https://aiohttp.readthedocs.io/en/stable": None,
-    "http://jinja2.pocoo.org/docs/dev": None,
+    "https://jinja.palletsprojects.com/en/latest": None,
 }
