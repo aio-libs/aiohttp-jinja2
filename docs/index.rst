@@ -242,19 +242,27 @@ or have some suggestion for library improvement.
 The library uses `Travis <https://travis-ci.org/aio-libs/aiohttp-jinja2>`_ for
 Continuous Integration.
 
-IRC channel
------------
-
-You can discuss the library on Freenode_ at **#aio-libs** channel.
-
-.. _Freenode: http://freenode.net
-
-
 
 License
 -------
 
 :mod:`aiohttp_jinja2` is offered under the Apache 2 license.
+
+Contents
+--------
+
+.. toctree::
+   :maxdepth: 2
+
+   api
+
+
+Indices and tables
+------------------
+
+* :ref:`genindex`
+* :ref:`search`
+
 
 Glossary
 --------
@@ -272,19 +280,3 @@ Glossary
    web-handler
 
        An endpoint that returns http response.
-
-
-Contents
---------
-
-.. toctree::
-   :maxdepth: 2
-
-   api
-
-
-Indices and tables
-------------------
-
-* :ref:`genindex`
-* :ref:`search`

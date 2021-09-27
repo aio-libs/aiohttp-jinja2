@@ -86,21 +86,17 @@ Describes the module API with detailed explanations of functions parameters.
    :params int status: http status code that will be set on resulting response.
 
 
-Example of usage
-^^^^^^^^^^^^^^^^
+   Simple initialization::
 
-Simple initialization::
+      import jinja2
+      import aiohttp_jinja2
+      from aiohttp import web
 
-   import jinja2
-   import aiohttp_jinja2
-   from aiohttp import web
-
-
-   app = web.Application()
-   aiohttp_jinja2.setup(
-      app,
-      loader=jinja2.FileSystemLoader('/path/to/templates/folder'),
-   )
+      app = web.Application()
+      aiohttp_jinja2.setup(
+         app,
+         loader=jinja2.FileSystemLoader('/path/to/templates/folder'),
+      )
 
 
 .. function:: render_string(template_name, request, context, *, \
@@ -147,6 +143,17 @@ Simple initialization::
                        to `aiohttp_jinja2_environment`.
    :param int status: http status code that will be set on resulting response.
 
+   Assuming the initialization from the example above has been done::
+
+      async def handler(request):
+         context = {'foo': 'bar'}
+         response = aiohttp_jinja2.render_template('tmpl.jinja2',
+                                                request,
+                                                context)
+         return response
+
+      app.router.add_get('/tmpl', handler)
+
 
 .. function:: render_template_async( \
         template_name, request, context, *, \
@@ -160,19 +167,6 @@ Simple initialization::
 
     See ``render_template()`` for parameter usage.
 
-
-Example of usage
-^^^^^^^^^^^^^^^^
-Assuming the initialization from the example above has been done::
-
-   async def handler(request):
-      context = {'foo': 'bar'}
-      response = aiohttp_jinja2.render_template('tmpl.jinja2',
-                                                request,
-                                                context)
-      return response
-
-   app.router.add_get('/tmpl', handler)
 
 
 .. function:: get_env(app, app_key=APP_KEY)
