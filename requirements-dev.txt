@@ -17,4 +17,4 @@ pytest-aiohttp==0.3.0
 pytest-cov==3.0.0
 pytest-sugar==0.9.4
 sphinx==4.2.0
-yarl==1.6.3
+yarl==1.7.0
