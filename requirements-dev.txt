@@ -1,5 +1,5 @@
 -e .
-aiohttp==3.7.4.post0
+aiohttp==3.8.0
 alabaster>=0.6.2
 attrs==21.2.0
 coverage==6.0.2
