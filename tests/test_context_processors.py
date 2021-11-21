@@ -4,6 +4,7 @@ import jinja2
 from aiohttp import web
 
 import aiohttp_jinja2
+
 from .conftest import _App, _Request
 
 
@@ -12,7 +13,9 @@ async def test_context_processors(aiohttp_client):
     async def func(request):
         return {"bar": 2}
 
-    app: _App = web.Application(middlewares=[aiohttp_jinja2.context_processors_middleware])
+    app: _App = web.Application(
+        middlewares=[aiohttp_jinja2.context_processors_middleware]
+    )
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.DictLoader(
@@ -43,7 +46,9 @@ async def test_nested_context_processors(aiohttp_client):
     async def func(request):
         return {"bar": 2}
 
-    subapp: _App = web.Application(middlewares=[aiohttp_jinja2.context_processors_middleware])
+    subapp: _App = web.Application(
+        middlewares=[aiohttp_jinja2.context_processors_middleware]
+    )
     aiohttp_jinja2.setup(
         subapp,
         loader=jinja2.DictLoader(
@@ -64,7 +69,9 @@ async def test_nested_context_processors(aiohttp_client):
 
     subapp.router.add_get("/", func)
 
-    app: _App = web.Application(middlewares=[aiohttp_jinja2.context_processors_middleware])
+    app: _App = web.Application(
+        middlewares=[aiohttp_jinja2.context_processors_middleware]
+    )
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({}))
 
     async def processor(request):

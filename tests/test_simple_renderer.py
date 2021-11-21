@@ -6,6 +6,7 @@ from aiohttp import web
 from aiohttp.test_utils import make_mocked_request
 
 import aiohttp_jinja2
+
 from .conftest import _App, _Request
 
 _T = TypeVar("_T")
@@ -43,7 +44,7 @@ async def test_render_class_based_view(aiohttp_client):
 
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
 
-    app:_App = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
 
     app.router.add_route("*", "/", MyView)
@@ -146,7 +147,7 @@ async def test_set_status(aiohttp_client):
 async def _test_render_template(func, aiohttp_client, enable_async):
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
 
-    app:_App = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app,
         enable_async=enable_async,
