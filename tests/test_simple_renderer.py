@@ -6,6 +6,7 @@ from aiohttp import web
 from aiohttp.test_utils import make_mocked_request
 
 import aiohttp_jinja2
+from .conftest import _App, _Request
 
 _T = TypeVar("_T")
 
@@ -13,11 +14,11 @@ _T = TypeVar("_T")
 @pytest.mark.parametrize("enable_async", (False, True))
 async def test_func(aiohttp_client, enable_async):
     @aiohttp_jinja2.template("tmpl.jinja2")
-    async def func(request: web.Request) -> Dict[str, str]:
+    async def func(request: _Request) -> Dict[str, str]:
         return {"head": "HEAD", "text": "text"}
 
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app,
         enable_async=enable_async,
@@ -42,7 +43,7 @@ async def test_render_class_based_view(aiohttp_client):
 
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
 
-    app = web.Application()
+    app:_App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
 
     app.router.add_route("*", "/", MyView)
@@ -66,7 +67,7 @@ async def test_meth(aiohttp_client):
 
     handler = Handler()
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
 
     app.router.add_route("*", "/", handler.meth)
@@ -87,7 +88,7 @@ async def test_convert_func_to_coroutine(aiohttp_client):
 
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
 
     app.router.add_route("*", "/", func)
@@ -101,10 +102,10 @@ async def test_convert_func_to_coroutine(aiohttp_client):
 
 
 async def test_render_not_initialized():
-    async def func(request: web.Request) -> web.Response:
+    async def func(request: _Request) -> web.Response:
         return aiohttp_jinja2.render_template("template", request, {})
 
-    app = web.Application()
+    app: _App = web.Application()
 
     app.router.add_route("GET", "/", func)
 
@@ -128,7 +129,7 @@ async def test_set_status(aiohttp_client):
 
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
 
     app.router.add_route("*", "/", func)
@@ -145,7 +146,7 @@ async def test_set_status(aiohttp_client):
 async def _test_render_template(func, aiohttp_client, enable_async):
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
 
-    app = web.Application()
+    app:_App = web.Application()
     aiohttp_jinja2.setup(
         app,
         enable_async=enable_async,
@@ -189,7 +190,7 @@ async def test_render_template_custom_status(aiohttp_client):
 
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
 
     app.router.add_route("*", "/", func)
@@ -204,10 +205,10 @@ async def test_render_template_custom_status(aiohttp_client):
 
 
 async def test_template_not_found():
-    async def func(request: web.Request) -> web.Response:
+    async def func(request: _Request) -> web.Response:
         return aiohttp_jinja2.render_template("template", request, {})
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({}))
 
     app.router.add_route("GET", "/", func)
@@ -224,10 +225,10 @@ async def test_template_not_found():
 
 async def test_render_not_mapping():
     @aiohttp_jinja2.template("tmpl.jinja2")  # type: ignore[arg-type]
-    async def func(request: web.Request) -> int:
+    async def func(request: _Request) -> int:
         return 123
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": "tmpl"}))
 
     app.router.add_route("GET", "/", func)
@@ -247,7 +248,7 @@ async def test_render_without_context(aiohttp_client):
 
     template = "<html><body><p>{{text}}</p></body></html>"
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": template}))
 
     app.router.add_route("GET", "/", func)
@@ -265,7 +266,7 @@ async def test_render_default_is_autoescaped(aiohttp_client):
     async def func(request):
         return {"text": "<script>alert(1)</script>"}
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app, loader=jinja2.DictLoader({"tmpl.jinja2": "<html>{{text}}</html>"})
     )
@@ -285,7 +286,7 @@ async def test_render_can_disable_autoescape(aiohttp_client):
     async def func(request):
         return {"text": "<script>alert(1)</script>"}
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.DictLoader({"tmpl.jinja2": "<html>{{text}}</html>"}),
@@ -304,9 +305,9 @@ async def test_render_can_disable_autoescape(aiohttp_client):
 
 async def test_render_bare_funcs_deprecated(aiohttp_client):
     def wrapper(
-        func: Callable[[web.Request], Awaitable[_T]]
-    ) -> Callable[[web.Request], Awaitable[_T]]:
-        async def wrapped(request: web.Request) -> _T:
+        func: Callable[[_Request], Awaitable[_T]]
+    ) -> Callable[[_Request], Awaitable[_T]]:
+        async def wrapped(request: _Request) -> _T:
             with pytest.warns(
                 DeprecationWarning, match="Bare functions are deprecated"
             ):
@@ -316,10 +317,10 @@ async def test_render_bare_funcs_deprecated(aiohttp_client):
 
     @wrapper  # type: ignore[arg-type]  # Deprecated functionality
     @aiohttp_jinja2.template("tmpl.jinja2")
-    def func(request: web.Request) -> Dict[str, str]:
+    def func(request: _Request) -> Dict[str, str]:
         return {"text": "OK"}
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": "{{text}}"}))
 
     app.router.add_route("GET", "/", func)
@@ -337,7 +338,7 @@ async def test_skip_render_for_response_from_handler(aiohttp_client):
     async def func(request):
         return web.Response(text="OK")
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": "{{text}}"}))
 
     app.router.add_route("GET", "/", func)

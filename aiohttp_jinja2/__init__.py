@@ -7,6 +7,7 @@ from typing import (
     Awaitable,
     Callable,
     Dict,
+    Final,
     Iterable,
     Mapping,
     Optional,
@@ -22,35 +23,35 @@ from aiohttp import web
 from aiohttp.abc import AbstractView
 
 if sys.version_info >= (3, 8):
-    from typing import Protocol
+    from typing import Protocol, TypedDict
 else:
-    from typing_extensions import Protocol
+    from typing_extensions import Protocol, TypedDict
 
 from .helpers import GLOBAL_HELPERS
-from .typedefs import Filters
+from .typedefs import AppState as AppState, ContextProcessor, Filters
 
 __version__ = "1.5"
 
 __all__ = ("setup", "get_env", "render_template", "render_string", "template")
 
 
-APP_CONTEXT_PROCESSORS_KEY = "aiohttp_jinja2_context_processors"
-APP_KEY = "aiohttp_jinja2_environment"
-REQUEST_CONTEXT_KEY = "aiohttp_jinja2_context"
+APP_KEY: Final = "_aiohttp_jinja2_environment"
+APP_CONTEXT_PROCESSORS_KEY: Final = "_aiohttp_jinja2_context_processors"
+REQUEST_CONTEXT_KEY: Final = "_aiohttp_jinja2_context"
 
 _TemplateReturnType = Awaitable[Union[web.StreamResponse, Mapping[str, Any]]]
-_SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
-_ContextProcessor = Callable[[web.Request], Awaitable[Dict[str, Any]]]
+_SimpleTemplateHandler = Callable[[web.Request[_T]], _TemplateReturnType]
 
 _T = TypeVar("_T")
-_AbstractView = TypeVar("_AbstractView", bound=AbstractView)
+_U = TypeVar("_U")
+_AbstractView = TypeVar("_AbstractView", bound=AbstractView[Any])
 
 
 class _TemplateWrapper(Protocol):
     @overload
     def __call__(
-        self, func: _SimpleTemplateHandler
-    ) -> Callable[[web.Request], Awaitable[web.StreamResponse]]:
+        self, func: _SimpleTemplateHandler[_T]
+    ) -> Callable[[web.Request[_T]], Awaitable[web.StreamResponse]]:
         ...
 
     @overload
@@ -61,16 +62,16 @@ class _TemplateWrapper(Protocol):
 
     @overload
     def __call__(
-        self, func: Callable[[_T, web.Request], _TemplateReturnType]
-    ) -> Callable[[_T, web.Request], Awaitable[web.StreamResponse]]:
+        self, func: Callable[[_T, web.Request[_U]], _TemplateReturnType]
+    ) -> Callable[[_T, web.Request[_U]], Awaitable[web.StreamResponse]]:
         ...
 
 
 def setup(
-    app: web.Application,
+    app: web.Application[AppState],
     *args: Any,
     app_key: str = APP_KEY,
-    context_processors: Iterable[_ContextProcessor] = (),
+    context_processors: Iterable[ContextProcessor] = (),
     filters: Optional[Filters] = None,
     default_helpers: bool = True,
     **kwargs: Any,
@@ -81,9 +82,9 @@ def setup(
         env.globals.update(GLOBAL_HELPERS)
     if filters is not None:
         env.filters.update(filters)
-    app[app_key] = env
+    app.state["_aiohttp_jinja2_environment"] = env
     if context_processors:
-        app[APP_CONTEXT_PROCESSORS_KEY] = context_processors
+        app.state["_aiohttp_jinja2_context_processors"] = context_processors
         app.middlewares.append(context_processors_middleware)
 
     env.globals["app"] = app
@@ -91,13 +92,13 @@ def setup(
     return env
 
 
-def get_env(app: web.Application, *, app_key: str = APP_KEY) -> jinja2.Environment:
-    return cast(jinja2.Environment, app.get(app_key))
+def get_env(app: web.Application[AppState]) -> jinja2.Environment:
+    return app.state["_aiohttp_jinja2_environment"]
 
 
 def _render_string(
     template_name: str,
-    request: web.Request,
+    request: web.Request[AppState],
     context: Mapping[str, Any],
     app_key: str,
 ) -> Tuple[jinja2.Template, Mapping[str, Any]]:
@@ -128,7 +129,7 @@ def _render_string(
 
 def render_string(
     template_name: str,
-    request: web.Request,
+    request: web.Request[AppState],
     context: Mapping[str, Any],
     *,
     app_key: str = APP_KEY,
@@ -139,7 +140,7 @@ def render_string(
 
 async def render_string_async(
     template_name: str,
-    request: web.Request,
+    request: web.Request[AppState],
     context: Mapping[str, Any],
     *,
     app_key: str = APP_KEY,
@@ -163,7 +164,7 @@ def _render_template(
 
 def render_template(
     template_name: str,
-    request: web.Request,
+    request: web.Request[AppState],
     context: Optional[Mapping[str, Any]],
     *,
     app_key: str = APP_KEY,
@@ -177,7 +178,7 @@ def render_template(
 
 async def render_template_async(
     template_name: str,
-    request: web.Request,
+    request: web.Request[AppState],
     context: Optional[Mapping[str, Any]],
     *,
     app_key: str = APP_KEY,
@@ -200,8 +201,8 @@ def template(
 ) -> _TemplateWrapper:
     @overload
     def wrapper(
-        func: _SimpleTemplateHandler,
-    ) -> Callable[[web.Request], Awaitable[web.StreamResponse]]:
+        func: _SimpleTemplateHandler[_T],
+    ) -> Callable[[web.Request[_T]], Awaitable[web.StreamResponse]]:
         ...
 
     @overload
@@ -212,8 +213,8 @@ def template(
 
     @overload
     def wrapper(
-        func: Callable[[_T, web.Request], _TemplateReturnType]
-    ) -> Callable[[_T, web.Request], Awaitable[web.StreamResponse]]:
+        func: Callable[[_T, web.Request[_U]], _TemplateReturnType]
+    ) -> Callable[[_T, web.Request[_U]], Awaitable[web.StreamResponse]]:
         ...
 
     def wrapper(
@@ -257,11 +258,10 @@ def template(
 
 
 @web.middleware
-async def context_processors_middleware(
-    request: web.Request,
-    handler: Callable[[web.Request], Awaitable[web.StreamResponse]],
+async def context_processors_middleware(  # type: ignore[misc]
+    request: web.Request[AppState],
+    handler: Callable[[web.Request[Any]], Awaitable[web.StreamResponse]],
 ) -> web.StreamResponse:
-
     if REQUEST_CONTEXT_KEY not in request:
         request[REQUEST_CONTEXT_KEY] = {}
     for processor in request.config_dict[APP_CONTEXT_PROCESSORS_KEY]:
@@ -269,5 +269,5 @@ async def context_processors_middleware(
     return await handler(request)
 
 
-async def request_processor(request: web.Request) -> Dict[str, web.Request]:
+async def request_processor(request: web.Request[_T]) -> Dict[str, web.Request[_T]]:
     return {"request": request}

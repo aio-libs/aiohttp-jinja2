@@ -3,10 +3,11 @@ import pytest
 from aiohttp import web
 
 import aiohttp_jinja2
+from .conftest import _App, _Request
 
 
 def test_get_env():
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": "tmpl"}))
 
     env = aiohttp_jinja2.get_env(app)
@@ -22,7 +23,7 @@ async def test_url(aiohttp_client):
     async def other(request):
         return
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.DictLoader({"tmpl.jinja2": "{{ url('other', name='John_Doe')}}"}),
@@ -43,7 +44,7 @@ async def test_url_with_query(aiohttp_client):
     async def index(request):
         return {}
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.DictLoader(
@@ -68,7 +69,7 @@ async def test_url_int_param(aiohttp_client):
     async def other(request):
         return
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app, loader=jinja2.DictLoader({"tmpl.jinja2": "{{ url('other', arg=1)}}"})
     )
@@ -98,7 +99,7 @@ async def test_url_param_forbidden_type(aiohttp_client):
     async def other(request):
         return
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app, loader=jinja2.DictLoader({"tmpl.jinja2": "{{ url('other', arg=True)}}"})
     )
@@ -117,7 +118,7 @@ async def test_helpers_disabled(aiohttp_client):
             aiohttp_jinja2.render_template("tmpl.jinja2", request, {})
         return web.Response()
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app,
         default_helpers=False,
@@ -136,12 +137,12 @@ async def test_static(aiohttp_client):
     async def index(request):
         return {}
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app, loader=jinja2.DictLoader({"tmpl.jinja2": "{{ static('whatever.js') }}"})
     )
 
-    app["static_root_url"] = "/static"
+    app.state["static_root_url"] = "/static"
     app.router.add_route("GET", "/", index)
     client = await aiohttp_client(app)
 
@@ -157,7 +158,7 @@ async def test_static_var_missing(aiohttp_client, caplog):
             aiohttp_jinja2.render_template("tmpl.jinja2", request, {})
         return web.Response()
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app, loader=jinja2.DictLoader({"tmpl.jinja2": "{{ static('whatever.js') }}"})
     )

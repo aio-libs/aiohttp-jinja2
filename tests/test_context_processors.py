@@ -4,6 +4,7 @@ import jinja2
 from aiohttp import web
 
 import aiohttp_jinja2
+from .conftest import _App, _Request
 
 
 async def test_context_processors(aiohttp_client):
@@ -11,7 +12,7 @@ async def test_context_processors(aiohttp_client):
     async def func(request):
         return {"bar": 2}
 
-    app = web.Application(middlewares=[aiohttp_jinja2.context_processors_middleware])
+    app: _App = web.Application(middlewares=[aiohttp_jinja2.context_processors_middleware])
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.DictLoader(
@@ -19,10 +20,10 @@ async def test_context_processors(aiohttp_client):
         ),
     )
 
-    async def processor(request: web.Request) -> Dict[str, Union[str, int]]:
+    async def processor(request: _Request) -> Dict[str, Union[str, int]]:
         return {"foo": 1, "bar": "should be overwriten"}
 
-    app["aiohttp_jinja2_context_processors"] = (
+    app.state[aiohttp_jinja2.APP_CONTEXT_PROCESSORS_KEY] = (
         aiohttp_jinja2.request_processor,
         processor,
     )
@@ -42,7 +43,7 @@ async def test_nested_context_processors(aiohttp_client):
     async def func(request):
         return {"bar": 2}
 
-    subapp = web.Application(middlewares=[aiohttp_jinja2.context_processors_middleware])
+    subapp: _App = web.Application(middlewares=[aiohttp_jinja2.context_processors_middleware])
     aiohttp_jinja2.setup(
         subapp,
         loader=jinja2.DictLoader(
@@ -56,20 +57,20 @@ async def test_nested_context_processors(aiohttp_client):
     async def subprocessor(request):
         return {"foo": 1, "bar": "should be overwriten"}
 
-    subapp["aiohttp_jinja2_context_processors"] = (
+    subapp.state[aiohttp_jinja2.APP_CONTEXT_PROCESSORS_KEY] = (
         aiohttp_jinja2.request_processor,
         subprocessor,
     )
 
     subapp.router.add_get("/", func)
 
-    app = web.Application(middlewares=[aiohttp_jinja2.context_processors_middleware])
+    app: _App = web.Application(middlewares=[aiohttp_jinja2.context_processors_middleware])
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({}))
 
     async def processor(request):
         return {"baz": 5}
 
-    app["aiohttp_jinja2_context_processors"] = (
+    app.state[aiohttp_jinja2.APP_CONTEXT_PROCESSORS_KEY] = (
         aiohttp_jinja2.request_processor,
         processor,
     )
@@ -89,7 +90,7 @@ async def test_context_is_response(aiohttp_client):
     async def func(request):
         raise web.HTTPForbidden()
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": "template"}))
 
     app.router.add_route("GET", "/", func)
@@ -107,7 +108,7 @@ async def test_context_processors_new_setup_style(aiohttp_client):
     async def processor(request):
         return {"foo": 1, "bar": "should be overwriten"}
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.DictLoader(
@@ -139,7 +140,7 @@ async def test_context_not_tainted(aiohttp_client):
     async def processor(request):
         return {"foo": 1}
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.DictLoader({"tmpl.jinja2": "foo: {{ foo }}"}),

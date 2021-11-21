@@ -9,11 +9,13 @@ import jinja2
 from aiohttp import web
 from yarl import URL
 
+from .typedefs import AppState
+
 if sys.version_info >= (3, 8):
     from typing import TypedDict
 
     class _Context(TypedDict, total=False):
-        app: web.Application
+        app: web.Application[AppState]
 
 
 else:
@@ -70,7 +72,7 @@ def static_url(context: _Context, static_file_path: str) -> str:
     """
     app = context["app"]
     try:
-        static_url = app["static_root_url"]
+        static_url = app.state["static_root_url"]
     except KeyError:
         raise RuntimeError(
             "app does not define a static root url "

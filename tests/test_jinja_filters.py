@@ -2,6 +2,7 @@ import jinja2
 from aiohttp import web
 
 import aiohttp_jinja2
+from .conftest import _App
 
 
 async def test_jinja_filters(aiohttp_client):
@@ -12,7 +13,7 @@ async def test_jinja_filters(aiohttp_client):
     def add_2(value):
         return value + 2
 
-    app = web.Application()
+    app: _App = web.Application()
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.DictLoader({"tmpl.jinja2": "{{ 5|add_2 }}"}),
