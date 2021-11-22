@@ -13,7 +13,7 @@ if sys.version_info >= (3, 8):
     from typing import TypedDict
 
     class _Context(TypedDict, total=False):
-        app: web.Application
+        app: web.Application[Any]
 
 
 else:
@@ -21,7 +21,7 @@ else:
 
 
 @jinja2.pass_context
-def url_for(
+def url_for(  # type: ignore[misc]
     context: _Context,
     __route_name: str,
     query_: Optional[Dict[str, str]] = None,
@@ -59,7 +59,7 @@ def url_for(
 
 
 @jinja2.pass_context
-def static_url(context: _Context, static_file_path: str) -> str:
+def static_url(context: _Context, static_file_path: str) -> str:  # type: ignore[misc]
     """Filter for generating urls for static files.
 
     NOTE: you'll need
@@ -70,7 +70,7 @@ def static_url(context: _Context, static_file_path: str) -> str:
     """
     app = context["app"]
     try:
-        static_url = app["static_root_url"]
+        static_url = app.state["static_root_url"]
     except KeyError:
         raise RuntimeError(
             "app does not define a static root url "
