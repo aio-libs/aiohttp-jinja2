@@ -2,7 +2,7 @@
 aiohttp==3.8.1
 alabaster>=0.6.2
 attrs==21.2.0
-coverage==6.1.2
+coverage==6.2
 flake8==4.0.1
 flake8-bandit==2.1.2
 flake8-bugbear==21.11.28
