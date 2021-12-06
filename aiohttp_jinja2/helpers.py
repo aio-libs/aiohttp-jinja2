@@ -15,7 +15,6 @@ if sys.version_info >= (3, 8):
     class _Context(TypedDict, total=False):
         app: web.Application
 
-
 else:
     _Context = Dict[str, Any]
 
