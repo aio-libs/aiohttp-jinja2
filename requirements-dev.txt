@@ -1,7 +1,7 @@
 -e .
 aiohttp==3.8.1
 alabaster>=0.6.2
-attrs==21.3.0
+attrs==21.4.0
 coverage==6.2
 flake8==4.0.1
 flake8-bandit==2.1.2
