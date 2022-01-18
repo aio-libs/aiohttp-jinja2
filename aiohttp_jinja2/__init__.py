@@ -38,7 +38,9 @@ _TemplateReturnType = Awaitable[Union[web.StreamResponse, Mapping[str, Any]]]
 _SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
 _ContextProcessor = Callable[[web.Request], Awaitable[Dict[str, Any]]]
 
-APP_CONTEXT_PROCESSORS_KEY: Final = web.AppKey[Iterable[_ContextProcessor]]("APP_CONTEXT_PROCESSORS_KEY")
+APP_CONTEXT_PROCESSORS_KEY: Final = web.AppKey[Iterable[_ContextProcessor]](
+    "APP_CONTEXT_PROCESSORS_KEY"
+)
 APP_KEY: Final = web.AppKey[jinja2.Environment]("APP_KEY")
 REQUEST_CONTEXT_KEY: Final = "aiohttp_jinja2_context"
 
@@ -91,7 +93,9 @@ def setup(
     return env
 
 
-def get_env(app: web.Application, *, app_key: web.AppKey[jinja2.Environment] = APP_KEY) -> jinja2.Environment:
+def get_env(
+    app: web.Application, *, app_key: web.AppKey[jinja2.Environment] = APP_KEY
+) -> jinja2.Environment:
     try:
         return app[APP_KEY]
     except KeyError:
