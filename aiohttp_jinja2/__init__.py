@@ -7,6 +7,7 @@ from typing import (
     Awaitable,
     Callable,
     Dict,
+    Final,
     Iterable,
     Mapping,
     Optional,
@@ -33,14 +34,13 @@ __version__ = "1.5"
 
 __all__ = ("setup", "get_env", "render_template", "render_string", "template")
 
-
-APP_CONTEXT_PROCESSORS_KEY = "aiohttp_jinja2_context_processors"
-APP_KEY = "aiohttp_jinja2_environment"
-REQUEST_CONTEXT_KEY = "aiohttp_jinja2_context"
-
 _TemplateReturnType = Awaitable[Union[web.StreamResponse, Mapping[str, Any]]]
 _SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
 _ContextProcessor = Callable[[web.Request], Awaitable[Dict[str, Any]]]
+
+APP_CONTEXT_PROCESSORS_KEY: Final = web.AppKey[Iterable[_ContextProcessor]]("APP_CONTEXT_PROCESSORS_KEY")
+APP_KEY: Final = web.AppKey[jinja2.Environment]("APP_KEY")
+REQUEST_CONTEXT_KEY: Final = "aiohttp_jinja2_context"
 
 _T = TypeVar("_T")
 _AbstractView = TypeVar("_AbstractView", bound=AbstractView)
@@ -69,7 +69,7 @@ class _TemplateWrapper(Protocol):
 def setup(
     app: web.Application,
     *args: Any,
-    app_key: str = APP_KEY,
+    app_key: web.AppKey[jinja2.Environment] = APP_KEY,
     context_processors: Iterable[_ContextProcessor] = (),
     filters: Optional[Filters] = None,
     default_helpers: bool = True,
@@ -91,15 +91,18 @@ def setup(
     return env
 
 
-def get_env(app: web.Application, *, app_key: str = APP_KEY) -> jinja2.Environment:
-    return cast(jinja2.Environment, app.get(app_key))
+def get_env(app: web.Application, *, app_key: web.AppKey[jinja2.Environment] = APP_KEY) -> jinja2.Environment:
+    try:
+        return app[APP_KEY]
+    except KeyError:
+        raise RuntimeError("aiohttp_jinja2.setup(...) must be called first.")
 
 
 def _render_string(
     template_name: str,
     request: web.Request,
     context: Mapping[str, Any],
-    app_key: str,
+    app_key: web.AppKey[jinja2.Environment],
 ) -> Tuple[jinja2.Template, Mapping[str, Any]]:
     env = request.config_dict.get(app_key)
     if env is None:
@@ -131,7 +134,7 @@ def render_string(
     request: web.Request,
     context: Mapping[str, Any],
     *,
-    app_key: str = APP_KEY,
+    app_key: web.AppKey[jinja2.Environment] = APP_KEY,
 ) -> str:
     template, context = _render_string(template_name, request, context, app_key)
     return template.render(context)
@@ -142,7 +145,7 @@ async def render_string_async(
     request: web.Request,
     context: Mapping[str, Any],
     *,
-    app_key: str = APP_KEY,
+    app_key: web.AppKey[jinja2.Environment] = APP_KEY,
 ) -> str:
     template, context = _render_string(template_name, request, context, app_key)
     return await template.render_async(context)
@@ -166,7 +169,7 @@ def render_template(
     request: web.Request,
     context: Optional[Mapping[str, Any]],
     *,
-    app_key: str = APP_KEY,
+    app_key: web.AppKey[jinja2.Environment] = APP_KEY,
     encoding: str = "utf-8",
     status: int = 200,
 ) -> web.Response:
@@ -180,7 +183,7 @@ async def render_template_async(
     request: web.Request,
     context: Optional[Mapping[str, Any]],
     *,
-    app_key: str = APP_KEY,
+    app_key: web.AppKey[jinja2.Environment] = APP_KEY,
     encoding: str = "utf-8",
     status: int = 200,
 ) -> web.Response:
@@ -194,7 +197,7 @@ async def render_template_async(
 def template(
     template_name: str,
     *,
-    app_key: str = APP_KEY,
+    app_key: web.AppKey[jinja2.Environment] = APP_KEY,
     encoding: str = "utf-8",
     status: int = 200,
 ) -> _TemplateWrapper:
