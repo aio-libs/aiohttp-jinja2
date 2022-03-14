@@ -118,7 +118,7 @@ def _render_string(
         text = f"Template '{template_name}' not found"
         raise web.HTTPInternalServerError(reason=text, text=text) from e
     if not isinstance(context, Mapping):
-        text = f"context should be mapping, not {type(context)}"
+        text = f"context should be mapping, not {type(context)}"  # type: ignore[unreachable]
         # same reason as above
         raise web.HTTPInternalServerError(reason=text, text=text)
     if request.get(REQUEST_CONTEXT_KEY):
