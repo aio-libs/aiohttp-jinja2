@@ -12,7 +12,7 @@ repos:
   hooks:
   - id: isort
 - repo: https://github.com/psf/black
-  rev: '22.3.0'
+  rev: '22.6.0'
   hooks:
     - id: black
       language_version: python3 # Should be a command that runs python
@@ -51,7 +51,7 @@ repos:
   - id: flake8
     exclude: "^docs/"
 - repo: https://github.com/asottile/pyupgrade
-  rev: 'v2.34.0'
+  rev: 'v2.37.1'
   hooks:
   - id: pyupgrade
     args: ['--py36-plus']
