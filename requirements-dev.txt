@@ -6,7 +6,7 @@ flake8==5.0.4
 flake8-bandit==4.1.1
 flake8-bugbear==22.8.23
 flake8-import-order==0.18.1
-flake8-requirements==1.6.0
+flake8-requirements==1.6.1
 jinja2==3.1.2
 mypy==0.971; implementation_name=="cpython"
 pre-commit==2.20.0
