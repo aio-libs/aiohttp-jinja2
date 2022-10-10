@@ -7,9 +7,9 @@ from typing import (
     Awaitable,
     Callable,
     Dict,
-    Iterable,
     Mapping,
     Optional,
+    Sequence,
     Tuple,
     TypeVar,
     Union,
@@ -70,7 +70,7 @@ def setup(
     app: web.Application,
     *args: Any,
     app_key: str = APP_KEY,
-    context_processors: Iterable[_ContextProcessor] = (),
+    context_processors: Sequence[_ContextProcessor] = (),
     filters: Optional[Filters] = None,
     default_helpers: bool = True,
     **kwargs: Any,
@@ -228,7 +228,7 @@ def template(
                     "Bare functions are deprecated, use async ones",
                     DeprecationWarning,
                 )
-                coro = asyncio.coroutine(func)
+                coro = asyncio.coroutine(func)  # type: ignore[assignment]
             context = await coro(*args)
             if isinstance(context, web.StreamResponse):
                 return context
