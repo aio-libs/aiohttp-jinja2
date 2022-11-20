@@ -219,17 +219,11 @@ def template(
     def wrapper(
         func: Callable[..., _TemplateReturnType]
     ) -> Callable[..., Awaitable[web.StreamResponse]]:
+        # TODO(PY310): ParamSpec
+
         @functools.wraps(func)
         async def wrapped(*args: Any) -> web.StreamResponse:  # type: ignore[misc]
-            if asyncio.iscoroutinefunction(func):
-                coro = func
-            else:
-                warnings.warn(
-                    "Bare functions are deprecated, use async ones",
-                    DeprecationWarning,
-                )
-                coro = asyncio.coroutine(func)  # type: ignore[assignment]
-            context = await coro(*args)
+            context = await func(*args)
             if isinstance(context, web.StreamResponse):
                 return context
 
