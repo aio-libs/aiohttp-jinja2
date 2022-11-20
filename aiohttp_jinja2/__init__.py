@@ -1,7 +1,5 @@
-import asyncio
 import functools
 import sys
-import warnings
 from typing import (
     Any,
     Awaitable,
