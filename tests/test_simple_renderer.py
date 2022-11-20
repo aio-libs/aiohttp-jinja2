@@ -1,4 +1,4 @@
-from typing import Awaitable, Callable, Dict, TypeVar
+from typing import Dict, TypeVar
 
 import jinja2
 import pytest
