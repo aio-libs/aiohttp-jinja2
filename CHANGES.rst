@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+1.6
+---
+
+- Drop support for decorating non-async functions with @template (deprecated since 0.16).
+
 1.5 (2021-08-21)
 ----------------
 
