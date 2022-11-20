@@ -302,36 +302,6 @@ async def test_render_can_disable_autoescape(aiohttp_client):
     assert "<html><script>alert(1)</script></html>" == txt
 
 
-async def test_render_bare_funcs_deprecated(aiohttp_client):
-    def wrapper(
-        func: Callable[[web.Request], Awaitable[_T]]
-    ) -> Callable[[web.Request], Awaitable[_T]]:
-        async def wrapped(request: web.Request) -> _T:
-            with pytest.warns(
-                DeprecationWarning, match="Bare functions are deprecated"
-            ):
-                return await func(request)
-
-        return wrapped
-
-    @wrapper  # type: ignore[arg-type]  # Deprecated functionality
-    @aiohttp_jinja2.template("tmpl.jinja2")
-    def func(request: web.Request) -> Dict[str, str]:
-        return {"text": "OK"}
-
-    app = web.Application()
-    aiohttp_jinja2.setup(app, loader=jinja2.DictLoader({"tmpl.jinja2": "{{text}}"}))
-
-    app.router.add_route("GET", "/", func)
-
-    client = await aiohttp_client(app)
-    resp = await client.get("/")
-
-    assert 200 == resp.status
-    txt = await resp.text()
-    assert "OK" == txt
-
-
 async def test_skip_render_for_response_from_handler(aiohttp_client):
     @aiohttp_jinja2.template("tmpl.jinja2")
     async def func(request):
