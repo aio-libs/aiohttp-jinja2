@@ -21,7 +21,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Setup Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: 3.8
     - name: Cache PyPI
@@ -66,7 +66,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Setup Python ${{ matrix.pyver }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.pyver }}
     - name: Get pip cache dir
@@ -120,7 +120,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Setup Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: 3.8
     - name: Install dependencies
