@@ -1,4 +1,4 @@
-from typing import Dict, TypeVar
+from typing import Dict
 
 import jinja2
 import pytest
@@ -6,8 +6,6 @@ from aiohttp import web
 from aiohttp.test_utils import make_mocked_request
 
 import aiohttp_jinja2
-
-_T = TypeVar("_T")
 
 
 @pytest.mark.parametrize("enable_async", (False, True))
