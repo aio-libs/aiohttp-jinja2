@@ -17,6 +17,7 @@ def _get_version():
                         return version[0]
         except IndexError:
             raise RuntimeError("Unable to determine version.")
+    raise RuntimeError("Unable to find version.")
 
 
 version = _get_version()
