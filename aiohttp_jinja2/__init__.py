@@ -27,7 +27,7 @@ else:
 from .helpers import GLOBAL_HELPERS
 from .typedefs import Filters
 
-__version__ = "1.5"
+__version__ = "1.5.1"
 
 __all__ = ("setup", "get_env", "render_template", "render_string", "template")
 

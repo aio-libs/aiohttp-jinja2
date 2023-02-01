@@ -1,9 +1,10 @@
 CHANGES
 =======
 
-1.6
----
+1.5.1 (2023-02-01)
+------------------
 
+- Add support for Python 3.11.
 - Drop support for decorating non-async functions with @template (deprecated since 0.16).
 
 1.5 (2021-08-21)
