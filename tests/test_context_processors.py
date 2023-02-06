@@ -129,7 +129,6 @@ async def test_context_processors_new_setup_style(aiohttp_client):
 
 
 async def test_context_not_tainted(aiohttp_client):
-
     global_context = {"version": 1}
 
     @aiohttp_jinja2.template("tmpl.jinja2")

@@ -253,7 +253,6 @@ async def context_processors_middleware(
     request: web.Request,
     handler: Callable[[web.Request], Awaitable[web.StreamResponse]],
 ) -> web.StreamResponse:
-
     if REQUEST_CONTEXT_KEY not in request:
         request[REQUEST_CONTEXT_KEY] = {}
     for processor in request.config_dict[APP_CONTEXT_PROCESSORS_KEY]:
