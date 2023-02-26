@@ -74,8 +74,7 @@ jobs:
       env:
         COLOR: 'yes'
       run: |
-        pytest tests
-        python -m coverage xml
+        pytest tests --cov-report xml
     - name: Upload coverage
       uses: codecov/codecov-action@v3
       with:
