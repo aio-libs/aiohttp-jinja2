@@ -1,7 +1,7 @@
 -e .
 aiohttp==3.8.4
 alabaster>=0.6.2
-coverage==7.2.2
+coverage==7.2.3
 jinja2==3.1.2
 pytest==7.2.2
 pytest-aiohttp==1.0.4
