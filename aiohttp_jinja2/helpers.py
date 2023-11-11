@@ -2,7 +2,7 @@
 useful context functions, see
 http://jinja.pocoo.org/docs/dev/api/#jinja2.contextfunction
 """
-from typing import Any, Dict, Optional, TypedDict, Union
+from typing import Dict, Optional, TypedDict, Union
 
 import jinja2
 from aiohttp import web
