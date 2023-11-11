@@ -8,6 +8,7 @@ import jinja2
 from aiohttp import web
 from yarl import URL
 
+
 class _Context(TypedDict, total=False):
     app: web.Application
 
