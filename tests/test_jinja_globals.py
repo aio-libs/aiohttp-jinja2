@@ -20,7 +20,7 @@ async def test_url(aiohttp_client):
         return {}
 
     async def other(request):
-        return
+        """Dummy handler."""
 
     app = web.Application()
     aiohttp_jinja2.setup(
@@ -66,7 +66,7 @@ async def test_url_int_param(aiohttp_client):
         return {}
 
     async def other(request):
-        return
+        """Dummy handler."""
 
     app = web.Application()
     aiohttp_jinja2.setup(
@@ -96,7 +96,7 @@ async def test_url_param_forbidden_type(aiohttp_client):
         return web.Response()
 
     async def other(request):
-        return
+        """Dummy handler."""
 
     app = web.Application()
     aiohttp_jinja2.setup(

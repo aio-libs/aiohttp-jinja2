@@ -1,16 +1,14 @@
-import asyncio
 import functools
 import sys
-import warnings
 from typing import (
     Any,
     Awaitable,
     Callable,
     Dict,
     Final,
-    Iterable,
     Mapping,
     Optional,
+    Sequence,
     Tuple,
     TypeVar,
     Union,
@@ -29,7 +27,7 @@ else:
 from .helpers import GLOBAL_HELPERS
 from .typedefs import Filters
 
-__version__ = "1.5"
+__version__ = "1.5.1"
 
 __all__ = ("setup", "get_env", "render_template", "render_string", "template")
 
@@ -37,7 +35,7 @@ _TemplateReturnType = Awaitable[Union[web.StreamResponse, Mapping[str, Any]]]
 _SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
 _ContextProcessor = Callable[[web.Request], Awaitable[Dict[str, Any]]]
 
-APP_CONTEXT_PROCESSORS_KEY: Final = web.AppKey[Iterable[_ContextProcessor]](
+APP_CONTEXT_PROCESSORS_KEY: Final = web.AppKey[Sequence[_ContextProcessor]](
     "APP_CONTEXT_PROCESSORS_KEY"
 )
 APP_KEY: Final = web.AppKey[jinja2.Environment]("APP_KEY")
@@ -71,7 +69,7 @@ def setup(
     app: web.Application,
     *args: Any,
     app_key: web.AppKey[jinja2.Environment] = APP_KEY,
-    context_processors: Iterable[_ContextProcessor] = (),
+    context_processors: Sequence[_ContextProcessor] = (),
     filters: Optional[Filters] = None,
     default_helpers: bool = True,
     **kwargs: Any,
@@ -123,7 +121,7 @@ def _render_string(
         text = f"Template '{template_name}' not found"
         raise web.HTTPInternalServerError(reason=text, text=text) from e
     if not isinstance(context, Mapping):
-        text = f"context should be mapping, not {type(context)}"
+        text = f"context should be mapping, not {type(context)}"  # type: ignore[unreachable]
         # same reason as above
         raise web.HTTPInternalServerError(reason=text, text=text)
     if request.get(REQUEST_CONTEXT_KEY):
@@ -224,17 +222,11 @@ def template(
     def wrapper(
         func: Callable[..., _TemplateReturnType]
     ) -> Callable[..., Awaitable[web.StreamResponse]]:
+        # TODO(PY310): ParamSpec
+
         @functools.wraps(func)
         async def wrapped(*args: Any) -> web.StreamResponse:  # type: ignore[misc]
-            if asyncio.iscoroutinefunction(func):
-                coro = func
-            else:
-                warnings.warn(
-                    "Bare functions are deprecated, use async ones",
-                    DeprecationWarning,
-                )
-                coro = asyncio.coroutine(func)
-            context = await coro(*args)
+            context = await func(*args)
             if isinstance(context, web.StreamResponse):
                 return context
 
@@ -266,7 +258,6 @@ async def context_processors_middleware(
     request: web.Request,
     handler: Callable[[web.Request], Awaitable[web.StreamResponse]],
 ) -> web.StreamResponse:
-
     if REQUEST_CONTEXT_KEY not in request:
         request[REQUEST_CONTEXT_KEY] = {}
     for processor in request.config_dict[APP_CONTEXT_PROCESSORS_KEY]:
