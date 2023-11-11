@@ -28,7 +28,7 @@ def read(f):
 
 
 install_requires = [
-    "aiohttp>=3.6.3",
+    "aiohttp>=3.9.0b1",
     "jinja2>=3.0.0",
     'typing_extensions>=3.7.4; python_version<"3.8"',
 ]

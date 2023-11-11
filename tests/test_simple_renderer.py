@@ -107,11 +107,7 @@ async def test_render_not_initialized():
     app.router.add_route("GET", "/", func)
 
     req = make_mocked_request("GET", "/", app=app)
-    msg = (
-        "Template engine is not initialized, "
-        "call aiohttp_jinja2.setup(..., app_key={}"
-        ") first".format(aiohttp_jinja2.APP_KEY)
-    )
+    msg = "Template engine is not initialized, call aiohttp_jinja2.setup() first"
 
     with pytest.raises(web.HTTPInternalServerError) as ctx:
         await func(req)

@@ -24,12 +24,13 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Protocol
 
-from .helpers import GLOBAL_HELPERS
+from .helpers import GLOBAL_HELPERS, static_root_key
 from .typedefs import Filters
 
 __version__ = "1.5.1"
 
-__all__ = ("setup", "get_env", "render_template", "render_string", "template")
+__all__ = ("get_env", "render_string", "render_template",
+           "setup", "static_root_key", "template")
 
 _TemplateReturnType = Awaitable[Union[web.StreamResponse, Mapping[str, Any]]]
 _SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
@@ -107,10 +108,7 @@ def _render_string(
 ) -> Tuple[jinja2.Template, Mapping[str, Any]]:
     env = request.config_dict.get(app_key)
     if env is None:
-        text = (
-            "Template engine is not initialized, "
-            "call aiohttp_jinja2.setup(...) first"
-        )
+        text = "Template engine is not initialized, call aiohttp_jinja2.setup() first"
         # in order to see meaningful exception message both: on console
         # output and rendered page we add same message to *reason* and
         # *text* arguments.
