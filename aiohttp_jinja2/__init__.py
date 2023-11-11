@@ -96,7 +96,7 @@ def get_env(
     app: web.Application, *, app_key: web.AppKey[jinja2.Environment] = APP_KEY
 ) -> jinja2.Environment:
     try:
-        return app[APP_KEY]
+        return app[app_key]
     except KeyError:
         raise RuntimeError("aiohttp_jinja2.setup(...) must be called first.")
 
