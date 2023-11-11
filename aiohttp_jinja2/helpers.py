@@ -13,6 +13,7 @@ from yarl import URL
 class _Context(TypedDict, total=False):
     app: web.Application
 
+
 static_root_key = web.AppKey("static_root_key", str)
 
 
