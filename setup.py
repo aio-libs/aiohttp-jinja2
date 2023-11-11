@@ -27,13 +27,6 @@ def read(f):
     return Path(__file__).with_name(f).read_text()
 
 
-install_requires = [
-    "aiohttp>=3.9.0b1",
-    "jinja2>=3.0.0",
-    'typing_extensions>=3.7.4; python_version<"3.8"',
-]
-
-
 setup(
     name="aiohttp-jinja2",
     version=version,
@@ -44,7 +37,6 @@ setup(
         "Intended Audience :: Developers",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
@@ -59,7 +51,7 @@ setup(
     url="https://github.com/aio-libs/aiohttp_jinja2/",
     license="Apache 2",
     packages=["aiohttp_jinja2"],
-    python_requires=">=3.7",
-    install_requires=install_requires,
+    python_requires=">=3.8",
+    install_requires=("aiohttp>=3.9.0b1", "jinja2>=3.0.0"),
     include_package_data=True,
 )

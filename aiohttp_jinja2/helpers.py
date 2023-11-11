@@ -2,22 +2,16 @@
 useful context functions, see
 http://jinja.pocoo.org/docs/dev/api/#jinja2.contextfunction
 """
-import sys
 import warnings
-from typing import Any, Dict, Optional, Union
+from typing import Dict, Optional, TypedDict, Union
 
 import jinja2
 from aiohttp import web
 from yarl import URL
 
-if sys.version_info >= (3, 8):
-    from typing import TypedDict
 
-    class _Context(TypedDict, total=False):
-        app: web.Application
-
-else:
-    _Context = Dict[str, Any]
+class _Context(TypedDict, total=False):
+    app: web.Application
 
 static_root_key = web.AppKey("static_root_key", str)
 
