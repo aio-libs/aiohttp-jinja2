@@ -85,7 +85,9 @@ def static_url(context: _Context, static_file_path: str) -> str:
         else:
             warnings.warn(
                 "'static_root_url' is deprecated, use aiohttp_jinja2.static_root_key.",
-                category=DeprecationWarning, stacklevel=2)
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
     return "{}/{}".format(static_url.rstrip("/"), static_file_path.lstrip("/"))
 
 

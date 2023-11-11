@@ -29,8 +29,14 @@ from .typedefs import Filters
 
 __version__ = "1.5.1"
 
-__all__ = ("get_env", "render_string", "render_template",
-           "setup", "static_root_key", "template")
+__all__ = (
+    "get_env",
+    "render_string",
+    "render_template",
+    "setup",
+    "static_root_key",
+    "template",
+)
 
 _TemplateReturnType = Awaitable[Union[web.StreamResponse, Mapping[str, Any]]]
 _SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
