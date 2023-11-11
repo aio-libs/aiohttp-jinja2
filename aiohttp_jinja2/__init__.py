@@ -1,5 +1,4 @@
 import functools
-import sys
 from typing import (
     Any,
     Awaitable,
@@ -7,6 +6,7 @@ from typing import (
     Dict,
     Mapping,
     Optional,
+    Protocol,
     Sequence,
     Tuple,
     TypeVar,
@@ -18,11 +18,6 @@ from typing import (
 import jinja2
 from aiohttp import web
 from aiohttp.abc import AbstractView
-
-if sys.version_info >= (3, 8):
-    from typing import Protocol
-else:
-    from typing_extensions import Protocol
 
 from .helpers import GLOBAL_HELPERS
 from .typedefs import Filters

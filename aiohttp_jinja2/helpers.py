@@ -2,21 +2,14 @@
 useful context functions, see
 http://jinja.pocoo.org/docs/dev/api/#jinja2.contextfunction
 """
-import sys
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, TypedDict, Union
 
 import jinja2
 from aiohttp import web
 from yarl import URL
 
-if sys.version_info >= (3, 8):
-    from typing import TypedDict
-
-    class _Context(TypedDict, total=False):
-        app: web.Application
-
-else:
-    _Context = Dict[str, Any]
+class _Context(TypedDict, total=False):
+    app: web.Application
 
 
 @jinja2.pass_context
