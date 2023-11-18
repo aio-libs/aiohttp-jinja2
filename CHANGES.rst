@@ -4,6 +4,12 @@ CHANGES
 
 .. towncrier release notes start
 
+1.6 (2023-11-18)
+================
+
+- Switch to ``aiohttp.web.AppKey``, and deprecate the old 'static_root_url' key.
+- Drop Python 3.7, add Python 3.12.
+
 1.5.1 (2023-02-01)
 ==================
 
