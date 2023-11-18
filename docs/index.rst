@@ -201,14 +201,13 @@ This is useful as it would allow your static path to switch in
 deployment or testing with just one line.
 
 The ``static`` function has similar usage, except it requires you to
-set ``static_root_url`` on the app
+set ``app[aiohttp_jinja2.static_root_key]``.
 
-.. code-block:: ruby
+.. code-block:: python
 
     app = web.Application()
-    aiohttp_jinja2.setup(app,
-        loader=jinja2.FileSystemLoader('/path/to/templates/folder'))
-    app['static_root_url'] = '/static'
+    aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader("/path/to/templates/folder"))
+    app[aiohttp_jinja2.static_root_key] = "/static"
 
 Then in the template::
 

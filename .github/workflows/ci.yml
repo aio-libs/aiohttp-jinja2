@@ -50,7 +50,7 @@ jobs:
     name: Test
     strategy:
       matrix:
-        pyver: ['3.7', '3.8', '3.9', '3.10', '3.11']
+        pyver: ['3.8', '3.9', '3.10', '3.11']
         os: [ubuntu, macos, windows]
         include:
           - pyver: pypy-3.8
@@ -78,8 +78,7 @@ jobs:
     - name: Upload coverage
       uses: codecov/codecov-action@v3
       with:
-        file: ./coverage.xml
-        flags: unit
+        fail_ci_if_error: true
 
   check:  # This job does nothing and is only used for the branch protection
     if: always()

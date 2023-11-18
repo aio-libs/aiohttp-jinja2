@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, Tuple, Union
 
 import jinja2
 from aiohttp import web
@@ -22,10 +22,11 @@ async def test_context_processors(aiohttp_client):
     async def processor(request: web.Request) -> Dict[str, Union[str, int]]:
         return {"foo": 1, "bar": "should be overwriten"}
 
-    app["aiohttp_jinja2_context_processors"] = (
+    f: Tuple[aiohttp_jinja2._ContextProcessor, ...] = (
         aiohttp_jinja2.request_processor,
         processor,
     )
+    app[aiohttp_jinja2.APP_CONTEXT_PROCESSORS_KEY] = f
 
     app.router.add_get("/", func)
 
@@ -56,7 +57,7 @@ async def test_nested_context_processors(aiohttp_client):
     async def subprocessor(request):
         return {"foo": 1, "bar": "should be overwriten"}
 
-    subapp["aiohttp_jinja2_context_processors"] = (
+    subapp[aiohttp_jinja2.APP_CONTEXT_PROCESSORS_KEY] = (
         aiohttp_jinja2.request_processor,
         subprocessor,
     )
@@ -69,7 +70,7 @@ async def test_nested_context_processors(aiohttp_client):
     async def processor(request):
         return {"baz": 5}
 
-    app["aiohttp_jinja2_context_processors"] = (
+    app[aiohttp_jinja2.APP_CONTEXT_PROCESSORS_KEY] = (
         aiohttp_jinja2.request_processor,
         processor,
     )

@@ -141,7 +141,7 @@ async def test_static(aiohttp_client):
         app, loader=jinja2.DictLoader({"tmpl.jinja2": "{{ static('whatever.js') }}"})
     )
 
-    app["static_root_url"] = "/static"
+    app[aiohttp_jinja2.static_root_key] = "/static"
     app.router.add_route("GET", "/", index)
     client = await aiohttp_client(app)
 
@@ -153,7 +153,7 @@ async def test_static(aiohttp_client):
 
 async def test_static_var_missing(aiohttp_client, caplog):
     async def index(request):
-        with pytest.raises(RuntimeError, match="static_root_url"):
+        with pytest.raises(RuntimeError, match="static_root_key"):
             aiohttp_jinja2.render_template("tmpl.jinja2", request, {})
         return web.Response()
 
@@ -166,4 +166,4 @@ async def test_static_var_missing(aiohttp_client, caplog):
     client = await aiohttp_client(app)
 
     resp = await client.get("/")
-    assert 200 == resp.status  # static_root_url is not set
+    assert 200 == resp.status  # static_root_key is not set
