@@ -52,6 +52,6 @@ setup(
     license="Apache 2",
     packages=["aiohttp_jinja2"],
     python_requires=">=3.8",
-    install_requires=("aiohttp>=3.6.3", "jinja2>=3.0.0"),
+    install_requires=("aiohttp>=3.9.0", "jinja2>=3.0.0"),
     include_package_data=True,
 )
