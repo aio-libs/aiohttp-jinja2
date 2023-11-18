@@ -22,7 +22,7 @@ from aiohttp.abc import AbstractView
 from .helpers import GLOBAL_HELPERS, static_root_key
 from .typedefs import Filters
 
-__version__ = "1.5.1"
+__version__ = "1.6"
 
 __all__ = (
     "get_env",
