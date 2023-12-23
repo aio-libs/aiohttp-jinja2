@@ -2,5 +2,5 @@
 [run]
 branch = True
 source =
-    aiohttp_admin/
+    aiohttp_jinja2/
     tests/
