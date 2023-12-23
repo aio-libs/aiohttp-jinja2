@@ -4,5 +4,6 @@ branch = True
 source =
     aiohttp_jinja2/
     tests/
+
 [report]
 include_namespace_packages = True
