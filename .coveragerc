@@ -1,3 +1,6 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
+source =
+    aiohttp_admin/
+    tests/
