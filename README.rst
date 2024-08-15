@@ -7,7 +7,7 @@ aiohttp_jinja2
 .. image:: https://img.shields.io/pypi/v/aiohttp-jinja2.svg
     :target: https://pypi.python.org/pypi/aiohttp-jinja2
 .. image:: https://readthedocs.org/projects/aiohttp-jinja/badge/?version=latest
-    :target: http://aiohttp-jinja.readthedocs.io/en/latest/?badge=latest
+    :target: http://aiohttp-jinja2.aio-libs.org/en/latest/?badge=latest
 
 
 jinja2_ template renderer for `aiohttp.web`__.
