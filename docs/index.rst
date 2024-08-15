@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-aiohttp_jinja2
+aiohttp-jinja2
 ==============
 
 .. currentmodule:: aiohttp_jinja2
@@ -227,7 +227,7 @@ Library Installation
 
 The :mod:`aiohttp_jinja2` can be installed by pip::
 
-   $ pip3 install aiohttp_jinja2
+   $ pip install aiohttp-jinja2
 
 Source code
 -----------
