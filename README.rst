@@ -1,4 +1,4 @@
-aiohttp_jinja2
+aiohttp-jinja2
 ==============
 .. image:: https://github.com/aio-libs/aiohttp-jinja2/workflows/CI/badge.svg
     :target: https://github.com/aio-libs/aiohttp-jinja2/actions?query=workflow%3ACI
