@@ -138,7 +138,7 @@ html_theme_options = {
     "logo": "aiohttp-icon-128x128.png",
     "description": "jinja2 template renderer for aiohttp.web",
     "github_user": "aio-libs",
-    "github_repo": "aiohttp_jinja2",
+    "github_repo": "aiohttp-jinja2",
     "github_button": True,
     "github_banner": True,
     "travis_button": "aio-libs/aiohttp-jinja2",
