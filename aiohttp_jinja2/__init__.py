@@ -51,20 +51,17 @@ class _TemplateWrapper(Protocol):
     @overload
     def __call__(
         self, func: _SimpleTemplateHandler
-    ) -> Callable[[web.Request], Awaitable[web.StreamResponse]]:
-        ...
+    ) -> Callable[[web.Request], Awaitable[web.StreamResponse]]: ...
 
     @overload
     def __call__(
         self, func: Callable[[_AbstractView], _TemplateReturnType]
-    ) -> Callable[[_AbstractView], Awaitable[web.StreamResponse]]:
-        ...
+    ) -> Callable[[_AbstractView], Awaitable[web.StreamResponse]]: ...
 
     @overload
     def __call__(
         self, func: Callable[[_T, web.Request], _TemplateReturnType]
-    ) -> Callable[[_T, web.Request], Awaitable[web.StreamResponse]]:
-        ...
+    ) -> Callable[[_T, web.Request], Awaitable[web.StreamResponse]]: ...
 
 
 def setup(
@@ -203,20 +200,17 @@ def template(
     @overload
     def wrapper(
         func: _SimpleTemplateHandler,
-    ) -> Callable[[web.Request], Awaitable[web.StreamResponse]]:
-        ...
+    ) -> Callable[[web.Request], Awaitable[web.StreamResponse]]: ...
 
     @overload
     def wrapper(
         func: Callable[[_AbstractView], _TemplateReturnType]
-    ) -> Callable[[_AbstractView], Awaitable[web.StreamResponse]]:
-        ...
+    ) -> Callable[[_AbstractView], Awaitable[web.StreamResponse]]: ...
 
     @overload
     def wrapper(
         func: Callable[[_T, web.Request], _TemplateReturnType]
-    ) -> Callable[[_T, web.Request], Awaitable[web.StreamResponse]]:
-        ...
+    ) -> Callable[[_T, web.Request], Awaitable[web.StreamResponse]]: ...
 
     def wrapper(
         func: Callable[..., _TemplateReturnType]
