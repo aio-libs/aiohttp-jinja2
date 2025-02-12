@@ -204,16 +204,16 @@ def template(
 
     @overload
     def wrapper(
-        func: Callable[[_AbstractView], _TemplateReturnType]
+        func: Callable[[_AbstractView], _TemplateReturnType],
     ) -> Callable[[_AbstractView], Awaitable[web.StreamResponse]]: ...
 
     @overload
     def wrapper(
-        func: Callable[[_T, web.Request], _TemplateReturnType]
+        func: Callable[[_T, web.Request], _TemplateReturnType],
     ) -> Callable[[_T, web.Request], Awaitable[web.StreamResponse]]: ...
 
     def wrapper(
-        func: Callable[..., _TemplateReturnType]
+        func: Callable[..., _TemplateReturnType],
     ) -> Callable[..., Awaitable[web.StreamResponse]]:
         # TODO(PY310): ParamSpec
 
