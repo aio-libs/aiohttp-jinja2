@@ -1,5 +1,5 @@
 -e .
-aiohttp==3.12.12
+aiohttp==3.12.13
 alabaster>=0.6.2
 coverage==7.9.0
 jinja2==3.1.6
