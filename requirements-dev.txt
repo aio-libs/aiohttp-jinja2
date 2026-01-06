@@ -6,5 +6,5 @@ flake8-bugbear==24.12.12
 flake8-import-order==0.19.2
 flake8-requirements==2.3.0
 mypy==1.19.1; implementation_name=="cpython"
-pre-commit==4.3.0
+pre-commit==4.5.1
 sphinx==8.2.3
