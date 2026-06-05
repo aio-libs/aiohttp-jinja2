@@ -212,12 +212,10 @@ def template(
 
     def wrapper(
         func: Callable[_P, _TemplateReturnType],
-    ) -> Callable[_P, Awaitable[web.StreamResponse]]:
-        # TODO(PY310): ParamSpec
-
+    ) -> Callable[_P, Awaitable[web.StreamResponse]]:  # type: ignore[misc]
         @functools.wraps(func)
         async def wrapped(*args: _P.args, **kwargs: _P.kwargs) -> web.StreamResponse:
-            context = await func(*args)
+            context = await func(*args, **kwargs)
             if isinstance(context, web.StreamResponse):
                 return context
 
@@ -225,7 +223,7 @@ def template(
             if isinstance(args[0], AbstractView):
                 request = args[0].request
             else:
-                request = args[-1]
+                request = args[-1]  # type: ignore[assignment]
 
             env = request.config_dict.get(app_key)
             if env and env.is_async:
