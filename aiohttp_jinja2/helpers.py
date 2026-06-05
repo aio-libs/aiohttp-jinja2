@@ -3,7 +3,6 @@ useful context functions, see
 http://jinja.pocoo.org/docs/dev/api/#jinja2.contextfunction
 """
 
-import warnings
 from typing import TypedDict
 
 import jinja2
