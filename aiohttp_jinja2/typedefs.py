@@ -1,4 +1,4 @@
-from typing import Callable, Iterable, Mapping, Tuple, Union
+from typing import Callable, Iterable, Mapping
 
 Filter = Callable[..., str]
-Filters = Union[Iterable[Tuple[str, Filter]], Mapping[str, Filter]]
+Filters = Iterable[tuple[str, Filter]] | Mapping[str, Filter]

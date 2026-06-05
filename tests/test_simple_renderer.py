@@ -1,5 +1,3 @@
-from typing import Dict
-
 import jinja2
 import pytest
 from aiohttp import web
@@ -11,7 +9,7 @@ import aiohttp_jinja2
 @pytest.mark.parametrize("enable_async", (False, True))
 async def test_func(aiohttp_client, enable_async):
     @aiohttp_jinja2.template("tmpl.jinja2")
-    async def func(request: web.Request) -> Dict[str, str]:
+    async def func(request: web.Request) -> dict[str, str]:
         return {"head": "HEAD", "text": "text"}
 
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
@@ -35,7 +33,7 @@ async def test_func(aiohttp_client, enable_async):
 async def test_render_class_based_view(aiohttp_client):
     class MyView(web.View):
         @aiohttp_jinja2.template("tmpl.jinja2")
-        async def get(self) -> Dict[str, str]:
+        async def get(self) -> dict[str, str]:
             return {"head": "HEAD", "text": "text"}
 
     template = "<html><body><h1>{{head}}</h1>{{text}}</body></html>"
