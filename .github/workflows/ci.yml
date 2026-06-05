@@ -50,10 +50,10 @@ jobs:
     name: Test
     strategy:
       matrix:
-        pyver: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        pyver: ['3.10', '3.11', '3.12', '3.13', '3.14']
         os: [ubuntu, macos, windows]
         include:
-          - pyver: pypy-3.9
+          - pyver: pypy-3.10
             os: ubuntu
     runs-on: ${{ matrix.os }}-latest
     timeout-minutes: 15
@@ -106,7 +106,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v6
       with:
-        python-version: 3.9
+        python-version: 3.14
     - name: Install dependencies
       run:
         python -m pip install -U pip wheel setuptools build twine

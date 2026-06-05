@@ -3,15 +3,12 @@ from typing import (
     Any,
     Awaitable,
     Callable,
-    Dict,
     Final,
     Mapping,
-    Optional,
+    ParamSpec,
     Protocol,
     Sequence,
-    Tuple,
     TypeVar,
-    Union,
     overload,
 )
 
@@ -33,9 +30,9 @@ __all__ = (
     "template",
 )
 
-_TemplateReturnType = Awaitable[Union[web.StreamResponse, Mapping[str, Any]]]
+_TemplateReturnType = Awaitable[web.StreamResponse | Mapping[str, Any]]
 _SimpleTemplateHandler = Callable[[web.Request], _TemplateReturnType]
-_ContextProcessor = Callable[[web.Request], Awaitable[Dict[str, Any]]]
+_ContextProcessor = Callable[[web.Request], Awaitable[dict[str, Any]]]
 
 APP_CONTEXT_PROCESSORS_KEY: Final = web.AppKey[Sequence[_ContextProcessor]](
     "APP_CONTEXT_PROCESSORS_KEY"
@@ -44,6 +41,7 @@ APP_KEY: Final = web.AppKey[jinja2.Environment]("APP_KEY")
 REQUEST_CONTEXT_KEY: Final = "aiohttp_jinja2_context"
 
 _T = TypeVar("_T")
+_P = ParamSpec("_P")
 _AbstractView = TypeVar("_AbstractView", bound=AbstractView)
 
 
@@ -69,7 +67,7 @@ def setup(
     *args: Any,
     app_key: web.AppKey[jinja2.Environment] = APP_KEY,
     context_processors: Sequence[_ContextProcessor] = (),
-    filters: Optional[Filters] = None,
+    filters: Filters | None = None,
     default_helpers: bool = True,
     **kwargs: Any,
 ) -> jinja2.Environment:
@@ -103,7 +101,7 @@ def _render_string(
     request: web.Request,
     context: Mapping[str, Any],
     app_key: web.AppKey[jinja2.Environment],
-) -> Tuple[jinja2.Template, Mapping[str, Any]]:
+) -> tuple[jinja2.Template, Mapping[str, Any]]:
     env = request.config_dict.get(app_key)
     if env is None:
         text = "Template engine is not initialized, call aiohttp_jinja2.setup() first"
@@ -148,10 +146,10 @@ async def render_string_async(
 
 
 def _render_template(
-    context: Optional[Mapping[str, Any]],
+    context: Mapping[str, Any] | None,
     encoding: str,
     status: int,
-) -> Tuple[web.Response, Mapping[str, Any]]:
+) -> tuple[web.Response, Mapping[str, Any]]:
     response = web.Response(status=status)
     if context is None:
         context = {}
@@ -163,7 +161,7 @@ def _render_template(
 def render_template(
     template_name: str,
     request: web.Request,
-    context: Optional[Mapping[str, Any]],
+    context: Mapping[str, Any] | None,
     *,
     app_key: web.AppKey[jinja2.Environment] = APP_KEY,
     encoding: str = "utf-8",
@@ -177,7 +175,7 @@ def render_template(
 async def render_template_async(
     template_name: str,
     request: web.Request,
-    context: Optional[Mapping[str, Any]],
+    context: Mapping[str, Any] | None,
     *,
     app_key: web.AppKey[jinja2.Environment] = APP_KEY,
     encoding: str = "utf-8",
@@ -213,12 +211,12 @@ def template(
     ) -> Callable[[_T, web.Request], Awaitable[web.StreamResponse]]: ...
 
     def wrapper(
-        func: Callable[..., _TemplateReturnType],
-    ) -> Callable[..., Awaitable[web.StreamResponse]]:
+        func: Callable[_P, _TemplateReturnType],
+    ) -> Callable[_P, Awaitable[web.StreamResponse]]:
         # TODO(PY310): ParamSpec
 
         @functools.wraps(func)
-        async def wrapped(*args: Any) -> web.StreamResponse:  # type: ignore[misc]
+        async def wrapped(*args: _P.args, **kwargs: _P.kwargs) -> web.StreamResponse:
             context = await func(*args)
             if isinstance(context, web.StreamResponse):
                 return context
@@ -258,5 +256,5 @@ async def context_processors_middleware(
     return await handler(request)
 
 
-async def request_processor(request: web.Request) -> Dict[str, web.Request]:
+async def request_processor(request: web.Request) -> dict[str, web.Request]:
     return {"request": request}

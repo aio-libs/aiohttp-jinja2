@@ -4,7 +4,7 @@ http://jinja.pocoo.org/docs/dev/api/#jinja2.contextfunction
 """
 
 import warnings
-from typing import Dict, Optional, TypedDict, Union
+from typing import TypedDict
 
 import jinja2
 from aiohttp import web
@@ -22,8 +22,8 @@ static_root_key = web.AppKey("static_root_key", str)
 def url_for(
     context: _Context,
     __route_name: str,
-    query_: Optional[Dict[str, str]] = None,
-    **parts: Union[str, int]
+    query_: dict[str, str] | None = None,
+    **parts: str | int
 ) -> URL:
     """Filter for generating urls.
 
@@ -33,7 +33,7 @@ def url_for(
     """
     app = context["app"]
 
-    parts_clean: Dict[str, str] = {}
+    parts_clean: dict[str, str] = {}
     for key in parts:
         val = parts[key]
         if isinstance(val, str):
@@ -70,20 +70,10 @@ def static_url(context: _Context, static_file_path: str) -> str:
     try:
         static_url = app[static_root_key]
     except KeyError:
-        try:
-            # TODO (aiohttp 3.10+): Remove this fallback
-            static_url = app["static_root_url"]
-        except KeyError:
-            raise RuntimeError(
-                "app does not define a static root url, you need to set the url root "
-                "with app[aiohttp_jinja2.static_root_key] = '<static root>'."
-            ) from None
-        else:
-            warnings.warn(
-                "'static_root_url' is deprecated, use aiohttp_jinja2.static_root_key.",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
+        raise RuntimeError(
+            "app does not define a static root url, you need to set the url root "
+            "with app[aiohttp_jinja2.static_root_key] = '<static root>'."
+        ) from None
     return "{}/{}".format(static_url.rstrip("/"), static_file_path.lstrip("/"))
 
 
