@@ -212,9 +212,9 @@ def template(
 
     def wrapper(
         func: Callable[_P, _TemplateReturnType],
-    ) -> Callable[_P, Awaitable[web.StreamResponse]]:  # type: ignore[misc]
+    ) -> Callable[_P, Awaitable[web.StreamResponse]]:
         @functools.wraps(func)
-        async def wrapped(*args: _P.args, **kwargs: _P.kwargs) -> web.StreamResponse:
+        async def wrapped(*args: _P.args, **kwargs: _P.kwargs) -> web.StreamResponse:  # type: ignore[misc]
             context = await func(*args, **kwargs)
             if isinstance(context, web.StreamResponse):
                 return context
