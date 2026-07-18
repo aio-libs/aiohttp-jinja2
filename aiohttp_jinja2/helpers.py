@@ -36,7 +36,7 @@ def url_for(
     for key in parts:
         val = parts[key]
         if isinstance(val, str):
-            # if type is inherited from str expilict cast to str makes sense
+            # if type is inherited from str explicit cast to str makes sense
             # if type is exactly str the operation is very fast
             val = str(val)
         elif type(val) is int:
