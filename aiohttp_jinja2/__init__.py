@@ -38,7 +38,7 @@ APP_CONTEXT_PROCESSORS_KEY: Final = web.AppKey[Sequence[_ContextProcessor]](
     "APP_CONTEXT_PROCESSORS_KEY"
 )
 APP_KEY: Final = web.AppKey[jinja2.Environment]("APP_KEY")
-REQUEST_CONTEXT_KEY: Final = "aiohttp_jinja2_context"
+REQUEST_CONTEXT_KEY: Final = web.RequestKey("jinja_context", dict)
 
 _T = TypeVar("_T")
 _P = ParamSpec("_P")
