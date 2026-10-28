@@ -151,7 +151,7 @@ will need to use the async functions for rendering::
 
     async def handler(request):
         return await aiohttp_jinja2.render_template_async(
-            'tmpl.jinja2', request)
+            'tmpl.jinja2', request, {'foo': 'bar'})
 
 The ``@aiohttp_jinja2.template`` decorator will work for both cases.
 
@@ -238,7 +238,8 @@ Please feel free to file an issue on `bug tracker
 <https://github.com/aio-libs/aiohttp_jinja2/issues>`_ if you have found a bug
 or have some suggestion for library improvement.
 
-The library uses `Travis <https://travis-ci.org/aio-libs/aiohttp-jinja2>`_ for
+The library uses `GitHub Actions
+<https://github.com/aio-libs/aiohttp-jinja2/actions>`_ for
 Continuous Integration.
 
 
