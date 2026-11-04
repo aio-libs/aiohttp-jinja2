@@ -12,11 +12,10 @@ APP_KEY
 
 .. data:: APP_KEY
 
-   The key name in :class:`aiohttp.web.Application` dictionary,
-   ``'aiohttp_jinja2_environment'`` for storing :term:`jinja2`
-   environment object (:class:`jinja2.Environment`).
+   The :class:`aiohttp.web.AppKey` under which the :class:`jinja2.Environment`
+   is stored in :class:`aiohttp.web.Application`.
 
-   Usually you don't need to operate with *application* manually, left
+   Usually you don't need to operate with *application* manually, leave
    it to :mod:`aiohttp_jinja2` functions.
 
 
@@ -34,16 +33,16 @@ setup
    :param app: :class:`aiohttp.web.Application` instance to initialize template
                system on.
 
-   :param str app_key: optional key that will be used to access templating
-                       environment from application dictionary object. Defaults
-                       to `aiohttp_jinja2_environment`.
+   :param app_key: optional :class:`aiohttp.web.AppKey` used to store the
+                   templating environment on the application. Defaults to
+                   :data:`APP_KEY`.
 
    :param context_processors: list of :ref:`aiohttp-web-middlewares`. These are
                               context processors used to rewrite or inject some
                               variables during the processing of a request.
    :type context_processors: :class:`list`
 
-   :param autoescape: the argument is passed to :class:`jinja2.Environemnt`, see
+   :param autoescape: the argument is passed to :class:`jinja2.Environment`, see
                            `Autoescaping` for more details.
 
    :param filters: extra jinja filters (`link to docs
@@ -72,7 +71,7 @@ setup
 
 
 @template
---------
+---------
 
 .. decorator:: template(template_name, *, app_key=APP_KEY, \
                         encoding='utf-8', status=200)
@@ -85,19 +84,19 @@ setup
                              by the loader. Raises a 500 error in case template
                              was not found.
 
-   :param str app_key: optional key that will be used to access templating
-                       environment from application dictionary object. Defaults
-                       to `aiohttp_jinja2_environment`.
+   :param app_key: optional :class:`aiohttp.web.AppKey` used to store the
+                   templating environment on the application. Defaults to
+                   :data:`APP_KEY`.
 
    :param str encoding: encoding that will be set as a charset property on the
                         response for rendered template, default to utf-8.
 
-   :params int status: http status code that will be set on resulting response.
+   :param int status: http status code that will be set on resulting response.
 
 
    Simple usage example::
 
-      @jinja2.template('tmpl.jinja2')
+      @aiohttp_jinja2.template('tmpl.jinja2')
       async def handler(request):
          context = {'foo': 'bar'}
          return context
@@ -120,9 +119,9 @@ render_string
    :type request: :class:`aiohttp.web.Request`
 
    :param dict context: dictionary used as context when rendering the template.
-   :param str app_key: optional key that will be used to access templating
-                       environment from application dictionary object. Defaults
-                       to `aiohttp_jinja2_environment`.
+   :param app_key: optional :class:`aiohttp.web.AppKey` used to store the
+                   templating environment on the application. Defaults to
+                   :data:`APP_KEY`.
 
 
 render_string_async
@@ -153,9 +152,9 @@ render_template
    :type request: :class:`aiohttp.web.Request`
 
    :param dict context: dictionary used as context when rendering the template.
-   :param str app_key: optional key that will be used to access templating
-                       environment from application dictionary object. Defaults
-                       to `aiohttp_jinja2_environment`.
+   :param app_key: optional :class:`aiohttp.web.AppKey` used to store the
+                   templating environment on the application. Defaults to
+                   :data:`APP_KEY`.
    :param int status: http status code that will be set on resulting response.
 
    Assuming the initialization from the example above has been done::
@@ -193,6 +192,6 @@ render_template_async
 
    :param app: :class:`aiohttp.web.Application` instance to get variables from.
 
-   :param str app_key: optional key that will be used to access templating
-                           environment from application dictionary object. Defaults
-                           to `aiohttp_jinja2_environment`.
+   :param app_key: optional :class:`aiohttp.web.AppKey` used to store the
+                   templating environment on the application. Defaults to
+                   :data:`APP_KEY`.
